@@ -1,0 +1,25 @@
+# Segredos e configuração local: nunca versionar.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+secrets/
+
+# Build e dependências
+target/
+node_modules/
+dist/
+coverage/
+
+# IDE e sistema
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Logs e dados locais
+*.log
+data/
