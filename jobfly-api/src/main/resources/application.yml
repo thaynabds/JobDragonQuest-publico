@@ -20,6 +20,8 @@ spring:
 
 server:
   port: ${JOBFLY_PORT:8080}
+  # Só esta máquina alcança a API. Para expor (atrás de um proxy com HTTPS), defina JOBFLY_ADDRESS=0.0.0.0.
+  address: ${JOBFLY_ADDRESS:127.0.0.1}
   # Atrás de um proxy reverso, defina JOBFLY_FORWARD_HEADERS=native para confiar em X-Forwarded-*.
   forward-headers-strategy: ${JOBFLY_FORWARD_HEADERS:none}
   error:

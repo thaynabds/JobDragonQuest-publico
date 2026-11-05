@@ -36,7 +36,7 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 | 16 | Ferramentas de IA com permissão controlada | ⬜ MCP previsto (ADR-007) |
 | 17 | Recuperação de falhas de integração | ⬜ Junto com as integrações |
 | 18 | Testes automatizados | ✅ `./mvnw verify` |
-| 19 | Instalar e executar pela documentação | 🟡 Executa nos testes com H2. No PostgreSQL local, falta você rodar `scripts/configurar-local.sh` (pede sudo) |
+| 19 | Instalar e executar pela documentação | ✅ Em 05/11/2026 rodou no PostgreSQL 16 local (cluster do usuário, sem sudo). `scripts/testar-api.py`: 20/20 verificações passaram |
 
 ## Cenários adicionais (seção 29)
 

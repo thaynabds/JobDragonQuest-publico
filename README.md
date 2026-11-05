@@ -61,18 +61,24 @@ JobFly/
 
 ## Como executar
 
-Requisitos: Java 21 e PostgreSQL 14 ou mais novo. O Maven vem embutido (`mvnw`).
+Requisitos: Java 21 e PostgreSQL 14 ou mais novo instalado (só os programas, ele não precisa estar configurado). O Maven vem embutido (`mvnw`).
 
 ```bash
-# 1. Cria o banco "jobfly" e grava .env com senha e segredo JWT aleatórios (pede sudo uma vez)
+# 1. Cria um PostgreSQL só seu em data/postgres (127.0.0.1:5433, sem sudo)
+#    e grava .env com senhas e segredo JWT aleatórios
 scripts/configurar-local.sh
 
-# 2. Sobe a API em http://localhost:8080
+# 2. Sobe a API em http://127.0.0.1:8080 (só esta máquina alcança)
 scripts/iniciar-api.sh
 
-# 3. Testes, com relatório de cobertura em jobfly-api/target/site/jacoco
+# 3. Em outro terminal: percorre o fluxo completo contra a API rodando
+scripts/testar-api.py
+
+# 4. Testes automatizados, com cobertura em jobfly-api/target/site/jacoco
 cd jobfly-api && ./mvnw verify
 ```
+
+Para parar: `Ctrl+C` na API e `scripts/postgres-local.sh parar` no banco. Depois de reiniciar o computador, rode `scripts/postgres-local.sh iniciar` antes da API. Se preferir o PostgreSQL do sistema (porta 5432), use `scripts/configurar-local.sh --sistema` (pede sudo).
 
 As variáveis de ambiente estão em [.env.example](.env.example). A referência da API está em [docs/05-api.md](docs/05-api.md).
 
