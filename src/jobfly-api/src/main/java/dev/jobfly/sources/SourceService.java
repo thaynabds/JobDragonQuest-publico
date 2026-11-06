@@ -256,7 +256,8 @@ public class SourceService {
         return new SourceResponse(s.getId(), s.getName(), s.getKind(), s.getKind().label(), s.getCollectionMode(),
                 s.getIdentifier(), s.getUrl(), openUrl(s), s.getFrequencyMinutes(), s.isEnabled(), s.getProfileIds(),
                 s.getKeywords(), s.getNextRunAt(), s.getLastRunAt(), s.getLastStatus(), s.getLastMessage(),
-                s.getLastFound(), s.getConsecutiveFailures(), s.isDue(clock.instant()), s.getCreatedAt(), s.getVersion());
+                s.getLastFound(), s.getConsecutiveFailures(), s.isDue(clock.instant()), s.isRunning(clock.instant()), s.getCreatedAt(),
+                s.getVersion());
     }
 
     /** Página pública que a pessoa pode abrir para conferir a fonte. */

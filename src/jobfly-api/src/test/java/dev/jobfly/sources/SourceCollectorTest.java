@@ -118,6 +118,46 @@ class SourceCollectorTest extends ApiTestSupport {
         getJson(newUser(), "/api/v1/sources/" + source + "/runs").andExpect(status().isNotFound());
     }
 
+    @Autowired
+    private org.springframework.transaction.support.TransactionTemplate transaction;
+
+    /** Critérios da issue #31: só uma coleta por fonte, e a reserva é liberada ao terminar. */
+    @Test
+    void onlyOneCollectionPerSourceAtATime() throws Exception {
+        when(greenhouse.kind()).thenReturn(SourceKind.GREENHOUSE);
+        when(greenhouse.fetch("acme")).thenReturn(BOARD);
+        String token = newUser();
+        UUID source = UUID.fromString(setup(token));
+        Instant now = Instant.now();
+
+        // Simula uma coleta em andamento (ex.: o agendador pegou a fonte).
+        transaction.executeWithoutResult(status -> repository.reserve(source, now, now.plusSeconds(600)));
+        getJson(token, "/api/v1/sources/" + source).andExpect(jsonPath("$.running").value(true));
+        postJson(token, "/api/v1/sources/" + source + "/run", "")
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("collection_running"));
+        org.assertj.core.api.Assertions.assertThat(collector.runDue()).as("o agendador também respeita a reserva").isZero();
+
+        // Reserva vencida (coleta interrompida) não trava a fonte.
+        transaction.executeWithoutResult(status -> repository.release(source));
+        transaction.executeWithoutResult(status -> repository.reserve(source, now.minusSeconds(1200), now.minusSeconds(600)));
+        postJson(token, "/api/v1/sources/" + source + "/run", "").andExpect(status().isOk()).andExpect(jsonPath("$.created").value(2));
+
+        // Ao terminar, a reserva é liberada: outra coleta pode rodar.
+        getJson(token, "/api/v1/sources/" + source).andExpect(jsonPath("$.running").value(false));
+        postJson(token, "/api/v1/sources/" + source + "/run", "").andExpect(status().isOk()).andExpect(jsonPath("$.created").value(0));
+    }
+
+    @Test
+    void reservationIsReleasedEvenWhenTheAtsFails() throws Exception {
+        when(greenhouse.kind()).thenReturn(SourceKind.GREENHOUSE);
+        when(greenhouse.fetch(anyString())).thenThrow(new CollectionException("O ATS respondeu com status 503"));
+        String token = newUser();
+        String source = setup(token);
+        postJson(token, "/api/v1/sources/" + source + "/run", "").andExpect(jsonPath("$.status").value("FAILED"));
+        getJson(token, "/api/v1/sources/" + source).andExpect(jsonPath("$.running").value(false));
+        postJson(token, "/api/v1/sources/" + source + "/run", "").andExpect(status().isOk());
+    }
+
     @Test
     void assistedSourcesAreNotCollectedAutomatically() throws Exception {
         String token = newUser();

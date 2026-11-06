@@ -29,16 +29,21 @@ interface WatchedSourceRepository extends JpaRepository<WatchedSource, UUID> {
     @Query("""
             select s.id from WatchedSource s
             where s.enabled = true and s.collectionMode = :mode and s.nextRunAt <= :now
+              and (s.runningUntil is null or s.runningUntil < :now)
             order by s.nextRunAt asc""")
     List<UUID> findDueIds(@Param("mode") CollectionMode mode, @Param("now") Instant now, Pageable page);
 
     /**
-     * Reserva a fonte para uma coleta: só uma execução vence quando duas tentam ao mesmo tempo (troca condicional
-     * do próximo horário, sem depender de SKIP LOCKED).
+     * Reserva a fonte para uma coleta (manual ou agendada). Troca condicional: se duas tentativas chegarem juntas, só
+     * uma recebe 1. Uma reserva vencida (coleta interrompida) pode ser tomada de novo.
      */
     @Modifying
     @Query("""
-            update WatchedSource s set s.nextRunAt = :lease
-            where s.id = :id and s.enabled = true and s.nextRunAt <= :now""")
-    int claim(@Param("id") UUID id, @Param("now") Instant now, @Param("lease") Instant lease);
+            update WatchedSource s set s.runningUntil = :until
+            where s.id = :id and (s.runningUntil is null or s.runningUntil < :now)""")
+    int reserve(@Param("id") UUID id, @Param("now") Instant now, @Param("until") Instant until);
+
+    @Modifying
+    @Query("update WatchedSource s set s.runningUntil = null where s.id = :id")
+    int release(@Param("id") UUID id);
 }

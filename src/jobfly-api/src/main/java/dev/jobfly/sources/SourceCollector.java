@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -55,7 +56,7 @@ public class SourceCollector {
     static final int MAX_JOBS_PER_RUN = 200;
     static final int MAX_REQUIREMENTS = 40;
     static final int DUE_BATCH = 5;
-    /** Reserva da fonte durante a coleta: evita que dois ciclos do agendador peguem a mesma fonte. */
+    /** Validade da reserva de uma coleta. Passado esse tempo, uma coleta interrompida não trava mais a fonte. */
     static final Duration LEASE = Duration.ofMinutes(15);
     private static final Logger log = LoggerFactory.getLogger(SourceCollector.class);
 
@@ -93,7 +94,10 @@ public class SourceCollector {
             throw DomainException.conflict("assisted_source",
                     source.getKind().label() + " não permite coleta automática: abra o link e registre as vagas encontradas");
         }
-        return collect(sourceId, Trigger.MANUAL);
+        if (!reserve(sourceId)) {
+            throw DomainException.conflict("collection_running", "Já existe uma coleta desta fonte em andamento. Aguarde terminar.");
+        }
+        return collectReserved(sourceId, Trigger.MANUAL);
     }
 
     /** Ciclo do agendador: coleta as fontes automáticas vencidas, poucas por vez, reservando cada uma antes. */
@@ -102,13 +106,27 @@ public class SourceCollector {
         List<UUID> due = sources.findDueIds(CollectionMode.AUTOMATIC, now, PageRequest.of(0, DUE_BATCH));
         int collected = 0;
         for (UUID id : due) {
-            Integer claimed = transaction.execute(status -> sources.claim(id, now, now.plus(LEASE)));
-            if (claimed != null && claimed == 1) {
-                collect(id, Trigger.SCHEDULED);
+            if (reserve(id)) {
+                collectReserved(id, Trigger.SCHEDULED);
                 collected++;
             }
         }
         return collected;
+    }
+
+    /** Só uma coleta por fonte: a reserva é uma troca condicional no banco, válida entre threads e instâncias. */
+    private boolean reserve(UUID sourceId) {
+        Instant now = clock.instant();
+        Integer reserved = transaction.execute(status -> sources.reserve(sourceId, now, now.plus(LEASE)));
+        return reserved != null && reserved == 1;
+    }
+
+    private RunResponse collectReserved(UUID sourceId, Trigger trigger) {
+        try {
+            return collect(sourceId, trigger);
+        } finally {
+            transaction.executeWithoutResult(status -> sources.release(sourceId));
+        }
     }
 
     RunResponse collect(UUID sourceId, Trigger trigger) {
@@ -148,6 +166,9 @@ public class SourceCollector {
                 result = jobs.createFromSource(plan.userId(), sourceId, toRequest(plan, job));
             } catch (DomainException ex) {
                 skipped++;
+                continue;
+            } catch (DataIntegrityViolationException ex) {
+                // Outra gravação da mesma vaga venceu a corrida (restrição única): ela já existe, então conta como duplicada.
                 continue;
             }
             if (result.duplicate()) {

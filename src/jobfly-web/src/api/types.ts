@@ -329,6 +329,7 @@ export interface Source {
   lastFound: number | null;
   consecutiveFailures: number;
   due: boolean;
+  running: boolean;
   createdAt: string;
   version: number;
 }

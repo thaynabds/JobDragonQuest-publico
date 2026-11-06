@@ -277,7 +277,9 @@ export function SourcesPage() {
                     </td>
                     <td className="small">{frequencyLabel(source.frequencyMinutes)}</td>
                     <td className="small">
-                      {!source.enabled ? (
+                      {source.running ? (
+                        <Badge tone="info">{t("sources.running")}</Badge>
+                      ) : !source.enabled ? (
                         <Badge>{t("sources.paused")}</Badge>
                       ) : source.lastStatus === "FAILED" ? (
                         <Badge tone="bad">{label("pending", "SOURCE_FAILING")}</Badge>
@@ -294,7 +296,7 @@ export function SourcesPage() {
                     <td className="row-actions">
                       {source.collectionMode === "AUTOMATIC" ? (
                         <Button
-                          disabled={busy}
+                          disabled={busy || source.running}
                           onClick={() =>
                             void run(async () => {
                               const { data } = await api.runSource(source.id);

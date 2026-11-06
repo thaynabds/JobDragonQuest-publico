@@ -74,7 +74,7 @@ public final class SourceDtos {
             UUID id, String name, SourceKind kind, String kindLabel, CollectionMode collectionMode, String identifier,
             String url, String openUrl, int frequencyMinutes, boolean enabled, Set<UUID> profileIds,
             List<String> keywords, Instant nextRunAt, Instant lastRunAt, RunStatus lastStatus, String lastMessage,
-            Integer lastFound, int consecutiveFailures, boolean due, Instant createdAt, long version) {
+            Integer lastFound, int consecutiveFailures, boolean due, boolean running, Instant createdAt, long version) {
     }
 
     /** Conferência de uma fonte assistida: quantas vagas a pessoa registrou e uma nota opcional. */
