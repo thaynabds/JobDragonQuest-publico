@@ -20,6 +20,7 @@ import dev.jobfly.sources.SourceDtos.BulkCreateRequest;
 import dev.jobfly.sources.SourceDtos.BulkCreateResult;
 import dev.jobfly.sources.SourceDtos.BulkUpdateRequest;
 import dev.jobfly.sources.SourceDtos.CatalogEntry;
+import dev.jobfly.sources.SourceDtos.RunResponse;
 import dev.jobfly.sources.SourceDtos.SourceResponse;
 import dev.jobfly.sources.SourceDtos.UpdateSourceRequest;
 import jakarta.validation.Valid;
@@ -29,10 +30,12 @@ import jakarta.validation.Valid;
 class SourceController {
 
     private final SourceService sources;
+    private final SourceCollector collector;
     private final CurrentUser currentUser;
 
-    SourceController(SourceService sources, CurrentUser currentUser) {
+    SourceController(SourceService sources, SourceCollector collector, CurrentUser currentUser) {
         this.sources = sources;
+        this.collector = collector;
         this.currentUser = currentUser;
     }
 
@@ -66,6 +69,17 @@ class SourceController {
     @PutMapping("/{id}")
     SourceResponse update(@PathVariable UUID id, @Valid @RequestBody UpdateSourceRequest request) {
         return sources.update(currentUser.id(), id, request);
+    }
+
+    /** Coleta agora uma fonte automática. Fontes assistidas respondem 409 (não há coleta automática permitida). */
+    @PostMapping("/{id}/run")
+    RunResponse run(@PathVariable UUID id) {
+        return collector.runNow(currentUser.id(), id);
+    }
+
+    @GetMapping("/{id}/runs")
+    List<RunResponse> runs(@PathVariable UUID id) {
+        return sources.runs(currentUser.id(), id);
     }
 
     @DeleteMapping("/{id}")

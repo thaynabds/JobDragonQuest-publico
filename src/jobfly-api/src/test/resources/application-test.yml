@@ -11,3 +11,6 @@ jobfly:
     secure-cookies: false
     login:
       max-attempts-per-window: 1000
+  sources:
+    scheduler:
+      enabled: false

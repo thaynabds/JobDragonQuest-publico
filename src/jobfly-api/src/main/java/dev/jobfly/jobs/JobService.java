@@ -44,12 +44,24 @@ public class JobService {
      */
     @Transactional
     public JobCreated create(UUID userId, JobRequest request) {
+        return create(userId, request, null);
+    }
+
+    /** Igual a {@link #create(UUID, JobRequest)}, registrando qual fonte vigiada encontrou a vaga. */
+    @Transactional
+    public JobCreated createFromSource(UUID userId, UUID sourceId, JobRequest request) {
+        return create(userId, request, sourceId);
+    }
+
+    private JobCreated create(UUID userId, JobRequest request, UUID sourceId) {
         JobData data = toData(request);
         Optional<JobPosting> existing = findDuplicate(userId, data);
         if (existing.isPresent()) {
             return new JobCreated(JobResponse.of(existing.get()), true);
         }
-        JobPosting job = repository.saveAndFlush(new JobPosting(userId, data, clock.instant()));
+        JobPosting job = new JobPosting(userId, data, clock.instant());
+        job.linkSource(sourceId);
+        repository.saveAndFlush(job);
         audit.record(userId, "job.created", "job", job.getId(), job.getSource());
         return new JobCreated(JobResponse.of(job), false);
     }
@@ -85,10 +97,12 @@ public class JobService {
     }
 
     @Transactional(readOnly = true)
-    public Page<JobSummary> list(UUID userId, int page, int size) {
-        int safeSize = Math.clamp(size, 1, MAX_PAGE_SIZE);
-        return repository.findByUserIdOrderByFoundAtDesc(userId, PageRequest.of(Math.max(page, 0), safeSize))
-                .map(JobSummary::of);
+    public Page<JobSummary> list(UUID userId, UUID sourceId, int page, int size) {
+        PageRequest pageable = PageRequest.of(Math.max(page, 0), Math.clamp(size, 1, MAX_PAGE_SIZE));
+        Page<JobPosting> result = sourceId == null
+                ? repository.findByUserIdOrderByFoundAtDesc(userId, pageable)
+                : repository.findByUserIdAndWatchedSourceIdOrderByFoundAtDesc(userId, sourceId, pageable);
+        return result.map(JobSummary::of);
     }
 
     @Transactional(readOnly = true)

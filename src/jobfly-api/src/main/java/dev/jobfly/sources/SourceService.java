@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ import dev.jobfly.sources.SourceDtos.BulkCreateResult;
 import dev.jobfly.sources.SourceDtos.BulkUpdateRequest;
 import dev.jobfly.sources.SourceDtos.CatalogEntry;
 import dev.jobfly.sources.SourceDtos.DuplicateSource;
+import dev.jobfly.sources.SourceDtos.RunResponse;
 import dev.jobfly.sources.SourceDtos.SourceInput;
 import dev.jobfly.sources.SourceDtos.SourceResponse;
 import dev.jobfly.sources.SourceDtos.UpdateSourceRequest;
@@ -44,12 +46,15 @@ public class SourceService {
     static final int MAX_SOURCES_PER_USER = 200;
 
     private final WatchedSourceRepository sources;
+    private final SourceRunRepository runs;
     private final ProfileService profiles;
     private final AuditService audit;
     private final Clock clock;
 
-    SourceService(WatchedSourceRepository sources, ProfileService profiles, AuditService audit, Clock clock) {
+    SourceService(WatchedSourceRepository sources, SourceRunRepository runs, ProfileService profiles, AuditService audit,
+            Clock clock) {
         this.sources = sources;
+        this.runs = runs;
         this.profiles = profiles;
         this.audit = audit;
         this.clock = clock;
@@ -181,6 +186,13 @@ public class SourceService {
         sources.flush();
         audit.record(userId, "source.bulk_updated", "source", null, selected.size() + " fonte(s)");
         return selected.stream().map(this::response).sorted((a, b) -> a.name().compareToIgnoreCase(b.name())).toList();
+    }
+
+    /** Últimas 20 execuções (coletas ou conferências) da fonte, da mais recente para a mais antiga. */
+    @Transactional(readOnly = true)
+    public List<RunResponse> runs(UUID userId, UUID sourceId) {
+        load(userId, sourceId);
+        return runs.findBySourceIdOrderByStartedAtDesc(sourceId, PageRequest.of(0, 20)).stream().map(RunResponse::of).toList();
     }
 
     @Transactional

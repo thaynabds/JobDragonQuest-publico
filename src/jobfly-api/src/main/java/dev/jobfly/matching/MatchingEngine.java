@@ -3,12 +3,10 @@ package dev.jobfly.matching;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Component;
 import dev.jobfly.common.domain.LanguageLevel;
 import dev.jobfly.common.domain.WorkMode;
 import dev.jobfly.common.text.TextNormalizer;
+import dev.jobfly.common.text.TitleMatcher;
 import dev.jobfly.jobs.JobRequirement.Kind;
 import dev.jobfly.jobs.JobSnapshot;
 import dev.jobfly.matching.MatchResult.Blocker;
@@ -38,9 +37,6 @@ public class MatchingEngine {
     static final BigDecimal DESIRED_WEIGHT = new BigDecimal("0.3");
     private static final BigDecimal HALF = new BigDecimal("0.5");
     private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
-    private static final int MIN_STEM_LENGTH = 5;
-    private static final Set<String> STOP_WORDS = Set.of("de", "da", "do", "das", "dos", "em", "e", "para", "com", "a", "o",
-            "of", "the", "and", "in", "for", "-", "/");
     /** Margem abaixo do mínimo do perfil em que a vaga ainda merece revisão humana. */
     static final int REVIEW_MARGIN = 15;
     private static final int BASIC_LEVEL = 1;
@@ -235,38 +231,9 @@ public class MatchingEngine {
         return Recommendation.SKIP;
     }
 
-    /**
-     * O cargo da vaga contém todas as palavras de algum cargo desejado. A comparação é por radical, palavra a palavra,
-     * para "Desenvolvedora" casar com "Desenvolvedor" e "Estagiária" com "Estagiário".
-     */
+    /** O cargo da vaga contém todas as palavras de algum cargo desejado (comparação por radical: {@link TitleMatcher}). */
     static boolean titleAffinity(ProfileSnapshot profile, JobSnapshot job) {
-        List<String> titleWords = words(job.title());
-        return profile.desiredTitles().stream().map(MatchingEngine::words)
-                .filter(desired -> !desired.isEmpty())
-                .anyMatch(desired -> desired.stream().allMatch(word -> titleWords.stream().anyMatch(t -> sameWord(word, t))));
-    }
-
-    private static List<String> words(String text) {
-        return Arrays.stream(TextNormalizer.normalize(text).split(" "))
-                .filter(w -> !w.isBlank() && !STOP_WORDS.contains(w))
-                .toList();
-    }
-
-    private static boolean sameWord(String a, String b) {
-        if (a.equals(b)) {
-            return true;
-        }
-        if (a.length() < MIN_STEM_LENGTH || b.length() < MIN_STEM_LENGTH) {
-            return false;
-        }
-        String stemA = stem(a);
-        String stemB = stem(b);
-        return stemA.equals(stemB) || stemA.startsWith(stemB) || stemB.startsWith(stemA);
-    }
-
-    /** Radical simples para flexão de gênero e número do português (a/o/as/os/es finais). */
-    private static String stem(String word) {
-        return word.replaceFirst("(as|os|es|a|o|s)$", "");
+        return profile.desiredTitles().stream().anyMatch(desired -> TitleMatcher.containsAllWords(job.title(), desired));
     }
 
     private static String summary(Integer score, Recommendation recommendation, List<Blocker> blockers, int minScore) {
