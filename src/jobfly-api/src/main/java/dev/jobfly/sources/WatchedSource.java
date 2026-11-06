@@ -93,6 +93,10 @@ public class WatchedSource extends AssignedIdEntity {
     @Column(name = "consecutive_failures", nullable = false)
     private int consecutiveFailures;
 
+    /** Reserva da coleta em andamento; null quando nenhuma coleta está rodando. Gravada só pelo repositório. */
+    @Column(name = "running_until", insertable = false, updatable = false)
+    private Instant runningUntil;
+
     @ElementCollection
     @CollectionTable(name = "watched_source_profile", joinColumns = @JoinColumn(name = "source_id"))
     @Column(name = "profile_id", nullable = false)
@@ -262,6 +266,10 @@ public class WatchedSource extends AssignedIdEntity {
 
     public int getConsecutiveFailures() {
         return consecutiveFailures;
+    }
+
+    public boolean isRunning(Instant now) {
+        return runningUntil != null && runningUntil.isAfter(now);
     }
 
     public Set<UUID> getProfileIds() {

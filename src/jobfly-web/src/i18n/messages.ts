@@ -281,6 +281,8 @@ const ptBR = {
   "error.assisted_source": "Esta plataforma não permite coleta automática. Abra o link e registre as vagas.",
   "error.company_title_required": "Informe empresa e cargo.",
   "error.profile_name_taken": "Já existe um perfil com este nome.",
+  "error.collection_running": "Já existe uma coleta desta fonte em andamento. Aguarde terminar.",
+  "sources.running": "Coletando…",
 };
 
 export type MessageKey = keyof typeof ptBR;
@@ -566,6 +568,8 @@ const en: Messages = {
   "error.assisted_source": "This platform does not allow automated collection. Open the link and record the jobs.",
   "error.company_title_required": "Enter company and role.",
   "error.profile_name_taken": "A profile with this name already exists.",
+  "error.collection_running": "A collection for this source is already running. Wait for it to finish.",
+  "sources.running": "Collecting…",
 };
 
 export const LOCALES = { "pt-BR": ptBR, en } as const;

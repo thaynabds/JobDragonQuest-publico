@@ -55,6 +55,7 @@ const source = (id: string, name: string) => ({
   lastFound: null,
   consecutiveFailures: 0,
   due: true,
+  running: false,
   createdAt: "2026-11-06T10:00:00Z",
   version: 0,
 });
