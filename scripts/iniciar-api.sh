@@ -13,5 +13,5 @@ set -a
 # shellcheck disable=SC1090
 source "$env_file"
 set +a
-cd "$root/jobfly-api"
+cd "$root/src/jobfly-api"
 exec ./mvnw -q spring-boot:run

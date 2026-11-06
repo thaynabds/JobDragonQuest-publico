@@ -53,9 +53,9 @@ A modular monolith in Java 21 and Spring Boot 4.1, with PostgreSQL and Flyway. M
 
 ```
 JobFly/
-├── jobfly-api/              REST API (Spring Boot)
+├── src/jobfly-api/           REST API (Spring Boot)
 ├── docs/                    requirements, architecture, data, integrations, API, security, roadmap
-├── auditoria-jobcopilot/    reference study and feature matrix
+├── docs/referencias-jobcopilot/   reference study and feature matrix
 └── scripts/                 local setup and run
 ```
 
@@ -74,8 +74,8 @@ scripts/iniciar-api.sh
 # 3. In another terminal: runs the full flow against the running API
 scripts/testar-api.py
 
-# 4. Automated tests, with coverage in jobfly-api/target/site/jacoco
-cd jobfly-api && ./mvnw verify
+# 4. Automated tests, with coverage in src/jobfly-api/target/site/jacoco
+cd src/jobfly-api && ./mvnw verify
 ```
 
 To stop: `Ctrl+C` on the API and `scripts/postgres-local.sh parar` for the database. After a reboot, run `scripts/postgres-local.sh iniciar` before the API. To use the system PostgreSQL (port 5432) instead, run `scripts/configurar-local.sh --sistema` (asks for sudo).

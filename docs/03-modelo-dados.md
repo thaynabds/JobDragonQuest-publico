@@ -1,6 +1,6 @@
 # 03. Modelo de dados
 
-Migração: `jobfly-api/src/main/resources/db/migration/V1__schema_inicial.sql` (Flyway). O Hibernate só **valida** o esquema (`ddl-auto: validate`): toda mudança passa por uma nova migração versionada.
+Migração: `src/jobfly-api/src/main/resources/db/migration/` (Flyway). O Hibernate só **valida** o esquema (`ddl-auto: validate`): toda mudança passa por uma nova migração versionada.
 
 ## Convenções
 
