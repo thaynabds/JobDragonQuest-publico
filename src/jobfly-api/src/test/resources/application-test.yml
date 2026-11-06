@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:jobfly;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+
+jobfly:
+  security:
+    # Segredo exclusivo dos testes (32 bytes aleatórios). Não é usado fora daqui.
+    jwt-secret: "u5Vx3dQ8kq2m0yJ7cP1wT9rL4bN6hF2sA8eZ0gK3vXo="
+    secure-cookies: false
+    login:
+      max-attempts-per-window: 1000
+  sources:
+    scheduler:
+      enabled: false

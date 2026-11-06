@@ -1,0 +1,61 @@
+# Configuração do JobFly. Segredos e endereços vêm de variáveis de ambiente: nada sensível fica aqui.
+spring:
+  application:
+    name: jobfly-api
+  datasource:
+    url: ${JOBFLY_DB_URL:jdbc:postgresql://127.0.0.1:5432/jobfly}
+    username: ${JOBFLY_DB_USER:jobfly}
+    password: ${JOBFLY_DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: ${JOBFLY_PORT:8080}
+  # Só esta máquina alcança a API. Para expor (atrás de um proxy com HTTPS), defina JOBFLY_ADDRESS=0.0.0.0.
+  address: ${JOBFLY_ADDRESS:127.0.0.1}
+  # Atrás de um proxy reverso, defina JOBFLY_FORWARD_HEADERS=native para confiar em X-Forwarded-*.
+  forward-headers-strategy: ${JOBFLY_FORWARD_HEADERS:none}
+  error:
+    include-stacktrace: never
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: never
+
+jobfly:
+  security:
+    # Segredo HMAC do JWT em Base64, com no mínimo 32 bytes. A aplicação não sobe sem ele.
+    jwt-secret: ${JOBFLY_JWT_SECRET:}
+    issuer: jobfly
+    audience: jobfly-api
+    access-token-ttl: PT15M
+    refresh-token-ttl: P14D
+    # Marque false só em desenvolvimento local sem HTTPS.
+    secure-cookies: ${JOBFLY_SECURE_COOKIES:true}
+    allowed-origins: ${JOBFLY_ALLOWED_ORIGINS:http://127.0.0.1:5173,http://localhost:5173}
+    login:
+      max-attempts-per-window: 10
+      window: PT5M
+      lockout-after-failures: 5
+      lockout-duration: PT15M
+  applications:
+    # Dias sem evidência nova até uma candidatura ativa aparecer como "sem atualização".
+    stale-after-days: 21
+    duplicate-window-days: 60
+    # Abaixo desta confiança, uma mudança vinda de agente ou e-mail vira sugestão (RN-03).
+    min-automatic-confidence: 0.70

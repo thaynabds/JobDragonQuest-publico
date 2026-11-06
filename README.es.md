@@ -2,91 +2,154 @@
 
 > Idioma: [Português](README.md) | [English](README.en.md) | **Español**
 
-Plataforma para gestionar la carrera y automatizar postulaciones a empleos y prácticas, en Brasil y en el exterior. JobFly reúne en un solo lugar todo lo que pasa en cada proceso de selección, venga de donde venga la postulación: LinkedIn, Gupy, el sitio de la empresa, Instagram, un grupo de Facebook, el correo o una recomendación.
+[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.2.0-2563eb)](https://github.com/thaynabds/JobFly/releases/tag/v0.2.0)
+[![Licencia](https://img.shields.io/badge/licencia-todos%20los%20derechos%20reservados-6b7280)](#licencia)
+[![CI](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml)
+[![Pruebas](https://img.shields.io/badge/pruebas-128%20aprobadas-16a34a)](#calidad-y-seguridad)
+[![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobfly-api)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobfly-api)
+[![React](https://img.shields.io/badge/React-19-0891b2)](src/jobfly-web)
 
-**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Estado:** en desarrollo, incremento 1 (núcleo de la API).
+**Plataforma de gestión de carrera y automatización de postulaciones a empleos y prácticas, en Brasil y en el exterior.**
 
-## Qué hace la solución
+**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositorio:** privado · **Versión:** 0.2.0
 
-### Ya funciona (incremento 1, probado)
+## El problema
 
-- **Cuentas seguras.** Registro e inicio de sesión con contraseña protegida por Argon2id, sesión de 15 minutos renovada por un token rotativo que se revoca solo si lo roban, bloqueo tras intentos fallidos y límite de solicitudes.
-- **Varios perfiles profesionales.** Por ejemplo: "Desarrolladora Java", "Prácticas de desarrollo", "Vacantes internacionales". Cada perfil tiene objetivo, cargos deseados, competencias con nivel y años de uso, idiomas según el MCER, experiencias, formación, proyectos, cursos, certificaciones, pretensión salarial, modalidades, ciudades, disponibilidad y restricciones. Los perfiles nunca se mezclan.
-- **Registro de vacantes con deduplicación.** La misma vacante llega por URLs distintas (con rastreo, otro subdominio, otra ruta de LinkedIn) y JobFly reconoce que es una sola. También reconoce la misma empresa y cargo, sin importar "Ltda.", "S.A." ni acentos.
-- **Análisis de compatibilidad explicable.**
-  - Puntuación de 0 a 100 con el motivo de cada requisito: cumplido, parcial, no cumplido o "necesita lectura humana".
-  - Los impedimentos eliminatorios (modalidad, ciudad, idioma exigido, seniority) van aparte: una nota alta nunca oculta un impedimento.
-  - El sistema elige solo el perfil más adecuado para cada vacante.
-- **Central unificada de postulaciones.**
-  - Registra postulaciones hechas en cualquier lugar e impide duplicados por URL, por empresa y cargo, y por clave de idempotencia.
-  - Sigue 19 etapas: de la vacante encontrada a aprobada, rechazada o cerrada, pasando por filtro, entrevistas, pruebas técnicas y oferta.
-- **Actualización por evidencia.**
-  - Cada cambio de etapa registra el origen (tú, correo, portal, agente), el texto que lo justifica y la confianza.
-  - Una confirmación automática nunca se convierte en aprobación, y el silencio nunca en rechazo.
-  - La información dudosa se convierte en una sugerencia que aceptas o descartas.
-  - Las fuentes automáticas no reabren un proceso cerrado. Solo tú puedes.
-- **Panel (API).** Kanban por etapa, resumen con contadores, filtros por perfil, empresa, país, plataforma y período, historial completo de cada postulación y central de pendientes (acción tuya, prueba técnica, entrevista próxima, plazo, sugerencia por revisar, proceso sin novedades).
-- **Auditoría** de todas las operaciones relevantes, sin guardar contenido sensible.
+Quien busca empleo en tecnología se postula por muchos canales a la vez: LinkedIn, Gupy, Greenhouse, sitios de empresas, publicaciones en Instagram, grupos de Facebook, correo y recomendaciones. Cada canal avisa (o no) el avance a su manera. El resultado: vacantes compatibles que pasan desapercibidas, procesos olvidados y postulaciones hechas sin entender los requisitos.
 
-### Próximos incrementos
+JobFly lo reúne todo en una central única y explicable:
+- **vigila** sitios, ATS y redes sociales, muchos a la vez y para varios perfiles;
+- **analiza** la compatibilidad de cada vacante con cada perfil, mostrando el motivo de cada requisito;
+- **acompaña** todas las postulaciones, de cualquier origen, según la evidencia;
+- **muestra** lo que depende de ti.
 
-El plan detallado y el estado de cada criterio de aceptación están en [docs/07-roadmap.md](docs/07-roadmap.md) (en portugués). En resumen:
+## Funcionalidades
 
-1. Panel web en React (portugués e inglés).
-2. Búsqueda automática de vacantes mediante las APIs públicas de Greenhouse, Lever, SmartRecruiters y Ashby, y lista de Empresas Monitoreadas.
-3. Gmail y Outlook por OAuth con permisos mínimos: clasificación de mensajes, vínculo automático con la postulación correcta, etiquetas y respuestas autorizadas. Nunca borra correos.
-4. Agentes de IA (Claude, OpenAI o modelo local): análisis de preguntas eliminatorias, revisión de la postulación antes del envío y documentos personalizados que usan solo datos reales del perfil.
-5. Servidor MCP para usar las herramientas de JobFly desde Claude Desktop y Claude Code.
-6. Extensión de navegador "Enviar a JobFly".
-7. Currículums versionados, adjuntos e importación de historial (CSV).
+### Implementado (v0.2.0)
 
-## Principios
+| Área | Qué hace |
+|---|---|
+| Cuentas | Registro e inicio de sesión con Argon2id, sesión de 15 minutos renovada por un token rotativo (se revoca todo si lo roban), bloqueo tras intentos fallidos |
+| Perfiles | Varios perfiles independientes con competencias (nivel y años), idiomas MCER, historial, modalidades, ubicaciones, pretensión y restricciones |
+| Fuentes vigiladas | Alta y edición **en lote**, cada fuente vinculada a **uno o más perfiles**. **Recolección automática** por las APIs públicas de Greenhouse, Lever, SmartRecruiters y Ashby, con planificador en segundo plano, espera progresiva tras fallos, historial y una recolección a la vez. **Recordatorios** para LinkedIn, Instagram, Facebook, Gupy y otras plataformas que no permiten recolección automática |
+| Vacantes | Alta manual o por recolección, sin duplicados por URL canónica y por empresa, cargo y ubicación. Las tecnologías citadas en la descripción se vuelven requisitos |
+| Compatibilidad | Puntuación de 0 a 100 con el motivo de cada requisito. Impedimentos eliminatorios (modalidad, ciudad, idioma, seniority) separados de la nota. APPLY solo con todos los obligatorios cumplidos. Elección automática del mejor perfil |
+| Postulaciones | Central de postulaciones de cualquier origen, con 19 etapas. Cada cambio registra origen, evidencia y confianza. La duda se vuelve sugerencia. El silencio nunca se vuelve rechazo. Sin duplicados |
+| Panel web | Resumen, central de pendientes con acción directa, Kanban con filtros, detalle con historial, perfiles, fuentes y vacantes, en portugués e inglés |
+| Operación | Un comando levanta la base, la API y el panel, solo en 127.0.0.1. Pruebas de humo y de recolección real. CI en GitHub Actions |
 
-- **Veracidad.** La IA nunca inventa experiencia, certificados, idiomas ni competencias.
-- **Reglas de las plataformas.** Solo APIs oficiales y caminos permitidos. CAPTCHA, MFA y bloqueos nunca se eluden: JobFly avisa qué depende de ti.
-- **Tú decides.** Aceptar una oferta, firmar un contrato, asumir un compromiso financiero o compartir datos sensibles siempre requiere tu aprobación.
-- **Privacidad (LGPD/RGPD).** Datos separados por usuario, secretos fuera del código, borrado en cascada.
+### Planificado
 
-## Arquitectura
+| Próximo | Descripción |
+|---|---|
+| Gmail y Outlook | OAuth con permisos mínimos, clasificación de mensajes, vínculo con la postulación y respuestas autorizadas. Nunca borra correos |
+| Agentes de IA | Análisis de preguntas eliminatorias, revisión de la postulación antes del envío y documentos personalizados solo con datos reales |
+| MCP y extensión | Servidor MCP con permisos controlados y extensión de navegador "Enviar a JobFly" |
+| Documentos | Currículums versionados, adjuntos e importación de historial en CSV |
 
-Monolito modular en Java 21 y Spring Boot 4.1, con PostgreSQL y Flyway. Los módulos están separados por responsabilidad (`identity`, `profiles`, `jobs`, `matching`, `applications`, `dashboard`, `audit`) y preparados para convertirse en servicios propios cuando haya motivo. Las decisiones y su justificación están en [docs/02-arquitetura.md](docs/02-arquitetura.md) (en portugués).
+El estado de cada requisito está en [docs/requisitos.md](docs/requisitos.md) y el orden de las próximas entregas en [docs/roadmap.md](docs/roadmap.md) (en portugués).
 
-```
-JobFly/
-├── jobfly-api/              API REST (Spring Boot)
-├── docs/                    requisitos, arquitectura, datos, integraciones, API, seguridad, roadmap
-├── auditoria-jobcopilot/    estudio de referencia y matriz de funcionalidades
-└── scripts/                 configuración y ejecución local
-```
+## Documentación
+
+| Documento | Contenido |
+|---|---|
+| [Acta de constitución](docs/project-charter.md) | Justificación, visión, objetivos SMART, alcance, stakeholders y público |
+| [Requisitos](docs/requisitos.md) | RF y RNF numerados y trazables, y reglas de negocio |
+| [Casos de uso](docs/casos-de-uso.md) | Actores y flujos principal, alternativos y de excepción |
+| [Historias de usuario](docs/user-stories.md) | Historias con criterios de aceptación en Gherkin |
+| [Diagramas](docs/diagramas.md) | C4 (contexto, contenedores, componentes), clases, DER y máquina de estados |
+| [Arquitectura](docs/arquitetura.md) | Decisiones (ADR) y justificación |
+| [Modelo de datos](docs/modelo-dados.md) | Tablas, deduplicación, estados y retención |
+| [API](docs/api.md) | Referencia de la API REST v1 |
+| [Seguridad](docs/seguranca.md) | Modelo de amenazas, controles y pruebas |
+| [Integraciones](docs/integracoes.md) | Qué permite cada plataforma y cómo |
+| [Roadmap](docs/roadmap.md) | Estado y próximas entregas |
+| [Estudio de JobCopilot](docs/referencias-jobcopilot/matriz-funcionalidades.md) | Matriz comparativa de funcionalidades |
 
 ## Cómo ejecutarlo
 
-Requisitos: Java 21 y PostgreSQL 14 o más reciente instalado (solo los programas, sin configurar). Maven viene incluido (`mvnw`).
+Requisitos: **Java 21**, **Node 20.19+** y **PostgreSQL 14+** instalados. PostgreSQL solo necesita los programas: sin configuración y sin sudo.
 
 ```bash
-# 1. Crea un PostgreSQL propio en data/postgres (127.0.0.1:5433, sin sudo)
-#    y escribe .env con contraseñas y secreto JWT aleatorios
+# 1. Una vez: crea un PostgreSQL propio en data/postgres (127.0.0.1:5433)
+#    y escribe .env con contraseñas y secreto JWT aleatorios (permiso 600)
 scripts/configurar-local.sh
 
-# 2. Levanta la API en http://127.0.0.1:8080 (solo accesible desde esta máquina)
-scripts/iniciar-api.sh
-
-# 3. En otra terminal: recorre el flujo completo contra la API en ejecución
-scripts/testar-api.py
-
-# 4. Pruebas automatizadas, con cobertura en jobfly-api/target/site/jacoco
-cd jobfly-api && ./mvnw verify
+# 2. Levanta la base, la API y el panel
+scripts/iniciar.sh
 ```
 
-Para detener: `Ctrl+C` en la API y `scripts/postgres-local.sh parar` en la base. Tras reiniciar el equipo, ejecuta `scripts/postgres-local.sh iniciar` antes de la API. Para usar el PostgreSQL del sistema (puerto 5432), ejecuta `scripts/configurar-local.sh --sistema` (pide sudo).
+Abre **http://127.0.0.1:5173**, crea tu cuenta y empieza por los perfiles y las fuentes vigiladas. Para detener todo: `scripts/iniciar.sh parar`.
 
-Las variables de entorno están en [.env.example](.env.example). La referencia de la API está en [docs/05-api.md](docs/05-api.md).
+Verificaciones:
+
+```bash
+cd src/jobfly-api && ./mvnw verify        # pruebas de la API y cobertura mínima del 80%
+cd src/jobfly-web && npm run verify       # tipos, pruebas y build del panel
+python3 scripts/testar-api.py             # flujo completo contra la API en ejecución
+python3 scripts/testar-coleta.py          # recolección real de un board público de Greenhouse
+```
+
+Las variables de entorno están en [.env.example](.env.example). Para usar el PostgreSQL del sistema (puerto 5432): `scripts/configurar-local.sh --sistema`.
+
+## Arquitectura y estructura
+
+Monolito modular en Java 21 + Spring Boot 4.1 (PostgreSQL, Flyway) y panel en React 19 + TypeScript + Vite 7. Los módulos están separados por responsabilidad y pueden convertirse en servicios propios cuando haya motivo ([ADR](docs/arquitetura.md)).
+
+```
+JobFly/
+├── docs/                 documentación (acta, requisitos, casos de uso, historias, diagramas...)
+├── src/
+│   ├── jobfly-api/       API REST (Spring Boot): identity, profiles, jobs, matching, applications, sources, dashboard
+│   └── jobfly-web/       panel web (React + TypeScript)
+├── scripts/              configuración, ejecución, pruebas de humo y verificadores
+├── .github/workflows/    integración continua
+├── AGENTS.md             reglas para agentes de código (OpenCode)
+└── opencode.json         configuración restrictiva de OpenCode
+```
+
+## Flujo de ramas (Git Flow)
+
+| Rama | Para qué | Recibe de | Regla |
+|---|---|---|---|
+| `main` | Producción: solo versiones estables con etiqueta | `develop`, por PR de release | Nunca recibe commits directos. Cada release lleva una etiqueta anotada SemVer (`v0.1.0`, `v0.2.0`) |
+| `develop` | Integración de lo terminado | `feature/*` y `fix/*`, por PR | Cada PR referencia su issue con `Closes #N` |
+| `feature/issue-NN-descripcion` | Una issue de funcionalidad, documentación o herramienta | sale de `develop` | Commits atómicos en Conventional Commits: `feat(sources): ... (#9)` |
+| `fix/issue-NN-descripcion` | Corrección de un defecto registrado en una issue | sale de `develop` | `fix(alcance): ... (#31)` |
+
+```mermaid
+gitGraph
+    commit id: "v0.1.0" tag: "v0.1.0"
+    branch develop
+    checkout develop
+    branch feature/issue-09-fontes-em-lote
+    commit id: "feat(sources) #9"
+    checkout develop
+    merge feature/issue-09-fontes-em-lote
+    branch fix/issue-31-coleta-concorrente
+    commit id: "fix(sources) #31"
+    checkout develop
+    merge fix/issue-31-coleta-concorrente
+    checkout main
+    merge develop tag: "v0.2.0"
+```
+
+El backlog completo está en las [issues del repositorio](https://github.com/thaynabds/JobFly/issues).
 
 ## Calidad y seguridad
 
-- 81 pruebas automatizadas (unitarias y de integración con la aplicación completa).
-- El build falla si la cobertura de líneas de los módulos críticos baja del 80% (hoy supera el 92%).
-- Los controles y pruebas de seguridad están en [docs/06-seguranca.md](docs/06-seguranca.md): aislamiento por usuario, CSRF, XSS, inyección, fuerza bruta, robo de tokens y tamaño de solicitud.
+- **128 pruebas automatizadas**: 108 en la API (unitarias y de integración con la aplicación completa) y 20 en el panel, además de 26 verificaciones de la prueba de humo y la prueba de recolección real.
+- **Cobertura:** el build falla por debajo del 80% de líneas en los módulos críticos. Hoy la cobertura general es del 94,3%.
+- **Seguridad** ([detalles](docs/seguranca.md)):
+  - aislamiento por usuario (un recurso ajeno responde 404);
+  - Argon2id y token rotativo con detección de reutilización;
+  - protección contra CSRF, XSS, inyección SQL y SSRF;
+  - límites de intentos y de tamaño de solicitud;
+  - CSP en el panel;
+  - servicios solo en 127.0.0.1;
+  - secretos fuera de Git;
+  - 0 vulnerabilidades conocidas en las dependencias del panel (`npm audit`).
 
 ## Licencia
 
