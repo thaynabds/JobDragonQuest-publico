@@ -9,7 +9,7 @@
                     └──────────────┬───────────────┘
                                    │ HTTPS + JWT (Bearer)
                     ┌──────────────▼───────────────┐
-  Cliente MCP ─────▶│  jobfly-api (Spring Boot 3)  │──▶ PostgreSQL
+  Cliente MCP ─────▶│  jobfly-api (Spring Boot 4)  │──▶ PostgreSQL
   (Claude Desktop)  │  monólito modular            │──▶ (Redis, fase 2)
    via jobfly-mcp   │  identity · profiles · jobs  │
                     │  matching · applications     │──▶ Provedores LLM (fase 2)

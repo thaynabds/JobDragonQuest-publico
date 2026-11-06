@@ -53,9 +53,9 @@ Monolito modular en Java 21 y Spring Boot 4.1, con PostgreSQL y Flyway. Los mód
 
 ```
 JobFly/
-├── jobfly-api/              API REST (Spring Boot)
+├── src/jobfly-api/           API REST (Spring Boot)
 ├── docs/                    requisitos, arquitectura, datos, integraciones, API, seguridad, roadmap
-├── auditoria-jobcopilot/    estudio de referencia y matriz de funcionalidades
+├── docs/referencias-jobcopilot/   estudio de referencia y matriz de funcionalidades
 └── scripts/                 configuración y ejecución local
 ```
 
@@ -74,8 +74,8 @@ scripts/iniciar-api.sh
 # 3. En otra terminal: recorre el flujo completo contra la API en ejecución
 scripts/testar-api.py
 
-# 4. Pruebas automatizadas, con cobertura en jobfly-api/target/site/jacoco
-cd jobfly-api && ./mvnw verify
+# 4. Pruebas automatizadas, con cobertura en src/jobfly-api/target/site/jacoco
+cd src/jobfly-api && ./mvnw verify
 ```
 
 Para detener: `Ctrl+C` en la API y `scripts/postgres-local.sh parar` en la base. Tras reiniciar el equipo, ejecuta `scripts/postgres-local.sh iniciar` antes de la API. Para usar el PostgreSQL del sistema (puerto 5432), ejecuta `scripts/configurar-local.sh --sistema` (pide sudo).
