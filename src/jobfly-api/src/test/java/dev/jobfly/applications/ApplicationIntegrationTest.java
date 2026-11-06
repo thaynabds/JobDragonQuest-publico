@@ -125,7 +125,10 @@ class ApplicationIntegrationTest extends ApiTestSupport {
         String suggestionId = read(suggested, "$.event.id");
 
         getJson(token, "/api/v1/dashboard/pending")
-                .andExpect(jsonPath("$[*].type", hasItem("SUGGESTION_TO_REVIEW")));
+                .andExpect(jsonPath("$[*].type", hasItem("SUGGESTION_TO_REVIEW")))
+                // Campos estruturados para o painel montar a frase no idioma escolhido (issue #38).
+                .andExpect(jsonPath("$[?(@.type=='SUGGESTION_TO_REVIEW')].suggestedState", hasItem("INTERVIEW_SCHEDULED")))
+                .andExpect(jsonPath("$[?(@.type=='SUGGESTION_TO_REVIEW')].confidence", hasItem(0.55)));
 
         postJson(token, "/api/v1/applications/" + id + "/suggestions/" + suggestionId + "/accept", "")
                 .andExpect(status().isOk())
@@ -189,7 +192,8 @@ class ApplicationIntegrationTest extends ApiTestSupport {
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("stale_version"));
 
         getJson(token, "/api/v1/dashboard/pending").andExpect(jsonPath("$[0].type").value("DEADLINE_SOON"))
-                .andExpect(jsonPath("$[0].message").value("Enviar portfólio"));
+                .andExpect(jsonPath("$[0].message").value("Enviar portfólio"))
+                .andExpect(jsonPath("$[0].detail").value("Enviar portfólio"));
     }
 
     @Test
