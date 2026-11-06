@@ -36,8 +36,9 @@ class JobController {
     }
 
     @GetMapping
-    PageResponse<JobSummary> list(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        return PageResponse.of(jobs.list(currentUser.id(), page, size));
+    PageResponse<JobSummary> list(@RequestParam(required = false) UUID sourceId,
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+        return PageResponse.of(jobs.list(currentUser.id(), sourceId, page, size));
     }
 
     @GetMapping("/{id}")

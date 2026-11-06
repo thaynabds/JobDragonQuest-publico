@@ -18,5 +18,7 @@ interface JobRepository extends JpaRepository<JobPosting, UUID> {
 
     Page<JobPosting> findByUserIdOrderByFoundAtDesc(UUID userId, Pageable pageable);
 
+    Page<JobPosting> findByUserIdAndWatchedSourceIdOrderByFoundAtDesc(UUID userId, UUID watchedSourceId, Pageable pageable);
+
     long countByUserId(UUID userId);
 }

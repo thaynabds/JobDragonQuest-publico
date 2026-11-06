@@ -110,6 +110,10 @@ public class JobPosting extends AssignedIdEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    /** Fonte vigiada que encontrou a vaga; null quando ela foi cadastrada à mão. */
+    @Column(name = "watched_source_id")
+    private UUID watchedSourceId;
+
     protected JobPosting() {
     }
 
@@ -144,6 +148,10 @@ public class JobPosting extends AssignedIdEntity {
         this.languages.clear();
         this.languages.addAll(data.languages());
         this.updatedAt = now;
+    }
+
+    void linkSource(UUID sourceId) {
+        this.watchedSourceId = sourceId;
     }
 
     void changeStatus(JobStatus status, Instant now) {
@@ -239,5 +247,9 @@ public class JobPosting extends AssignedIdEntity {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public UUID getWatchedSourceId() {
+        return watchedSourceId;
     }
 }

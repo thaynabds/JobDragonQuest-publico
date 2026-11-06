@@ -1,0 +1,127 @@
+# Tecnologias reconhecidas nas descrições coletadas. Uma por linha, na forma canônica do SkillNormalizer.
+# Mantenha a lista ampla: ela inclui tecnologias que o perfil NÃO tem, para a nota não ficar inflada.
+java
+kotlin
+scala
+groovy
+spring
+spring boot
+quarkus
+micronaut
+hibernate
+maven
+gradle
+javascript
+typescript
+node.js
+react
+angular
+angularjs
+vue
+svelte
+next.js
+nuxt
+express
+nestjs
+html
+css
+sass
+tailwind
+bootstrap
+jquery
+python
+django
+flask
+fastapi
+pandas
+numpy
+pytorch
+tensorflow
+scikit-learn
+csharp
+dotnet
+asp.net
+entity framework
+rust
+c++
+php
+laravel
+symfony
+ruby
+rails
+elixir
+swift
+objective-c
+android
+ios
+flutter
+dart
+react native
+sql
+postgresql
+mysql
+mariadb
+sql server
+oracle
+sqlite
+mongodb
+redis
+cassandra
+dynamodb
+elasticsearch
+kafka
+rabbitmq
+graphql
+grpc
+soap
+microservices
+docker
+kubernetes
+helm
+terraform
+ansible
+jenkins
+github actions
+gitlab ci
+ci/cd
+git
+github
+gitlab
+linux
+bash
+aws
+azure
+gcp
+lambda
+serverless
+junit
+mockito
+selenium
+cypress
+playwright
+jest
+pytest
+tdd
+bdd
+oauth
+jwt
+power bi
+tableau
+excel
+spark
+hadoop
+airflow
+dbt
+snowflake
+databricks
+machine learning
+llm
+figma
+scrum
+kanban
+jira
+sap
+salesforce
+rpa
+uipath
+automation anywhere

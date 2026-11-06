@@ -61,7 +61,7 @@ public final class JobDtos {
             UUID id, String source, String url, String company, String title, String location, String country,
             WorkMode workMode, Seniority seniority, String description, BigDecimal salaryMin, BigDecimal salaryMax,
             String salaryCurrency, String salaryPeriod, JobStatus status, List<RequirementDto> requirements,
-            List<LanguageRequirementDto> languages, Instant foundAt, Instant updatedAt) {
+            List<LanguageRequirementDto> languages, Instant foundAt, Instant updatedAt, UUID watchedSourceId) {
 
         static JobResponse of(JobPosting job) {
             return new JobResponse(job.getId(), job.getSource(), job.getSourceUrl(), job.getCompany(), job.getTitle(),
@@ -72,16 +72,16 @@ public final class JobDtos {
                             .map(r -> new RequirementDto(r.getKind(), r.getText(), r.getSkill(), r.getMinYears())).toList(),
                     job.getLanguages().stream()
                             .map(l -> new LanguageRequirementDto(l.getCode(), l.getMinLevel(), l.isRequired())).toList(),
-                    job.getFoundAt(), job.getUpdatedAt());
+                    job.getFoundAt(), job.getUpdatedAt(), job.getWatchedSourceId());
         }
     }
 
     public record JobSummary(UUID id, String company, String title, String location, WorkMode workMode,
-            JobStatus status, String source, Instant foundAt) {
+            JobStatus status, String source, String url, Instant foundAt, UUID watchedSourceId) {
 
         static JobSummary of(JobPosting job) {
             return new JobSummary(job.getId(), job.getCompany(), job.getTitle(), job.getLocation(), job.getWorkMode(),
-                    job.getStatus(), job.getSource(), job.getFoundAt());
+                    job.getStatus(), job.getSource(), job.getSourceUrl(), job.getFoundAt(), job.getWatchedSourceId());
         }
     }
 
