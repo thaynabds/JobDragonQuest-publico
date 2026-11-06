@@ -10,10 +10,18 @@ logs="$root/data/logs"
 mkdir -p "$logs"
 chmod 700 "$root/data"
 
+# Cada serviço roda numa sessão própria (setsid): o pid gravado é o líder do grupo, e parar encerra o grupo inteiro
+# (npm e o vite filho; o script da API e o java filho), sem deixar processo órfão escutando na porta.
 stop_pid() {
   local file="$logs/$1.pid"
-  if [[ -f "$file" ]] && kill -0 "$(cat "$file")" 2>/dev/null; then
-    kill "$(cat "$file")" && echo "$1 parado."
+  if [[ -f "$file" ]]; then
+    local pid
+    pid="$(cat "$file")"
+    if kill -0 "$pid" 2>/dev/null; then
+      kill -- "-$pid" 2>/dev/null || kill "$pid"
+      for _ in $(seq 1 30); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
+      echo "$1 parado."
+    fi
   fi
   rm -f "$file"
 }
@@ -42,7 +50,7 @@ wait_for() {
 }
 
 if ! curl -s -o /dev/null --max-time 2 http://127.0.0.1:8080/actuator/health; then
-  nohup "$root/scripts/iniciar-api.sh" > "$logs/api.log" 2>&1 &
+  setsid nohup "$root/scripts/iniciar-api.sh" > "$logs/api.log" 2>&1 < /dev/null &
   echo $! > "$logs/api.pid"
 fi
 wait_for http://127.0.0.1:8080/actuator/health api 600
@@ -51,7 +59,7 @@ cd "$root/src/jobfly-web"
 [[ -d node_modules ]] || npm ci --no-audit --no-fund
 if ! curl -s -o /dev/null --max-time 2 http://127.0.0.1:5173/; then
   npm run build > "$logs/web-build.log" 2>&1
-  nohup npm run preview > "$logs/web.log" 2>&1 &
+  setsid nohup npm run preview > "$logs/web.log" 2>&1 < /dev/null &
   echo $! > "$logs/web.pid"
 fi
 wait_for http://127.0.0.1:5173/ web 120
