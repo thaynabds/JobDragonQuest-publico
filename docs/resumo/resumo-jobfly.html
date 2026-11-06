@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JobFly — resumo</title>
+<style>
+  @page { size: A4; margin: 18mm 20mm; }
+  body { font-family: "Noto Sans", "DejaVu Sans", Arial, sans-serif; color: #1f1633; font-size: 11.2pt; line-height: 1.55; margin: 0; }
+  header { display: flex; align-items: center; gap: 16px; border-bottom: 3px solid #7c3aed; padding-bottom: 12px; margin-bottom: 16px; }
+  header img { width: 92px; height: 92px; }
+  h1 { font-size: 26pt; margin: 0; color: #4c1d95; }
+  .sub { margin: 2px 0 0; color: #5b4b7a; font-size: 10pt; }
+  p { text-align: justify; margin: 0 0 12px; }
+  footer { margin-top: 18px; padding-top: 10px; border-top: 1px solid #ddd2f5; font-size: 10pt; color: #4c1d95; }
+</style>
+</head>
+<body>
+<header>
+  <img src="../assets/logo.png" alt="Logo do JobFly">
+  <div>
+    <h1>JobFly</h1>
+    <p class="sub">Plataforma de gestão de carreira e automação de candidaturas · Thayná Batista da Silva · versão {{VERSAO}} (novembro de 2026)</p>
+  </div>
+</header>
+
+<p>O JobFly é uma plataforma que centraliza a busca de emprego e estágio em tecnologia, no Brasil e no exterior. Quem procura vaga se candidata por muitos canais ao mesmo tempo (LinkedIn, Gupy, Greenhouse, sites de empresas, Instagram, grupos do Facebook, e-mail e indicação) e perde oportunidades e o controle dos processos. O JobFly resolve isso numa central única e explicável. A pessoa cadastra vários perfis profissionais independentes e vigia sites, ATS e redes sociais, várias fontes de uma vez e ligadas a vários perfis. As vagas dos ATS com API pública são coletadas automaticamente, e as plataformas que proíbem automação viram lembretes de conferência. Cada vaga recebe uma análise de compatibilidade com nota de 0 a 100, o motivo de cada requisito e os impedimentos eliminatórios separados da nota. Todas as candidaturas, de qualquer origem, são acompanhadas em 19 etapas atualizadas por evidência, num painel com Kanban e central de pendências. O sistema nunca inventa dados do perfil, nunca trata silêncio como reprovação e respeita os termos de uso de cada plataforma.</p>
+
+<p>A stack foi escolhida por maturidade, segurança e facilidade de manutenção. O back-end é uma API REST em Java 21 com Spring Boot 4.1 (Spring Security 7, Hibernate 7 e virtual threads), organizada como monólito modular, com persistência em PostgreSQL e migrações Flyway. A autenticação usa Argon2id, JWT de curta duração e refresh token rotativo com detecção de reuso, e a coleta de vagas usa um cliente HTTP restrito aos hosts dos ATS contra SSRF. O painel web é feito em React 19 com TypeScript estrito e Vite 7, em português e inglês. A qualidade é garantida por 128 testes automatizados (JUnit 5, MockMvc e Mockito na API; Vitest e Testing Library no painel), cobertura mínima de 80% exigida no build (94,3% medidos), integração contínua no GitHub Actions, Git Flow com Conventional Commits e versionamento semântico. O ambiente sobe localmente com um único comando.</p>
+
+<footer>Repositório (privado): https://github.com/thaynabds/JobFly</footer>
+</body>
+</html>

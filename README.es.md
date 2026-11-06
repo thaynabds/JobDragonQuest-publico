@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="docs/assets/logo.png" alt="Logo de JobFly: dragón morado con auriculares y portátil siguiendo postulaciones" width="220">
+</p>
+
 # JobFly
 
 > Idioma: [Português](README.md) | [English](README.en.md) | **Español**
 
-[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.2.0-2563eb)](https://github.com/thaynabds/JobFly/releases/tag/v0.2.0)
+[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.2.0-7c3aed)](https://github.com/thaynabds/JobFly/releases/tag/v0.2.0)
 [![Licencia](https://img.shields.io/badge/licencia-todos%20los%20derechos%20reservados-6b7280)](#licencia)
 [![CI](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml)
 [![Pruebas](https://img.shields.io/badge/pruebas-128%20aprobadas-16a34a)](#calidad-y-seguridad)
