@@ -15,6 +15,31 @@ export function PendingList({ onChange }: { onChange?: () => void }) {
   const pending = useAsync(() => api.pending().then((r) => r.data), []);
   const [message, setMessage] = useState<{ tone: "error" | "success"; text: string } | null>(null);
 
+  /** Frase no idioma do painel. Texto escrito pela pessoa (próxima ação) aparece como ela escreveu. */
+  const describe = (item: PendingItem) => {
+    switch (item.type) {
+      case "ACTION_REQUIRED":
+      case "TECH_TEST":
+      case "DEADLINE_SOON":
+        return item.detail ?? t(`pending.msg.${item.type}`);
+      case "INTERVIEW_SOON":
+        return t("pending.msg.INTERVIEW_SOON");
+      case "SUGGESTION_TO_REVIEW":
+        return t("pending.msg.SUGGESTION_TO_REVIEW", {
+          state: label("state", item.suggestedState),
+          confidence: Math.round((item.confidence ?? 0) * 100),
+        });
+      case "SOURCE_TO_CHECK":
+        return t("pending.msg.SOURCE_TO_CHECK", { kind: item.company });
+      case "SOURCE_FAILING":
+        return t("pending.msg.SOURCE_FAILING", { detail: item.detail ?? "" });
+      case "NO_UPDATE":
+        return t("pending.msg.NO_UPDATE", { date: formatDate(item.detail) });
+      default:
+        return item.message;
+    }
+  };
+
   const act = async (action: () => Promise<unknown>, success: string) => {
     try {
       await action();
@@ -75,7 +100,7 @@ export function PendingList({ onChange }: { onChange?: () => void }) {
               <Badge tone={TONE[item.priority]}>{label("pending", item.type)}</Badge>
               <div>
                 <strong>{item.title}</strong> <span className="muted">· {item.company}</span>
-                <p className="pending-message">{item.message}</p>
+                <p className="pending-message">{describe(item)}</p>
                 {item.dueAt && <span className="muted small">{formatDate(item.dueAt, true)}</span>}
               </div>
             </div>

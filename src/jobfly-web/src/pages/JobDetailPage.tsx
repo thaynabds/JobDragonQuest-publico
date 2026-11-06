@@ -75,7 +75,7 @@ export function JobDetailPage() {
                 <strong>{match.profileName}</strong>{" "}
                 <Badge tone={RECOMMENDATION_TONE[match.recommendation]}>{label("recommendation", match.recommendation)}</Badge>
               </div>
-              <span className="score">{match.score === null ? "—" : `${match.score}%`}</span>
+              <span className={`score score-${RECOMMENDATION_TONE[match.recommendation]}`}>{match.score === null ? "—" : `${match.score}%`}</span>
             </header>
             <p className="muted">{match.summary}</p>
             {match.blockers.length > 0 && (

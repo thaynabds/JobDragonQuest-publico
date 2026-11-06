@@ -59,7 +59,8 @@ describe("compatibilidade (#15)", () => {
     });
     renderAt("/vagas/j1", [{ path: "/vagas/:id", element: <JobDetailPage /> }]);
 
-    expect(await screen.findByText("70%")).toBeTruthy();
+    expect((await screen.findByText("70%")).className).toContain("score-good");
+    expect(screen.getByText("100%").className).toContain("score-bad");
     expect(screen.getByText("Candidatar")).toBeTruthy();
     expect(screen.getByText("A vaga é HYBRID e o perfil aceita [ONSITE]")).toBeTruthy();
     expect(screen.getByText(/Java nível 4/)).toBeTruthy();

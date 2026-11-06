@@ -267,6 +267,9 @@ export interface PendingItem {
   message: string;
   dueAt: string | null;
   url: string | null;
+  suggestedState: ApplicationState | null;
+  confidence: number | null;
+  detail: string | null;
 }
 
 export interface Summary {

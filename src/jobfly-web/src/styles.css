@@ -659,8 +659,20 @@ a:focus-visible {
   border-top: 0;
 }
 
-.match-best .score {
+.score-good {
   color: var(--good);
+}
+
+.score-warn {
+  color: var(--warn);
+}
+
+.score-bad {
+  color: var(--bad);
+}
+
+.score-neutral {
+  color: var(--muted);
 }
 
 .match-header {

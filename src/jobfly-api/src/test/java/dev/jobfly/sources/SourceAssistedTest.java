@@ -74,7 +74,9 @@ class SourceAssistedTest extends ApiTestSupport {
         getJson(token, "/api/v1/dashboard/pending")
                 .andExpect(jsonPath("$[?(@.type=='SOURCE_FAILING')].message",
                         hasItem("A coleta falhou: Board não encontrado no ATS. Confira o identificador.")))
-                .andExpect(jsonPath("$[?(@.type=='SOURCE_FAILING')].url", hasItem("https://jobs.lever.co/acme")));
+                .andExpect(jsonPath("$[?(@.type=='SOURCE_FAILING')].url", hasItem("https://jobs.lever.co/acme")))
+                .andExpect(jsonPath("$[?(@.type=='SOURCE_FAILING')].detail",
+                        hasItem("Board não encontrado no ATS. Confira o identificador.")));
         postJson(newUser(), "/api/v1/sources/" + id + "/check", "").andExpect(status().isNotFound());
     }
 }

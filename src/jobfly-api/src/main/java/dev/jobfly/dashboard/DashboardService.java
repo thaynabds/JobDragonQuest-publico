@@ -1,5 +1,6 @@
 package dev.jobfly.dashboard;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -59,10 +60,13 @@ public class DashboardService {
 
     /**
      * Pendência. {@code applicationId} e {@code eventId} apontam para candidaturas e sugestões. {@code sourceId} e
-     * {@code url} apontam para fontes vigiadas.
+     * {@code url} apontam para fontes vigiadas. {@code message} é a frase pronta em português. Os campos estruturados
+     * ({@code suggestedState}, {@code confidence}, {@code detail}) deixam o cliente montar a frase em outro idioma.
+     * {@code detail} traz texto escrito pela pessoa (próxima ação), a mensagem da última coleta ou a data da última evidência.
      */
     public record PendingItem(PendingType type, Priority priority, UUID applicationId, UUID eventId, UUID sourceId,
-            String company, String title, String message, Instant dueAt, String url) {
+            String company, String title, String message, Instant dueAt, String url, ApplicationState suggestedState,
+            BigDecimal confidence, String detail) {
     }
 
     public record Summary(long jobsFound, long applicationsTotal, long submitted, long inProgress,
@@ -99,23 +103,24 @@ public class DashboardService {
         for (ApplicationResponse app : all) {
             if (app.state() == ApplicationState.AWAITING_USER) {
                 items.add(item(PendingType.ACTION_REQUIRED, Priority.HIGH, app,
-                        app.nextAction() == null ? "A candidatura espera uma ação sua" : app.nextAction()));
+                        app.nextAction() == null ? "A candidatura espera uma ação sua" : app.nextAction(), app.nextAction()));
             }
             if (app.state() == ApplicationState.TECH_TEST_PENDING) {
                 items.add(item(PendingType.TECH_TEST, Priority.HIGH, app,
-                        app.nextAction() == null ? "Teste técnico pendente" : app.nextAction()));
+                        app.nextAction() == null ? "Teste técnico pendente" : app.nextAction(), app.nextAction()));
             }
             if (app.nextDueAt() != null && !app.state().isFinal() && app.nextDueAt().isAfter(now)) {
                 if (app.state() == ApplicationState.INTERVIEW_SCHEDULED
                         && app.nextDueAt().isBefore(now.plus(INTERVIEW_HORIZON))) {
-                    items.add(item(PendingType.INTERVIEW_SOON, Priority.HIGH, app, "Entrevista em breve"));
+                    items.add(item(PendingType.INTERVIEW_SOON, Priority.HIGH, app, "Entrevista em breve", null));
                 } else if (app.nextDueAt().isBefore(now.plus(DEADLINE_HORIZON))) {
                     items.add(item(PendingType.DEADLINE_SOON, Priority.MEDIUM, app,
-                            app.nextAction() == null ? "Prazo próximo" : app.nextAction()));
+                            app.nextAction() == null ? "Prazo próximo" : app.nextAction(), app.nextAction()));
                 }
             }
             if (app.stale()) {
-                items.add(item(PendingType.NO_UPDATE, Priority.LOW, app, "Sem atualização desde " + app.lastEvidenceAt()));
+                items.add(item(PendingType.NO_UPDATE, Priority.LOW, app, "Sem atualização desde " + app.lastEvidenceAt(),
+                        app.lastEvidenceAt().toString()));
             }
         }
         for (PendingSuggestion suggestion : applications.pendingSuggestions(userId)) {
@@ -123,16 +128,18 @@ public class DashboardService {
             if (app != null) {
                 items.add(new PendingItem(PendingType.SUGGESTION_TO_REVIEW, Priority.MEDIUM, app.id(), suggestion.eventId(),
                         null, app.company(), app.title(), "Confirmar mudança para " + suggestion.toState() + " (confiança "
-                                + suggestion.confidence() + ")", null, null));
+                                + suggestion.confidence() + ")", null, null, suggestion.toState(), suggestion.confidence(), null));
             }
         }
         for (SourceResponse source : sources.failing(userId)) {
             items.add(new PendingItem(PendingType.SOURCE_FAILING, Priority.MEDIUM, null, null, source.id(), source.kindLabel(),
-                    source.name(), "A coleta falhou: " + source.lastMessage(), null, source.openUrl()));
+                    source.name(), "A coleta falhou: " + source.lastMessage(), null, source.openUrl(), null, null,
+                    source.lastMessage()));
         }
         for (SourceResponse source : sources.dueForCheck(userId)) {
             items.add(new PendingItem(PendingType.SOURCE_TO_CHECK, Priority.LOW, null, null, source.id(), source.kindLabel(),
-                    source.name(), "Hora de conferir novas vagas em " + source.kindLabel(), source.nextRunAt(), source.openUrl()));
+                    source.name(), "Hora de conferir novas vagas em " + source.kindLabel(), source.nextRunAt(), source.openUrl(),
+                    null, null, null));
         }
         items.sort(Comparator.comparing(PendingItem::priority)
                 .thenComparing(PendingItem::dueAt, Comparator.nullsLast(Comparator.naturalOrder()))
@@ -147,8 +154,8 @@ public class DashboardService {
                 || (state == ApplicationState.CLOSED && app.appliedAt() != null);
     }
 
-    private static PendingItem item(PendingType type, Priority priority, ApplicationResponse app, String message) {
+    private static PendingItem item(PendingType type, Priority priority, ApplicationResponse app, String message, String detail) {
         return new PendingItem(type, priority, app.id(), null, null, app.company(), app.title(), message, app.nextDueAt(),
-                app.url());
+                app.url(), null, null, detail);
     }
 }
