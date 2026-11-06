@@ -2,7 +2,7 @@
 """Teste de fumaça do JobFly contra a API em execução (padrão: http://127.0.0.1:8080).
 
 Percorre o fluxo real: cadastro, perfil, vaga, compatibilidade, candidatura externa, deduplicação, evidência,
-sugestão de baixa confiança, Kanban e pendências. Cria um usuário descartável com e-mail aleatório e nunca imprime
+sugestão de baixa confiança, Kanban, pendências e fontes vigiadas em lote para vários perfis. Cria um usuário descartável com e-mail aleatório e nunca imprime
 tokens nem senhas. Sai com código 1 na primeira falha.
 
 Uso: scripts/testar-api.py [URL_BASE]
@@ -118,9 +118,30 @@ check("fonte automática não volta etapa", status == 409, status)
 status, _, board = call("GET", "/api/v1/applications/board")
 check("kanban com 19 etapas", status == 200 and len(board) == 19, status)
 status, _, summary = call("GET", "/api/v1/dashboard/summary")
-check("visão geral", status == 200 and summary["applicationsTotal"] == 2 and summary["jobsFound"] == 1, summary)
+check("visão geral", status == 200 and summary["applicationsTotal"] == 2 and summary["jobsFound"] == 1
+      and summary["byState"]["CONFIRMED"] == 1, summary)
 status, _, pending = call("GET", "/api/v1/dashboard/pending")
 check("pendência da sugestão", status == 200 and any(p["type"] == "SUGGESTION_TO_REVIEW" for p in pending), pending)
+
+# Fontes vigiadas: várias de uma vez, ligadas a dois perfis, com duplicata reconhecida e edição em lote.
+status, _, second_profile = call("POST", "/api/v1/profiles", {"name": "Estágio", "seniority": "INTERN", "desiredTitles": ["Estágio"]})
+check("segundo perfil", status == 201, status)
+both = [profile["id"], second_profile["id"]]
+status, _, batch = call("POST", "/api/v1/sources/bulk", {"profileIds": both, "frequencyMinutes": 720, "sources": [
+    {"name": "Nubank", "kind": "GREENHOUSE", "identifier": "nubank"},
+    {"name": "Vagas Java", "kind": "LINKEDIN", "url": "https://www.linkedin.com/jobs/search/?keywords=java"},
+    {"name": "#VagasTI", "kind": "INSTAGRAM", "url": "https://www.instagram.com/explore/tags/vagasti/"}]})
+check("três fontes em lote para dois perfis", status == 201 and len(batch["created"]) == 3
+      and all(sorted(s["profileIds"]) == sorted(both) for s in batch["created"]), (status, batch))
+status, _, again = call("POST", "/api/v1/sources/bulk", {"sources": [{"name": "Nubank", "kind": "GREENHOUSE", "identifier": "NUBANK"}]})
+check("fonte duplicada reconhecida", status == 201 and len(again["created"]) == 0 and len(again["duplicates"]) == 1, again)
+ids = [s["id"] for s in batch["created"]]
+status, _, paused = call("POST", "/api/v1/sources/bulk-update", {"sourceIds": ids[:2], "enabled": False})
+check("pausa em lote", status == 200 and all(not s["enabled"] for s in paused), paused)
+status, _, pending = call("GET", "/api/v1/dashboard/pending")
+check("fonte assistida a conferir nas pendências", any(p["type"] == "SOURCE_TO_CHECK" and p["sourceId"] == ids[2] for p in pending), pending)
+status, _, run = call("POST", f"/api/v1/sources/{ids[2]}/check", {"jobsRegistered": 1, "note": "Uma vaga encontrada"})
+check("fonte assistida conferida", status == 200 and run["status"] == "CHECKED", (status, run))
 
 token = None
 status, _, _ = call("GET", "/api/v1/profiles")
