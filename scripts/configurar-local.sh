@@ -63,7 +63,7 @@ JOBFLY_DB_URL=jdbc:postgresql://127.0.0.1:$port/jobfly
 JOBFLY_DB_USER=jobfly
 JOBFLY_DB_PASSWORD=$app_password
 JOBFLY_JWT_SECRET=$jwt_secret
-JOBFLY_ALLOWED_ORIGINS=http://localhost:5173
+JOBFLY_ALLOWED_ORIGINS=http://127.0.0.1:5173,http://localhost:5173
 JOBFLY_SECURE_COOKIES=false
 JOBFLY_PORT=8080
 EOF
