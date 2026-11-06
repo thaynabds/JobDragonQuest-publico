@@ -77,6 +77,10 @@ public final class SourceDtos {
             Integer lastFound, int consecutiveFailures, boolean due, Instant createdAt, long version) {
     }
 
+    /** Conferência de uma fonte assistida: quantas vagas a pessoa registrou e uma nota opcional. */
+    public record CheckRequest(@Min(0) @Max(500) Integer jobsRegistered, @Size(max = 300) String note) {
+    }
+
     public record CatalogEntry(SourceKind kind, String label, CollectionMode mode, boolean needsIdentifier) {
     }
 

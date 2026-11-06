@@ -30,6 +30,7 @@ import dev.jobfly.sources.SourceDtos.BulkCreateRequest;
 import dev.jobfly.sources.SourceDtos.BulkCreateResult;
 import dev.jobfly.sources.SourceDtos.BulkUpdateRequest;
 import dev.jobfly.sources.SourceDtos.CatalogEntry;
+import dev.jobfly.sources.SourceDtos.CheckRequest;
 import dev.jobfly.sources.SourceDtos.DuplicateSource;
 import dev.jobfly.sources.SourceDtos.RunResponse;
 import dev.jobfly.sources.SourceDtos.SourceInput;
@@ -186,6 +187,51 @@ public class SourceService {
         sources.flush();
         audit.record(userId, "source.bulk_updated", "source", null, selected.size() + " fonte(s)");
         return selected.stream().map(this::response).sorted((a, b) -> a.name().compareToIgnoreCase(b.name())).toList();
+    }
+
+    /**
+     * Fonte assistida conferida pela pessoa: registra a conferência e agenda o próximo lembrete na frequência da fonte.
+     * Fontes automáticas não são conferidas à mão: elas são coletadas ({@code POST /sources/{id}/run}).
+     */
+    @Transactional
+    public RunResponse markChecked(UUID userId, UUID sourceId, CheckRequest request) {
+        WatchedSource source = load(userId, sourceId);
+        if (source.getCollectionMode() != CollectionMode.ASSISTED) {
+            throw DomainException.conflict("automatic_source", "Esta fonte é coletada automaticamente. Use coletar agora.");
+        }
+        Instant now = clock.instant();
+        int registered = request == null || request.jobsRegistered() == null ? 0 : request.jobsRegistered();
+        String note = request == null || request.note() == null || request.note().isBlank() ? null : request.note().strip();
+        String message = "Conferida" + (registered > 0 ? ": " + registered + " vaga(s) registrada(s)" : "") + (note == null ? "" : ". " + note);
+        source.recordSuccess(WatchedSource.RunStatus.CHECKED, registered, message, now);
+        SourceRun run = runs.save(new SourceRun(sourceId, SourceRun.Trigger.MANUAL, WatchedSource.RunStatus.CHECKED, registered,
+                registered, 0, message, now, now));
+        audit.record(userId, "source.checked", "source", sourceId, null);
+        return RunResponse.of(run);
+    }
+
+    /** Fontes assistidas ativas cujo lembrete venceu: viram pendência "conferir". */
+    @Transactional(readOnly = true)
+    public List<SourceResponse> dueForCheck(UUID userId) {
+        Instant now = clock.instant();
+        return sources.findByUserIdOrderByNameAsc(userId).stream()
+                .filter(s -> s.getCollectionMode() == CollectionMode.ASSISTED && s.isDue(now))
+                .map(this::response)
+                .toList();
+    }
+
+    /** Fontes automáticas ativas cuja última coleta falhou: viram pendência "integração com falha". */
+    @Transactional(readOnly = true)
+    public List<SourceResponse> failing(UUID userId) {
+        return sources.findByUserIdOrderByNameAsc(userId).stream()
+                .filter(s -> s.isEnabled() && s.getLastStatus() == WatchedSource.RunStatus.FAILED)
+                .map(this::response)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public long count(UUID userId) {
+        return sources.countByUserId(userId);
     }
 
     /** Últimas 20 execuções (coletas ou conferências) da fonte, da mais recente para a mais antiga. */

@@ -18,6 +18,8 @@ import dev.jobfly.applications.ApplicationService;
 import dev.jobfly.applications.ApplicationService.PendingSuggestion;
 import dev.jobfly.applications.ApplicationState;
 import dev.jobfly.jobs.JobService;
+import dev.jobfly.sources.SourceDtos.SourceResponse;
+import dev.jobfly.sources.SourceService;
 
 /** Visão geral e central de pendências (RF-07.1, RF-07.4). Tudo é calculado na hora, sem tabela própria. */
 @Service
@@ -28,11 +30,13 @@ public class DashboardService {
 
     private final ApplicationService applications;
     private final JobService jobs;
+    private final SourceService sources;
     private final Clock clock;
 
-    DashboardService(ApplicationService applications, JobService jobs, Clock clock) {
+    DashboardService(ApplicationService applications, JobService jobs, SourceService sources, Clock clock) {
         this.applications = applications;
         this.jobs = jobs;
+        this.sources = sources;
         this.clock = clock;
     }
 
@@ -48,16 +52,22 @@ public class DashboardService {
         INTERVIEW_SOON,
         DEADLINE_SOON,
         SUGGESTION_TO_REVIEW,
+        SOURCE_TO_CHECK,
+        SOURCE_FAILING,
         NO_UPDATE
     }
 
-    public record PendingItem(PendingType type, Priority priority, UUID applicationId, UUID eventId, String company,
-            String title, String message, Instant dueAt) {
+    /**
+     * Pendência. {@code applicationId} e {@code eventId} apontam para candidaturas e sugestões. {@code sourceId} e
+     * {@code url} apontam para fontes vigiadas.
+     */
+    public record PendingItem(PendingType type, Priority priority, UUID applicationId, UUID eventId, UUID sourceId,
+            String company, String title, String message, Instant dueAt, String url) {
     }
 
     public record Summary(long jobsFound, long applicationsTotal, long submitted, long inProgress,
             long interviewsScheduled, long testsPending, long offers, long approved, long rejected, long stale,
-            long pendingItems, Map<ApplicationState, Long> byState) {
+            long pendingItems, long sourcesWatched, long sourcesToCheck, Map<ApplicationState, Long> byState) {
     }
 
     @Transactional(readOnly = true)
@@ -74,7 +84,8 @@ public class DashboardService {
         return new Summary(jobs.count(userId), all.size(), submitted, inProgress,
                 byState.get(ApplicationState.INTERVIEW_SCHEDULED), byState.get(ApplicationState.TECH_TEST_PENDING),
                 byState.get(ApplicationState.OFFER_RECEIVED), byState.get(ApplicationState.APPROVED),
-                byState.get(ApplicationState.REJECTED), stale, pending(userId, all).size(), Map.copyOf(byState));
+                byState.get(ApplicationState.REJECTED), stale, pending(userId, all).size(), sources.count(userId),
+                sources.dueForCheck(userId).size(), Map.copyOf(byState));
     }
 
     @Transactional(readOnly = true)
@@ -111,9 +122,17 @@ public class DashboardService {
             ApplicationResponse app = all.stream().filter(a -> a.id().equals(suggestion.applicationId())).findFirst().orElse(null);
             if (app != null) {
                 items.add(new PendingItem(PendingType.SUGGESTION_TO_REVIEW, Priority.MEDIUM, app.id(), suggestion.eventId(),
-                        app.company(), app.title(), "Confirmar mudança para " + suggestion.toState() + " (confiança "
-                                + suggestion.confidence() + ")", null));
+                        null, app.company(), app.title(), "Confirmar mudança para " + suggestion.toState() + " (confiança "
+                                + suggestion.confidence() + ")", null, null));
             }
+        }
+        for (SourceResponse source : sources.failing(userId)) {
+            items.add(new PendingItem(PendingType.SOURCE_FAILING, Priority.MEDIUM, null, null, source.id(), source.kindLabel(),
+                    source.name(), "A coleta falhou: " + source.lastMessage(), null, source.openUrl()));
+        }
+        for (SourceResponse source : sources.dueForCheck(userId)) {
+            items.add(new PendingItem(PendingType.SOURCE_TO_CHECK, Priority.LOW, null, null, source.id(), source.kindLabel(),
+                    source.name(), "Hora de conferir novas vagas em " + source.kindLabel(), source.nextRunAt(), source.openUrl()));
         }
         items.sort(Comparator.comparing(PendingItem::priority)
                 .thenComparing(PendingItem::dueAt, Comparator.nullsLast(Comparator.naturalOrder()))
@@ -129,6 +148,7 @@ public class DashboardService {
     }
 
     private static PendingItem item(PendingType type, Priority priority, ApplicationResponse app, String message) {
-        return new PendingItem(type, priority, app.id(), null, app.company(), app.title(), message, app.nextDueAt());
+        return new PendingItem(type, priority, app.id(), null, null, app.company(), app.title(), message, app.nextDueAt(),
+                app.url());
     }
 }

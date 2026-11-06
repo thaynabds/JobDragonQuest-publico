@@ -20,6 +20,7 @@ import dev.jobfly.sources.SourceDtos.BulkCreateRequest;
 import dev.jobfly.sources.SourceDtos.BulkCreateResult;
 import dev.jobfly.sources.SourceDtos.BulkUpdateRequest;
 import dev.jobfly.sources.SourceDtos.CatalogEntry;
+import dev.jobfly.sources.SourceDtos.CheckRequest;
 import dev.jobfly.sources.SourceDtos.RunResponse;
 import dev.jobfly.sources.SourceDtos.SourceResponse;
 import dev.jobfly.sources.SourceDtos.UpdateSourceRequest;
@@ -75,6 +76,12 @@ class SourceController {
     @PostMapping("/{id}/run")
     RunResponse run(@PathVariable UUID id) {
         return collector.runNow(currentUser.id(), id);
+    }
+
+    /** Marca uma fonte assistida (LinkedIn, Instagram...) como conferida e agenda o próximo lembrete. */
+    @PostMapping("/{id}/check")
+    RunResponse check(@PathVariable UUID id, @Valid @RequestBody(required = false) CheckRequest request) {
+        return sources.markChecked(currentUser.id(), id, request);
     }
 
     @GetMapping("/{id}/runs")
