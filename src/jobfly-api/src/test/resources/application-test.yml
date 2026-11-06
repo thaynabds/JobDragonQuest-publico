@@ -14,3 +14,5 @@ jobfly:
   sources:
     scheduler:
       enabled: false
+  notifications:
+    refresh-interval: PT0S

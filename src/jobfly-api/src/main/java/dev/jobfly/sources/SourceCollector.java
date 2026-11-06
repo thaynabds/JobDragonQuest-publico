@@ -3,12 +3,14 @@ package dev.jobfly.sources;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -70,10 +72,11 @@ public class SourceCollector {
     private final ApplicationService applications;
     private final Clock clock;
     private final TransactionTemplate transaction;
+    private final ApplicationEventPublisher publisher;
 
     SourceCollector(WatchedSourceRepository sources, SourceRunRepository runs, List<AtsClient> clients, SkillCatalog skills,
             JobService jobs, ProfileService profiles, MatchingEngine matching, ApplicationService applications, Clock clock,
-            PlatformTransactionManager txManager) {
+            PlatformTransactionManager txManager, ApplicationEventPublisher publisher) {
         this.sources = sources;
         this.runs = runs;
         this.clients = List.copyOf(clients);
@@ -84,6 +87,7 @@ public class SourceCollector {
         this.applications = applications;
         this.clock = clock;
         this.transaction = new TransactionTemplate(txManager);
+        this.publisher = publisher;
     }
 
     /** Coleta pedida pela pessoa no painel. Confere a dona da fonte antes de qualquer coisa. */
@@ -160,6 +164,7 @@ public class SourceCollector {
         int created = 0;
         int recommended = 0;
         int skipped = 0;
+        List<Integer> scores = new ArrayList<>();
         for (CollectedJob job : relevant) {
             JobCreated result;
             try {
@@ -176,7 +181,10 @@ public class SourceCollector {
             }
             created++;
             try {
-                if (recommend(plan, result.job().id())) {
+                MatchResult best = plan.profiles().isEmpty() ? null
+                        : matching.rank(plan.profiles(), jobs.snapshot(plan.userId(), result.job().id())).getFirst();
+                scores.add(best == null ? null : best.score());
+                if (recommend(plan, result.job().id(), best)) {
                     recommended++;
                 }
             } catch (DomainException ex) {
@@ -185,15 +193,15 @@ public class SourceCollector {
         }
         String message = fetched.size() + " vaga(s) no board, " + relevant.size() + " relevante(s), " + created
                 + " nova(s), " + recommended + " recomendada(s)" + (skipped > 0 ? ", " + skipped + " ignorada(s) por dados inválidos" : "");
-        return finish(sourceId, trigger, RunStatus.OK, relevant.size(), created, recommended, message, startedAt);
+        RunResponse response = finish(sourceId, trigger, RunStatus.OK, relevant.size(), created, recommended, message, startedAt);
+        if (created > 0) {
+            publisher.publishEvent(new JobsCollectedEvent(plan.userId(), sourceId, plan.companyName(), scores, response.id()));
+        }
+        return response;
     }
 
-    private boolean recommend(Plan plan, UUID jobId) {
-        if (plan.profiles().isEmpty()) {
-            return false;
-        }
-        MatchResult best = matching.rank(plan.profiles(), jobs.snapshot(plan.userId(), jobId)).getFirst();
-        if (best.recommendation() != MatchResult.Recommendation.APPLY) {
+    private boolean recommend(Plan plan, UUID jobId, MatchResult best) {
+        if (best == null || best.recommendation() != MatchResult.Recommendation.APPLY) {
             return false;
         }
         applications.create(plan.userId(), new CreateApplicationRequest(jobId, best.profileId(), Origin.AUTOMATION,

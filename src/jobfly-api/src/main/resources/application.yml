@@ -59,3 +59,8 @@ jobfly:
     duplicate-window-days: 60
     # Abaixo desta confiança, uma mudança vinda de agente ou e-mail vira sugestão (RN-03).
     min-automatic-confidence: 0.70
+  notifications:
+    # Intervalo mínimo entre duas verificações de pendências da mesma pessoa.
+    refresh-interval: PT30S
+    # Avisos lidos mais antigos que isto são apagados.
+    retention: P90D
