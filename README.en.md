@@ -40,6 +40,7 @@ JobFly brings it all into one explainable hub:
 | Jobs | Manual entry or collection, deduplicated by canonical URL and by company, title and location. Technologies mentioned in the description become requirements |
 | Match | 0–100 score with the reason for each requirement. Eliminatory blockers (work mode, city, language, seniority) kept apart from the score. APPLY only when every mandatory requirement is met. Automatic choice of the best profile |
 | Applications | A hub for applications from any origin, with 19 stages. Every change records source, evidence and confidence. Uncertainty becomes a suggestion. Silence never becomes a rejection. No duplicates |
+| Notifications | The API creates notifications for stage changes made by email, agent or system, required actions, technical tests, interview and deadline reminders with configurable lead time, suggestions, failing or due sources, stale applications and new jobs per source (with a minimum score). Settings per stage, type and source (on, pop-up, system, sound), quiet hours in the account time zone, snooze and mark as read, never repeating a notification |
 | Web dashboard | Overview, to-do center with direct actions, filtered Kanban, detail with history, profiles, sources and jobs, in Portuguese and English |
 | Operations | One command starts database, API and dashboard, on 127.0.0.1 only. Smoke and real collection tests. CI on GitHub Actions |
 
