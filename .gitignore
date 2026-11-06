@@ -23,3 +23,9 @@ coverage/
 # Logs e dados locais
 *.log
 data/
+
+# unlazy: ledger com evidências da máquina, estado do hook e configuração local do Claude Code
+GATES.md
+.unlazy/
+.unlazy-hook-state.json
+.claude/settings.local.json

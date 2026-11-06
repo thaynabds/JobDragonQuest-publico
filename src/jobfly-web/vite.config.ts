@@ -5,7 +5,8 @@ import { defineConfig, type Plugin } from "vite";
 // CSP só no build de produção: o modo de desenvolvimento do Vite injeta um script inline (React Refresh).
 const CSP =
   "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; " +
-  "frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'";
+  "base-uri 'self'; form-action 'self'; object-src 'none'";
+// frame-ancestors não vale em <meta>: o navegador ignora. A proteção contra frames fica para o proxy de produção.
 const contentSecurityPolicy: Plugin = {
   name: "jobfly-csp",
   apply: "build",
