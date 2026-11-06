@@ -28,6 +28,7 @@ import dev.jobfly.common.text.TextNormalizer;
 @Component
 public class SkillCatalog {
 
+    /** Forma canônica → padrão que casa qualquer grafia dela (ex.: "csharp" casa "C#" e "C Sharp"). */
     private final Map<String, Pattern> patterns;
 
     public SkillCatalog() {
@@ -41,9 +42,15 @@ public class SkillCatalog {
                 .filter(skill -> !skill.isBlank())
                 .distinct()
                 .sorted(Comparator.comparingInt(String::length).reversed().thenComparing(Comparator.naturalOrder()))
-                .collect(Collectors.toMap(skill -> skill,
-                        skill -> Pattern.compile("(?<![\\p{L}\\p{N}])" + Pattern.quote(skill) + "(?![\\p{L}\\p{N}+#])"),
-                        (a, b) -> a, LinkedHashMap::new));
+                .collect(Collectors.toMap(skill -> skill, SkillCatalog::anySpelling, (a, b) -> a, LinkedHashMap::new));
+    }
+
+    static Pattern anySpelling(String canonical) {
+        String alternatives = SkillNormalizer.surfaceForms(canonical).stream()
+                .sorted(Comparator.comparingInt(String::length).reversed())
+                .map(Pattern::quote)
+                .collect(Collectors.joining("|"));
+        return Pattern.compile("(?<![\\p{L}\\p{N}])(?:" + alternatives + ")(?![\\p{L}\\p{N}+#])");
     }
 
     /** Tecnologias canônicas citadas no texto, na ordem do catálogo (mais longas primeiro). */
