@@ -49,7 +49,7 @@
 
 ### ADR-008: navegação automatizada só onde é permitida
 - LinkedIn, Indeed e Glassdoor proíbem scraping e automação nos termos de uso. Para eles, as entradas são link, extensão de navegador (ação iniciada pela usuária), e-mail de alerta e importação.
-- Automação de formulários só em ATS que permitam e sempre com pausa em CAPTCHA e MFA. Detalhes em [04-integracoes.md](04-integracoes.md).
+- Automação de formulários só em ATS que permitam e sempre com pausa em CAPTCHA e MFA. Detalhes em [integracoes.md](integracoes.md).
 
 ## 3. Módulos do backend
 
@@ -66,7 +66,7 @@
 
 ## 4. Contratos
 
-A API REST é versionada em `/api/v1`. Os erros seguem o formato Problem Details (RFC 9457). O OpenAPI é gerado em `/v3/api-docs`, e a referência legível está em [05-api.md](05-api.md).
+A API REST é versionada em `/api/v1`. Os erros seguem o formato Problem Details (RFC 9457). O OpenAPI é gerado em `/v3/api-docs`, e a referência legível está em [api.md](api.md).
 
 ## 5. Observabilidade
 

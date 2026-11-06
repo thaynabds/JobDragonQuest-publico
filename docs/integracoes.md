@@ -7,7 +7,7 @@ Regra do projeto: só usar API oficial ou mecanismo permitido pelos termos de us
 - ⚠️ = possível, com restrição forte.
 - ❌ = sem caminho automático permitido.
 
-Esta é a pesquisa de viabilidade de 05/11/2026. Nenhuma destas integrações está implementada neste incremento (ver [07-roadmap.md](07-roadmap.md)). Antes de implementar cada uma, é preciso reler a documentação e os termos vigentes.
+Esta é a pesquisa de viabilidade de 05/11/2026. Nenhuma destas integrações está implementada neste incremento (ver [roadmap.md](roadmap.md)). Antes de implementar cada uma, é preciso reler a documentação e os termos vigentes.
 
 ## Fontes de vagas
 
