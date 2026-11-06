@@ -1,7 +1,8 @@
 import { api } from "../api/endpoints";
-import { Loading, Notice, Stat } from "../components/ui";
+import { Card, Loading, Notice, Stat } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { useAsync } from "../utils/useAsync";
+import { PendingList } from "./PendingList";
 
 export function DashboardPage() {
   const { t, errorMessage } = useI18n();
@@ -28,6 +29,9 @@ export function DashboardPage() {
           <Stat label={t("dashboard.sourcesToCheck")} value={summary.data.sourcesToCheck} tone="warn" />
         </div>
       )}
+      <Card title={t("dashboard.pending")}>
+        <PendingList onChange={summary.reload} />
+      </Card>
     </div>
   );
 }
