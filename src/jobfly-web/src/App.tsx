@@ -5,6 +5,8 @@ import { Layout } from "./components/Layout";
 import { Loading } from "./components/ui";
 import { I18nProvider } from "./i18n/I18nContext";
 import { DashboardPage } from "./pages/DashboardPage";
+import { JobDetailPage } from "./pages/JobDetailPage";
+import { JobsPage } from "./pages/JobsPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ProfileEditorPage } from "./pages/ProfileEditorPage";
@@ -23,6 +25,8 @@ function Routed() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<DashboardPage />} />
+        <Route path="vagas" element={<JobsPage />} />
+        <Route path="vagas/:id" element={<JobDetailPage />} />
         <Route path="fontes" element={<SourcesPage />} />
         <Route path="perfis" element={<ProfilesPage />} />
         <Route path="perfis/:id" element={<ProfileEditorPage />} />
