@@ -30,7 +30,7 @@ Plataforma para gerenciar a carreira e automatizar candidaturas a vagas de empre
 
 ### Próximos incrementos
 
-O plano detalhado e a situação de cada critério de aceitação estão em [docs/07-roadmap.md](docs/07-roadmap.md). Resumo:
+O plano detalhado e a situação de cada critério de aceitação estão em [docs/roadmap.md](docs/roadmap.md). Resumo:
 
 1. Painel web em React (português e inglês).
 2. Busca automática de vagas pelas APIs públicas do Greenhouse, Lever, SmartRecruiters e Ashby, e lista de Empresas Monitoradas.
@@ -49,7 +49,7 @@ O plano detalhado e a situação de cada critério de aceitação estão em [doc
 
 ## Arquitetura
 
-Monólito modular em Java 21 e Spring Boot 4.1, com PostgreSQL e Flyway. Os módulos são separados por responsabilidade (`identity`, `profiles`, `jobs`, `matching`, `applications`, `dashboard`, `audit`) e preparados para virar serviços próprios quando houver motivo. As decisões e suas justificativas estão em [docs/02-arquitetura.md](docs/02-arquitetura.md).
+Monólito modular em Java 21 e Spring Boot 4.1, com PostgreSQL e Flyway. Os módulos são separados por responsabilidade (`identity`, `profiles`, `jobs`, `matching`, `applications`, `dashboard`, `audit`) e preparados para virar serviços próprios quando houver motivo. As decisões e suas justificativas estão em [docs/arquitetura.md](docs/arquitetura.md).
 
 ```
 JobFly/
@@ -80,13 +80,13 @@ cd src/jobfly-api && ./mvnw verify
 
 Para parar: `Ctrl+C` na API e `scripts/postgres-local.sh parar` no banco. Depois de reiniciar o computador, rode `scripts/postgres-local.sh iniciar` antes da API. Se preferir o PostgreSQL do sistema (porta 5432), use `scripts/configurar-local.sh --sistema` (pede sudo).
 
-As variáveis de ambiente estão em [.env.example](.env.example). A referência da API está em [docs/05-api.md](docs/05-api.md).
+As variáveis de ambiente estão em [.env.example](.env.example). A referência da API está em [docs/api.md](docs/api.md).
 
 ## Qualidade e segurança
 
 - 81 testes automatizados (unitários e de integração com a aplicação completa).
 - O build falha se a cobertura de linhas dos módulos críticos ficar abaixo de 80% (hoje está acima de 92%).
-- Controles e testes de segurança estão em [docs/06-seguranca.md](docs/06-seguranca.md): isolamento por usuário, CSRF, XSS, injeção, força bruta, roubo de token e tamanho de requisição.
+- Controles e testes de segurança estão em [docs/seguranca.md](docs/seguranca.md): isolamento por usuário, CSRF, XSS, injeção, força bruta, roubo de token e tamanho de requisição.
 
 ## Licença
 

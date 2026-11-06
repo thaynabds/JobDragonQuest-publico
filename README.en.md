@@ -30,7 +30,7 @@ A platform to manage a career and automate applications to jobs and internships,
 
 ### Next increments
 
-The detailed plan and the status of each acceptance criterion are in [docs/07-roadmap.md](docs/07-roadmap.md). In short:
+The detailed plan and the status of each acceptance criterion are in [docs/roadmap.md](docs/roadmap.md). In short:
 
 1. React web dashboard (Portuguese and English).
 2. Automatic job search through the public APIs of Greenhouse, Lever, SmartRecruiters and Ashby, plus a list of Monitored Companies.
@@ -49,7 +49,7 @@ The detailed plan and the status of each acceptance criterion are in [docs/07-ro
 
 ## Architecture
 
-A modular monolith in Java 21 and Spring Boot 4.1, with PostgreSQL and Flyway. Modules are split by responsibility (`identity`, `profiles`, `jobs`, `matching`, `applications`, `dashboard`, `audit`) and ready to become separate services when there is a reason to. Decisions and their rationale are in [docs/02-arquitetura.md](docs/02-arquitetura.md) (Portuguese).
+A modular monolith in Java 21 and Spring Boot 4.1, with PostgreSQL and Flyway. Modules are split by responsibility (`identity`, `profiles`, `jobs`, `matching`, `applications`, `dashboard`, `audit`) and ready to become separate services when there is a reason to. Decisions and their rationale are in [docs/arquitetura.md](docs/arquitetura.md) (Portuguese).
 
 ```
 JobFly/
@@ -80,13 +80,13 @@ cd src/jobfly-api && ./mvnw verify
 
 To stop: `Ctrl+C` on the API and `scripts/postgres-local.sh parar` for the database. After a reboot, run `scripts/postgres-local.sh iniciar` before the API. To use the system PostgreSQL (port 5432) instead, run `scripts/configurar-local.sh --sistema` (asks for sudo).
 
-Environment variables are listed in [.env.example](.env.example). The API reference is in [docs/05-api.md](docs/05-api.md).
+Environment variables are listed in [.env.example](.env.example). The API reference is in [docs/api.md](docs/api.md).
 
 ## Quality and security
 
 - 81 automated tests (unit tests and integration tests against the full application).
 - The build fails if line coverage of the critical modules drops below 80% (it is above 92% today).
-- Security controls and tests are in [docs/06-seguranca.md](docs/06-seguranca.md): per-user isolation, CSRF, XSS, injection, brute force, token theft and request size.
+- Security controls and tests are in [docs/seguranca.md](docs/seguranca.md): per-user isolation, CSRF, XSS, injection, brute force, token theft and request size.
 
 ## License
 

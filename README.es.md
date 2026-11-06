@@ -30,7 +30,7 @@ Plataforma para gestionar la carrera y automatizar postulaciones a empleos y pr�
 
 ### Próximos incrementos
 
-El plan detallado y el estado de cada criterio de aceptación están en [docs/07-roadmap.md](docs/07-roadmap.md) (en portugués). En resumen:
+El plan detallado y el estado de cada criterio de aceptación están en [docs/roadmap.md](docs/roadmap.md) (en portugués). En resumen:
 
 1. Panel web en React (portugués e inglés).
 2. Búsqueda automática de vacantes mediante las APIs públicas de Greenhouse, Lever, SmartRecruiters y Ashby, y lista de Empresas Monitoreadas.
@@ -49,7 +49,7 @@ El plan detallado y el estado de cada criterio de aceptación están en [docs/07
 
 ## Arquitectura
 
-Monolito modular en Java 21 y Spring Boot 4.1, con PostgreSQL y Flyway. Los módulos están separados por responsabilidad (`identity`, `profiles`, `jobs`, `matching`, `applications`, `dashboard`, `audit`) y preparados para convertirse en servicios propios cuando haya motivo. Las decisiones y su justificación están en [docs/02-arquitetura.md](docs/02-arquitetura.md) (en portugués).
+Monolito modular en Java 21 y Spring Boot 4.1, con PostgreSQL y Flyway. Los módulos están separados por responsabilidad (`identity`, `profiles`, `jobs`, `matching`, `applications`, `dashboard`, `audit`) y preparados para convertirse en servicios propios cuando haya motivo. Las decisiones y su justificación están en [docs/arquitetura.md](docs/arquitetura.md) (en portugués).
 
 ```
 JobFly/
@@ -80,13 +80,13 @@ cd src/jobfly-api && ./mvnw verify
 
 Para detener: `Ctrl+C` en la API y `scripts/postgres-local.sh parar` en la base. Tras reiniciar el equipo, ejecuta `scripts/postgres-local.sh iniciar` antes de la API. Para usar el PostgreSQL del sistema (puerto 5432), ejecuta `scripts/configurar-local.sh --sistema` (pide sudo).
 
-Las variables de entorno están en [.env.example](.env.example). La referencia de la API está en [docs/05-api.md](docs/05-api.md).
+Las variables de entorno están en [.env.example](.env.example). La referencia de la API está en [docs/api.md](docs/api.md).
 
 ## Calidad y seguridad
 
 - 81 pruebas automatizadas (unitarias y de integración con la aplicación completa).
 - El build falla si la cobertura de líneas de los módulos críticos baja del 80% (hoy supera el 92%).
-- Los controles y pruebas de seguridad están en [docs/06-seguranca.md](docs/06-seguranca.md): aislamiento por usuario, CSRF, XSS, inyección, fuerza bruta, robo de tokens y tamaño de solicitud.
+- Los controles y pruebas de seguridad están en [docs/seguranca.md](docs/seguranca.md): aislamiento por usuario, CSRF, XSS, inyección, fuerza bruta, robo de tokens y tamaño de solicitud.
 
 ## Licencia
 
