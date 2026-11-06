@@ -3,16 +3,20 @@ package dev.jobfly.matching;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
 import dev.jobfly.common.domain.LanguageLevel;
 import dev.jobfly.common.domain.WorkMode;
+import dev.jobfly.common.text.SkillNormalizer;
 import dev.jobfly.common.text.TextNormalizer;
 import dev.jobfly.common.text.TitleMatcher;
 import dev.jobfly.jobs.JobRequirement.Kind;
@@ -53,16 +57,22 @@ public class MatchingEngine {
 
         Integer score = score(assessments);
         List<String> strengths = strengths(profile, assessments);
-        long unmetMandatory = assessments.stream()
-                .filter(a -> a.kind() == Kind.MANDATORY && a.outcome() == Outcome.UNMET).count();
+        long unmetMandatory = countMandatory(assessments, Outcome.UNMET);
+        long partialMandatory = countMandatory(assessments, Outcome.PARTIAL);
+        long unevaluatedMandatory = countMandatory(assessments, Outcome.NOT_EVALUATED);
         if (unmetMandatory > 0) {
             warnings.add(unmetMandatory + " requisito(s) obrigatório(s) não atendido(s)");
+        }
+        if (partialMandatory > 0) {
+            warnings.add(partialMandatory + " requisito(s) obrigatório(s) só parcialmente atendido(s)");
         }
         long notEvaluated = assessments.stream().filter(a -> a.outcome() == Outcome.NOT_EVALUATED).count();
         if (notEvaluated > 0) {
             warnings.add(notEvaluated + " requisito(s) precisam de leitura humana (sem competência identificável)");
         }
-        Recommendation recommendation = recommend(score, blockers, unmetMandatory, profile.minMatchScore());
+        // Só recomenda candidatura direta com todos os obrigatórios atendidos e avaliados (RN-02).
+        long mandatoryIssues = unmetMandatory + partialMandatory + unevaluatedMandatory;
+        Recommendation recommendation = recommend(score, blockers, mandatoryIssues, profile.minMatchScore());
         boolean affinity = titleAffinity(profile, job);
         return new MatchResult(profile.id(), profile.name(), score, recommendation, assessments, List.copyOf(blockers),
                 strengths, List.copyOf(warnings), affinity, summary(score, recommendation, blockers, profile.minMatchScore()));
@@ -116,15 +126,26 @@ public class MatchingEngine {
                 prefix + owned.name() + " nível " + owned.level());
     }
 
-    /** Procura no texto do requisito, como palavra inteira, uma competência que o perfil declara. */
+    /**
+     * Procura no texto do requisito, como palavra inteira, uma competência que o perfil declara, em qualquer grafia:
+     * a canônica, os apelidos ("C#" para csharp) e o nome como a pessoa escreveu.
+     */
     private static Optional<String> inferSkill(Map<String, ProfileSnapshot.Skill> skills, String text) {
         String normalized = " " + TextNormalizer.normalize(text) + " ";
-        return skills.keySet().stream()
-                .filter(skill -> skill.length() >= 2)
-                .filter(skill -> Pattern.compile("(?<![\\p{L}\\p{N}])" + Pattern.quote(skill) + "(?![\\p{L}\\p{N}])")
-                        .matcher(normalized).find())
+        return skills.entrySet().stream()
+                .filter(entry -> spellings(entry.getKey(), entry.getValue()).stream()
+                        .anyMatch(form -> Pattern.compile("(?<![\\p{L}\\p{N}])" + Pattern.quote(form) + "(?![\\p{L}\\p{N}+#])")
+                                .matcher(normalized).find()))
+                .map(Map.Entry::getKey)
                 // Prefere o nome mais longo: em "spring boot" ganha "spring boot", não "spring".
                 .max(Comparator.comparingInt(String::length).thenComparing(Comparator.naturalOrder()));
+    }
+
+    private static Set<String> spellings(String canonical, ProfileSnapshot.Skill skill) {
+        Set<String> forms = new LinkedHashSet<>(SkillNormalizer.surfaceForms(canonical));
+        forms.add(TextNormalizer.normalize(skill.name()));
+        forms.removeIf(form -> form.length() < 2);
+        return forms;
     }
 
     /** Aritmética decimal exata: 0,325 vira 33, e não 32 como daria em ponto flutuante. */
@@ -168,13 +189,23 @@ public class MatchingEngine {
         if (!presential || job.location() == null || profile.locations().isEmpty()) {
             return;
         }
-        String jobLocation = TextNormalizer.normalize(job.location());
+        // Compara a cidade (primeiro trecho do local do perfil) com os trechos do local da vaga, sem substring:
+        // "São Paulo" não casa com "São Paulo do Potengi - RN", mas "Recife" casa com "Recife, PE".
+        List<String> jobSegments = segments(job.location());
         boolean matches = profile.locations().stream()
-                .map(TextNormalizer::normalize)
-                .anyMatch(location -> jobLocation.contains(location) || location.contains(jobLocation));
+                .map(location -> segments(location))
+                .filter(parts -> !parts.isEmpty())
+                .anyMatch(parts -> jobSegments.contains(parts.getFirst()));
         if (!matches) {
             blockers.add(new Blocker("LOCATION", "Presença exigida em " + job.location() + ", fora das localidades do perfil"));
         }
+    }
+
+    static List<String> segments(String location) {
+        return Arrays.stream(location.split("[,;/|()\\-–]+"))
+                .map(TextNormalizer::normalize)
+                .filter(part -> !part.isEmpty())
+                .toList();
     }
 
     private static void checkLanguages(ProfileSnapshot profile, JobSnapshot job, List<Blocker> blockers, List<String> warnings) {
@@ -215,14 +246,19 @@ public class MatchingEngine {
                 .toList();
     }
 
-    static Recommendation recommend(Integer score, List<Blocker> blockers, long unmetMandatory, int minScore) {
+    private static long countMandatory(List<RequirementAssessment> assessments, Outcome outcome) {
+        return assessments.stream().filter(a -> a.kind() == Kind.MANDATORY && a.outcome() == outcome).count();
+    }
+
+    /** {@code mandatoryIssues}: obrigatórios não atendidos, parciais ou sem avaliação automática. */
+    static Recommendation recommend(Integer score, List<Blocker> blockers, long mandatoryIssues, int minScore) {
         if (!blockers.isEmpty()) {
             return Recommendation.SKIP;
         }
         if (score == null) {
             return Recommendation.INSUFFICIENT_DATA;
         }
-        if (score >= minScore && unmetMandatory == 0) {
+        if (score >= minScore && mandatoryIssues == 0) {
             return Recommendation.APPLY;
         }
         if (score >= minScore - REVIEW_MARGIN) {

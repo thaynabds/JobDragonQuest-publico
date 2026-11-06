@@ -1,6 +1,8 @@
 package dev.jobfly.common.text;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Forma canônica de uma competência, para "JS", "javascript" e "Java Script" contarem como a mesma coisa.
@@ -50,11 +52,30 @@ public final class SkillNormalizer {
             Map.entry("api rest", "rest"),
             Map.entry("git hub", "github"));
 
+    /** Apelidos que também são palavras comuns: valem no perfil, mas não para achar a competência num texto livre. */
+    private static final Set<String> AMBIGUOUS_IN_TEXT = Set.of("net", "node", "ts", "py");
+
     private SkillNormalizer() {
     }
 
     public static String normalize(String skill) {
         String plain = TextNormalizer.normalize(skill);
         return ALIASES.getOrDefault(plain, plain);
+    }
+
+    /**
+     * Todas as grafias (já normalizadas por {@link TextNormalizer}) que levam a esta forma canônica: a própria forma e
+     * os apelidos. Ex.: "csharp" → {"csharp", "c#", "c sharp"}. Serve para achar a competência num texto livre, que
+     * não passa pelo mapa de apelidos.
+     */
+    public static Set<String> surfaceForms(String canonical) {
+        Set<String> forms = new LinkedHashSet<>();
+        forms.add(canonical);
+        ALIASES.forEach((alias, target) -> {
+            if (target.equals(canonical) && !AMBIGUOUS_IN_TEXT.contains(alias)) {
+                forms.add(alias);
+            }
+        });
+        return forms;
     }
 }

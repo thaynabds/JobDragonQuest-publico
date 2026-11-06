@@ -148,6 +148,50 @@ class MatchingEngineTest {
         assertThat(MatchingEngine.titleAffinity(profile, sales)).isFalse();
     }
 
+    /** Issue #32: grafias como C#, .NET e JS no texto do requisito casam com as competências do perfil. */
+    @Test
+    void recognizesAliasesInRequirementText() {
+        ProfileSnapshot dotnet = new ProfileSnapshot(UUID.randomUUID(), ".NET", Seniority.JUNIOR, 60, List.of(), List.of(),
+                Set.of(), Map.of("csharp", skill("C#", 3, null), "dotnet", skill(".NET", 3, null), "javascript", skill("JS", 3, null)),
+                Map.of());
+        MatchResult result = engine.evaluate(dotnet, job(null, null, null, List.of(
+                mandatory("C# avançado", null, null), mandatory("Experiência com .NET Core", null, null),
+                mandatory("JS moderno (ES2020+)", null, null)), List.of()));
+
+        assertThat(result.requirements()).extracting(MatchResult.RequirementAssessment::skill)
+                .containsExactly("csharp", "dotnet", "javascript");
+        assertThat(result.requirements()).allMatch(r -> r.outcome() == Outcome.MET);
+        assertThat(result.recommendation()).isEqualTo(Recommendation.APPLY);
+    }
+
+    /** Issue #32: obrigatório parcial ou sem avaliação automática nunca vira APPLY, por maior que seja a nota. */
+    @Test
+    void partialOrUnevaluatedMandatoryIsReviewNotApply() {
+        MatchResult partial = engine.evaluate(javaProfile(), job(WorkMode.REMOTE, null, null, List.of(
+                mandatory("Java", "java", null), mandatory("Spring Boot 5+ anos", "spring boot", "5")), List.of()));
+        assertThat(partial.score()).isEqualTo(75);
+        assertThat(partial.recommendation()).isEqualTo(Recommendation.REVIEW);
+        assertThat(partial.warnings()).anyMatch(w -> w.contains("parcialmente atendido"));
+
+        MatchResult unevaluated = engine.evaluate(javaProfile(), job(WorkMode.REMOTE, null, null, List.of(
+                mandatory("Java", "java", null), mandatory("Boa comunicação", null, null)), List.of()));
+        assertThat(unevaluated.score()).isEqualTo(100);
+        assertThat(unevaluated.recommendation()).isEqualTo(Recommendation.REVIEW);
+    }
+
+    /** Issue #32: a cidade é comparada por trecho, não por substring. */
+    @Test
+    void locationComparesCitySegmentsNotSubstrings() {
+        ProfileSnapshot saoPaulo = new ProfileSnapshot(UUID.randomUUID(), "SP", Seniority.JUNIOR, 60, List.of(), List.of("São Paulo"),
+                Set.of(WorkMode.ONSITE), Map.of("java", skill("Java", 4, null)), Map.of());
+        List<JobSnapshot.Requirement> java = List.of(mandatory("Java", "java", null));
+
+        assertThat(engine.evaluate(saoPaulo, job(WorkMode.ONSITE, "São Paulo do Potengi - RN", null, java, List.of())).blockers())
+                .extracting(MatchResult.Blocker::code).containsExactly("LOCATION");
+        assertThat(engine.evaluate(saoPaulo, job(WorkMode.ONSITE, "São Paulo, SP", null, java, List.of())).blockers()).isEmpty();
+        assertThat(MatchingEngine.segments("Recife - PE (Brasil)")).containsExactly("recife", "pe", "brasil");
+    }
+
     @Test
     void reviewWhenScoreIsSlightlyBelowMinimumOrMandatoryIsMissing() {
         assertThat(MatchingEngine.recommend(50, List.of(), 0, 60)).isEqualTo(Recommendation.REVIEW);

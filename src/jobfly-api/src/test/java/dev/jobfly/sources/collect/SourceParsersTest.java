@@ -110,4 +110,13 @@ class SourceParsersTest {
         assertThat(catalog.detect(null)).isEmpty();
         assertThat(new SkillCatalog().detect("Kotlin and Docker")).contains("kotlin", "docker");
     }
+
+    /** Issue #32: o catálogo reconhece as grafias de uma tecnologia, mas não apelidos que são palavras comuns. */
+    @Test
+    void skillCatalogFindsAliasesButNotCommonWords() {
+        SkillCatalog catalog = new SkillCatalog();
+        assertThat(catalog.detect("Vaga para C#, .NET Core e JS no front.")).contains("csharp", "dotnet", "javascript");
+        assertThat(catalog.detect("Competitive net salary and Kubernetes node pools.")).contains("kubernetes")
+                .doesNotContain("dotnet", "node.js");
+    }
 }
