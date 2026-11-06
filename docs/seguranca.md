@@ -24,12 +24,16 @@ Modelo de ameaça resumido. Quem pode atacar:
 | Headers | CSP `default-src 'none'`, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer` | `securityHeadersArePresent` |
 | Métricas expostas | `/actuator/prometheus` só para ADMIN. `health` sem detalhes | `healthIsPublicButMetricsAreNot` |
 | Edição concorrente | `@Version` com 409 `stale_version` | `staleVersionIsRejected` |
+| SSRF na coleta | Cliente HTTP só para os hosts fixos dos ATS, em HTTPS, sem seguir redirecionamento, com tempo e tamanho máximos. O identificador do board é validado contra `../`, `/`, `?` e `@` | `SourceParsersTest.fetcherOnlyTalksToAllowedAtsHosts`, `invalidItemRejectsTheWholeBatch` |
+| Coletas concorrentes | Reserva por fonte com troca condicional no banco, liberada ao terminar. Inserção concorrente tratada como duplicata | `onlyOneCollectionPerSourceAtATime`, `SourceCollectorRaceTest` |
+| Exposição na rede | API, painel e banco escutam só em 127.0.0.1 por padrão | `scripts/verificar/web-no-ar.mjs` |
+| Agente de código lendo segredos | OpenCode sem editar arquivos, sem rodar comandos e sem ler `.env`, `data/` nem a auditoria pessoal, testado com arquivo-isca | `scripts/verificar/opencode.mjs` |
 | Segredo no Git | `.env` ignorado, `.env.example` sem valores, script gera segredos locais com permissão 600 e não mostra nada na tela | `.gitignore` |
 
 ## Regras para os próximos incrementos
 
 1. **Prompt injection.** Texto de e-mail, página ou documento entra no LLM delimitado como dado (`<conteudo_nao_confiavel>`), nunca como instrução. As ferramentas dos agentes são escolhidas pelo supervisor a partir da política, nunca a partir do conteúdo. Ação com efeito externo (enviar e-mail, enviar candidatura) passa pela política de autonomia e fica auditada.
-2. **SSRF.** O cadastro por link vai buscar páginas. A busca só aceita http(s), resolve o DNS e recusa IP privado, loopback, link-local e metadados de nuvem (169.254.169.254), sem seguir redirecionamento para esses endereços. Tem limite de tamanho e de tempo.
+2. **SSRF (cadastro por link).** A coleta de ATS já é protegida (hosts fixos). O cadastro por link, que vai buscar páginas de qualquer site, A busca só aceita http(s), resolve o DNS e recusa IP privado, loopback, link-local e metadados de nuvem (169.254.169.254), sem seguir redirecionamento para esses endereços. Tem limite de tamanho e de tempo.
 3. **Tokens OAuth de e-mail:** cifrados com AES-GCM e chave fora do banco. Escopos mínimos (ver 04). Revogação na tela de integrações.
 4. **Renderização:** a evidência e o corpo de e-mail são exibidos como texto no React (sem `dangerouslySetInnerHTML`).
 5. **MCP:** token de escopo próprio, validação de argumentos, limite de chamadas e nenhuma ferramenta de exclusão.
