@@ -1,4 +1,4 @@
-# 07. Situação e roadmap
+# Situação e roadmap
 
 **Legenda.**
 - ✅ implementado e testado automaticamente.
@@ -8,61 +8,65 @@
 
 Nada aqui é apresentado como pronto sem teste que comprove.
 
-## Incremento 1 (05/11/2026): núcleo da API
+## Versões
 
-- **Entregue:** autenticação, perfis, vagas, compatibilidade, candidaturas de qualquer origem, máquina de estados com evidências, Kanban, visão geral, pendências e auditoria.
-- **Testes:** 81 automatizados (unitários e de integração com a aplicação completa), todos passando.
-- **Cobertura:** ≥ 92% das linhas em cada pacote crítico (o build falha abaixo de 80%).
+| Versão | Data | Conteúdo |
+|---|---|---|
+| v0.1.0 | 05/11/2026 | Núcleo da API: contas, perfis, vagas, compatibilidade, candidaturas de qualquer origem, Kanban, pendências e auditoria |
+| v0.2.0 | 06/11/2026 | Fontes vigiadas em lote para vários perfis, coleta de ATS públicos com agendador, lembretes de fontes assistidas, painel web completo pt/en, documentação obrigatória, Git Flow, CI e correções achadas na navegação real e na revisão com o OpenCode (#31, #32, #36, #38) |
 
-## Critérios de aceitação (seção 21)
+Medição da v0.2.0:
+- API: 108 testes, cobertura geral de 94,3%.
+- Painel: 20 testes.
+- Teste de fumaça: 26 verificações contra a API no PostgreSQL local.
+- Coleta real: 246 vagas no board do GitLab, 88 relevantes gravadas, segunda coleta sem duplicar.
+
+## Critérios de aceitação do projeto (seção 21 do pedido)
 
 | # | Critério | Situação |
 |---|---|---|
 | 1 | Vários perfis profissionais | ✅ |
-| 2 | Conectar um provedor de e-mail | ⬜ 🔑 Projeto feito (04-integracoes): OAuth do Google ou da Microsoft |
-| 3 | Buscar vagas automaticamente em fontes integradas | ⬜ Próximo incremento: coletores Greenhouse, Lever, SmartRecruiters e Ashby (APIs públicas) |
-| 4 | Identificar oportunidades compatíveis | ✅ Nota, impedimentos e recomendação |
-| 5 | Selecionar o perfil correto | ✅ `GET /jobs/{id}/matches` |
-| 6 | Gerar documentos personalizados | ⬜ Depende do provedor de IA e do armazenamento de arquivos |
+| 2 | Conectar um provedor de e-mail | ⬜ 🔑 v0.3.0 (OAuth Google ou Microsoft) |
+| 3 | Buscar vagas automaticamente em fontes integradas | ✅ Greenhouse, Lever, SmartRecruiters e Ashby, com agendador |
+| 4 | Identificar oportunidades compatíveis | ✅ |
+| 5 | Selecionar o perfil correto | ✅ |
+| 6 | Gerar documentos personalizados | ⬜ Agentes de IA |
 | 7 | Candidatura de teste em ambiente autorizado | ⬜ |
-| 8 | Registrar o resultado da candidatura | ✅ Eventos com evidência |
-| 9 | Identificar mensagens de processos seletivos | ⬜ 🔑 Depende do item 2 |
-| 10 | Atualizar o status por evidência | 🟡 A API de transições com confiança e sugestões está pronta e testada. Falta a fonte automática (e-mail) |
-| 11 | Identificar pendências | ✅ |
+| 8 | Registrar o resultado da candidatura | ✅ |
+| 9 | Identificar mensagens de processos seletivos | ⬜ 🔑 depende do item 2 |
+| 10 | Atualizar o status por evidência | 🟡 API de transições com confiança e sugestões pronta. Falta a fonte automática (e-mail) |
+| 11 | Identificar pendências | ✅ inclui fontes a conferir e integrações com falha |
 | 12 | Preparar e enviar respostas autorizadas | ⬜ 🔑 |
-| 13 | Histórico completo | ✅ `GET /applications/{id}` |
-| 14 | Atividades no painel web | ⬜ A API do painel está pronta. Falta a interface React (próximo incremento) |
-| 15 | Tarefas em segundo plano | ⬜ Fila em banco prevista (ADR-004) |
-| 16 | Ferramentas de IA com permissão controlada | ⬜ MCP previsto (ADR-007) |
-| 17 | Recuperação de falhas de integração | ⬜ Junto com as integrações |
-| 18 | Testes automatizados | ✅ `./mvnw verify` |
-| 19 | Instalar e executar pela documentação | ✅ Em 05/11/2026 rodou no PostgreSQL 16 local (cluster do usuário, sem sudo). `scripts/testar-api.py`: 20/20 verificações passaram |
+| 13 | Histórico completo | ✅ |
+| 14 | Atividades no painel web | ✅ |
+| 15 | Tarefas em segundo plano | ✅ agendador de coleta com reserva, recuo e histórico |
+| 16 | Ferramentas de IA com permissão controlada | 🟡 OpenCode configurado com permissões restritas e testado. O servidor MCP próprio está planejado |
+| 17 | Recuperação de falhas de integração | ✅ recuo exponencial, reserva vencida liberada, falha nas pendências |
+| 18 | Testes automatizados | ✅ |
+| 19 | Instalar e executar pela documentação | ✅ `scripts/configurar-local.sh` e `scripts/iniciar.sh` |
 
 ## Cenários adicionais (seção 29)
 
 | # | Cenário | Situação |
 |---|---|---|
-| 1–4 | Registrar candidatura do LinkedIn, do site da empresa, do Instagram e de grupo do Facebook | ✅ `registersExternalApplicationsFromAnyOrigin` |
-| 5 | Adicionar por link | 🟡 A URL é validada, canonicalizada e deduplicada. A extração automática da página (com proteção contra SSRF) está pendente |
+| 1–4 | Registrar candidatura do LinkedIn, do site da empresa, do Instagram e de grupo do Facebook | ✅ |
+| 5 | Adicionar por link | 🟡 URL validada, canonicalizada e deduplicada. Falta extrair a página (exige proteção contra SSRF) |
 | 6 | Por encaminhamento de e-mail | ⬜ 🔑 |
 | 7 | Por extensão de navegador | ⬜ A API já aceita `origin=BROWSER_EXTENSION` com `Idempotency-Key` |
-| 8 | Importar histórico | ⬜ CSV no próximo incremento |
-| 9–10 | Relacionar e-mail a candidatura e atualizar etapa | 🟡 A atualização por evidência está pronta. Falta a leitura do e-mail |
-| 11 | Monitorar portais de empresas | ⬜ |
-| 12 | Vagas em publicações e imagens | ⬜ Depende da IA |
-| 13–15 | Perguntas eliminatórias, riscos e respostas verdadeiras | ⬜ Depende da IA |
-| 16 | Revisar candidatura antes do envio | ⬜ Depende da IA |
-| 17 | Impedir duplicadas | ✅ URL canônica, empresa e cargo, `Idempotency-Key` |
-| 18 | Sem informação suficiente, sem mudança de etapa | ✅ `stale` calculado, sugestões de baixa confiança, eventos `NOTED` |
-| 19 | Todas as candidaturas num só painel | ✅ na API (`/applications`, `/board`, `/dashboard`) |
+| 8 | Importar histórico | ⬜ |
+| 9–10 | Relacionar e-mail a candidatura e atualizar etapa | 🟡 A atualização por evidência está pronta |
+| 11 | Monitorar portais de empresas | ✅ por ATS público (fontes vigiadas). Páginas sem ATS ficam como fontes assistidas |
+| 12 | Vagas em publicações e imagens | 🟡 fontes assistidas com lembrete. A extração por IA está pendente |
+| 13–16 | Perguntas eliminatórias e revisão da candidatura | ⬜ Agentes de IA |
+| 17 | Impedir duplicadas | ✅ |
+| 18 | Sem informação suficiente, sem mudança | ✅ |
+| 19 | Todas as candidaturas num só painel | ✅ |
 
-## Próximos incrementos (ordem recomendada)
+## Próximas entregas
 
-1. **Painel web** (React + Vite + TypeScript, pt-BR/en): login, visão geral, Kanban, detalhe com histórico, pendências, perfis e cadastro de candidatura externa.
-2. **Coletores de vagas** com APIs públicas (Greenhouse, Lever, SmartRecruiters, Ashby), Empresas Monitoradas, fila em banco com retentativa e backoff, e agendador.
-3. **Gmail** (OAuth, escopos mínimos): classificação de mensagens, vínculo com a candidatura (com confirmação quando houver dúvida), marcadores, nunca apagar.
-4. **Camada de IA** (`LlmProvider`: Claude, OpenAI ou local) e agentes: extração de requisitos, perguntas eliminatórias, revisão da candidatura, documentos personalizados que só usam dados do perfil.
-5. **Servidor MCP** `jobfly-mcp` com token de escopo restrito.
-6. **Extensão de navegador** (Manifest V3): "Enviar ao JobFly" em vaga ou confirmação.
-7. **Documentos versionados** (currículos e cartas), anexos e importação CSV.
-8. **Operação:** Docker Compose, Redis para o limite de tentativas distribuído, rastreamento distribuído (OpenTelemetry), expurgo da auditoria, exportação e exclusão de dados (LGPD).
+1. **v0.3.0: Gmail.** OAuth com escopos mínimos, classificação de mensagens, vínculo com a candidatura (com confirmação quando houver dúvida) e marcadores. Nunca apagar.
+2. **Camada de IA** (`LlmProvider`: Claude, OpenAI ou local): perguntas eliminatórias, revisão da candidatura, documentos só com dados reais, extração de vagas de publicações.
+3. **Servidor MCP** do JobFly com token de escopo restrito.
+4. **Extensão de navegador** "Enviar ao JobFly".
+5. **Documentos versionados**, anexos e importação CSV.
+6. **Operação:** Docker Compose, Redis para o limite de tentativas distribuído, OpenTelemetry, medição do p95 ([RNF07]), exportação de dados (LGPD).

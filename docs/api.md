@@ -63,12 +63,29 @@ Resultado da análise: `score` (0–100 ou null), `recommendation` (APPLY, REVIE
 
 `origin`: AUTOMATION, MANUAL, LINK, EMAIL, BROWSER_EXTENSION, IMPORT, SOCIAL, REFERRAL. `source`: MANUAL, EMAIL, PORTAL, AGENT, SYSTEM, EXTENSION.
 
+## Fontes vigiadas
+
+| Rota | Descrição |
+|---|---|
+| `GET /sources/catalog` | Tipos de fonte e o modo de cada um: `AUTOMATIC` (Greenhouse, Lever, SmartRecruiters, Ashby) ou `ASSISTED` (LinkedIn, Instagram, Facebook, Indeed, Glassdoor, Gupy, Workday, página de carreiras, outro) |
+| `GET /sources?profileId` | Fontes da conta, com filtro opcional por perfil |
+| `POST /sources/bulk` | `{sources: [{name, kind, identifier \| url}], profileIds[], frequencyMinutes (15–10080), keywords[]}`: até 50 fontes de uma vez, tudo ou nada. Resposta 201 `{created[], duplicates[{index, existingId, name}]}` |
+| `POST /sources/bulk-update` | `{sourceIds[], enabled?, frequencyMinutes?, setProfileIds? \| addProfileIds?/removeProfileIds?}`: mesma mudança em várias fontes. 404 se algum id não for da conta |
+| `GET/PUT/DELETE /sources/{id}` | Ler, editar (exige `version`) e excluir |
+| `POST /sources/{id}/run` | Coleta agora (só automáticas). 409 `assisted_source` para assistidas, 409 `collection_running` se já houver coleta |
+| `POST /sources/{id}/check` | `{jobsRegistered?, note?}`: marca uma fonte assistida como conferida e agenda o próximo lembrete |
+| `GET /sources/{id}/runs` | Últimas 20 execuções (coletas e conferências) |
+
+Campos da fonte: `collectionMode`, `openUrl` (página para conferir), `nextRunAt`, `lastStatus` (OK, FAILED, CHECKED), `lastMessage`, `due`, `running`, `consecutiveFailures` e `profileIds`.
+
+`GET /jobs?sourceId=` lista as vagas encontradas por uma fonte.
+
 ## Painel
 
 | Rota | Descrição |
 |---|---|
-| `GET /dashboard/summary` | Contadores: vagas, candidaturas, enviadas, em andamento, entrevistas, testes, propostas, aprovações, reprovações, sem atualização, pendências, total por etapa |
-| `GET /dashboard/pending` | Pendências ordenadas por prioridade e prazo: ACTION_REQUIRED, TECH_TEST, INTERVIEW_SOON, DEADLINE_SOON, SUGGESTION_TO_REVIEW, NO_UPDATE |
+| `GET /dashboard/summary` | Contadores: vagas, candidaturas, enviadas, em andamento, entrevistas, testes, propostas, aprovações, reprovações, sem atualização, pendências, fontes vigiadas, fontes a conferir e total por etapa |
+| `GET /dashboard/pending` | Pendências ordenadas por prioridade e prazo: ACTION_REQUIRED, TECH_TEST, INTERVIEW_SOON, DEADLINE_SOON, SUGGESTION_TO_REVIEW, SOURCE_TO_CHECK, SOURCE_FAILING, NO_UPDATE. Cada item traz `message` (em português) e campos estruturados (`suggestedState`, `confidence`, `detail`, `sourceId`, `url`) para o cliente montar a frase no idioma dele |
 
 ## Operação
 

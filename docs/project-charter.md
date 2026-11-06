@@ -49,7 +49,7 @@ Princípios: veracidade (nunca inventar dados do perfil), respeito às regras da
 - Painel web completo em pt-BR e en, com visão geral, Kanban, detalhe, pendências, perfis, fontes e vagas.
 - Execução local com um comando (PostgreSQL do próprio usuário, sem sudo), testes automatizados, Git Flow e documentação.
 
-### Expressamente fora do escopo desta entrega
+### Fora do escopo desta entrega (expressamente excluído)
 
 - Integração com Gmail e Outlook (leitura, classificação e respostas). Planejada para a v0.3.0.
 - Agentes de IA (análise de perguntas eliminatórias, revisão da candidatura e documentos personalizados).
