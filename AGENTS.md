@@ -14,7 +14,7 @@ O JobFly é uma plataforma de gestão de carreira e candidaturas. Visão geral n
 
 ## Regras obrigatórias
 
-1. **Sem crédito para IA.** Nunca escreva Co-Authored-By de IA, "gerado com IA" ou algo parecido em commits, PRs, issues, documentos ou código.
+1. **Sem crédito para IA.** Nunca escreva linha de coautoria de IA nem frase que atribua o trabalho a uma IA, em commits, PRs, issues, documentos ou código.
 2. **Segredos.** Nunca leia, copie ou exiba `.env`, `data/`, chaves ou tokens. Configuração nova entra por variável de ambiente e é documentada em `.env.example`, sem valores.
 3. **Veracidade.** O sistema nunca inventa experiência, certificado, idioma ou competência de um perfil, e o código não pode abrir caminho para isso.
 4. **Plataformas externas.** Só APIs oficiais e caminhos permitidos pelos termos de uso. Nunca contorne CAPTCHA, MFA ou bloqueios.
