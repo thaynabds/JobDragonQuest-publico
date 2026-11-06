@@ -1,6 +1,6 @@
 # 03. Modelo de dados
 
-Migração: `src/jobfly-api/src/main/resources/db/migration/` (Flyway). O Hibernate só **valida** o esquema (`ddl-auto: validate`): toda mudança passa por uma nova migração versionada.
+Migrações: `src/jobfly-api/src/main/resources/db/migration/` (Flyway): V1 esquema inicial, V2 fontes vigiadas, V3 reserva de coleta. Diagrama ER completo em [diagramas.md](diagramas.md). O Hibernate só **valida** o esquema (`ddl-auto: validate`): toda mudança passa por uma nova migração versionada.
 
 ## Convenções
 
@@ -21,6 +21,10 @@ app_user 1─┬─* refresh_token          (hash SHA-256, família, revogação
            ├─* job 1─┬─* job_requirement        (MANDATORY | DESIRED, competência, anos)
            │         └─* job_language           (código, nível mínimo, exigido?)
            ├─* job_application 1─* application_event
+           ├─* watched_source 1─┬─* watched_source_profile *─1 profile
+           │                    ├─* watched_source_keyword
+           │                    ├─* source_run
+           │                    └─* job (watched_source_id, encontrada pela fonte)
            └─* audit_log
 ```
 
@@ -33,6 +37,10 @@ app_user 1─┬─* refresh_token          (hash SHA-256, família, revogação
 | `job_application` | Candidatura de qualquer origem | `(user_id, idempotency_key)` único; índices por estado, URL, empresa/cargo |
 | `application_event` | Histórico: mudança de etapa, nota ou sugestão, com origem, evidência e confiança | índice `(application_id, created_at)` |
 | `audit_log` | Quem fez o quê e quando (sem conteúdo sensível) | índice `(user_id, created_at)` |
+| `watched_source` (V2, V3) | Fonte vigiada: ATS automático ou plataforma assistida, frequência, próxima execução, último resultado e reserva de coleta (`running_until`) | `(user_id, dedup_key)` único; índice `(enabled, collection_mode, next_run_at)` |
+| `watched_source_profile` (V2) | Perfis que usam cada fonte (N:N) | PK `(source_id, profile_id)`, apagada em cascata com a fonte ou o perfil |
+| `watched_source_keyword` (V2) | Palavras-chave que filtram os cargos coletados | PK `(source_id, position)` |
+| `source_run` (V2) | Histórico de coletas e conferências | índice `(source_id, started_at)` |
 
 ## Deduplicação
 
