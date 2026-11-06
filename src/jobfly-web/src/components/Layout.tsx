@@ -19,9 +19,7 @@ export function Layout() {
     <div className="shell">
       <aside className="sidebar">
         <div className="brand">
-          <span className="brand-mark" aria-hidden="true">
-            ✓
-          </span>
+          <img className="brand-logo" src="/logo.png" alt="" width="44" height="44" />
           <div>
             <strong>{t("app.name")}</strong>
             <span className="brand-tagline">{t("app.tagline")}</span>

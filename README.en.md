@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="docs/assets/logo.png" alt="JobFly logo: a purple dragon with a headset and laptop tracking job applications" width="220">
+</p>
+
 # JobFly
 
 > Language: [Português](README.md) | **English** | [Español](README.es.md)
 
-[![Version](https://img.shields.io/badge/version-0.2.0-2563eb)](https://github.com/thaynabds/JobFly/releases/tag/v0.2.0)
+[![Version](https://img.shields.io/badge/version-0.2.0-7c3aed)](https://github.com/thaynabds/JobFly/releases/tag/v0.2.0)
 [![License](https://img.shields.io/badge/license-all%20rights%20reserved-6b7280)](#license)
 [![CI](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-128%20passing-16a34a)](#quality-and-security)

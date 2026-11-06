@@ -35,9 +35,7 @@ export function LoginPage() {
     <div className="auth-page">
       <form className="auth-card" onSubmit={(event) => void submit(event)} noValidate>
         <div className="brand brand-large">
-          <span className="brand-mark" aria-hidden="true">
-            ✓
-          </span>
+          <img className="brand-logo" src="/logo.png" alt="" width="44" height="44" />
           <div>
             <strong>{t("app.name")}</strong>
             <span className="brand-tagline">{t("app.tagline")}</span>

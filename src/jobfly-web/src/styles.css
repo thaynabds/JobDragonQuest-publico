@@ -1,4 +1,4 @@
-/* JobFly: tokens de cor com tema claro e escuro (prefers-color-scheme). Sem estilos inline: a CSP de produção
+/* JobFly: paleta roxa da logo (dragão). Tokens de cor com tema claro e escuro (prefers-color-scheme). Sem estilos inline: a CSP de produção
    não permite style="...". */
 :root {
   --bg: #f6f7fb;
@@ -7,17 +7,17 @@
   --text: #172033;
   --muted: #5b6577;
   --border: #dde2ec;
-  --primary: #2563eb;
+  --primary: #7c3aed;
   --primary-text: #ffffff;
-  --primary-soft: #e6eefe;
+  --primary-soft: #f1e9fe;
   --good: #137a3d;
   --good-soft: #e3f5ea;
   --warn: #8a5a00;
   --warn-soft: #fff3d6;
   --bad: #b42318;
   --bad-soft: #fde8e6;
-  --info: #1d4ed8;
-  --info-soft: #e6eefe;
+  --info: #6d28d9;
+  --info-soft: #f1e9fe;
   --radius: 10px;
   --shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 1px 3px rgb(16 24 40 / 8%);
   color-scheme: light;
@@ -36,17 +36,17 @@
     --text: #e6e9ef;
     --muted: #9aa4b5;
     --border: #2c3647;
-    --primary: #5b8def;
-    --primary-text: #0b1220;
-    --primary-soft: #1d2a44;
+    --primary: #a78bfa;
+    --primary-text: #170d2e;
+    --primary-soft: #2a1d47;
     --good: #5cd18f;
     --good-soft: #15301f;
     --warn: #f2c35b;
     --warn-soft: #33290f;
     --bad: #ff8a80;
     --bad-soft: #3a1b19;
-    --info: #8fb2ff;
-    --info-soft: #1d2a44;
+    --info: #c4b5fd;
+    --info-soft: #2a1d47;
     color-scheme: dark;
   }
 }
@@ -147,15 +147,11 @@ a:focus-visible {
   flex-direction: column;
 }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  background: var(--primary);
-  color: var(--primary-text);
-  font-weight: 700;
+.brand-logo {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  object-fit: contain;
 }
 
 .brand-tagline {
@@ -163,10 +159,14 @@ a:focus-visible {
   color: var(--muted);
 }
 
-.brand-large .brand-mark {
-  width: 44px;
-  height: 44px;
-  font-size: 1.3rem;
+.brand-large {
+  flex-direction: column;
+  text-align: center;
+}
+
+.brand-large .brand-logo {
+  width: 120px;
+  height: 120px;
 }
 
 .nav-link {
