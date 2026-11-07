@@ -1,5 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 
+import { A11yProvider } from "./a11y/A11yContext";
+import { A11yPanel } from "./a11y/A11yPanel";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { Layout } from "./components/Layout";
 import { Loading } from "./components/ui";
@@ -45,11 +47,14 @@ function Routed() {
 export function App() {
   return (
     <I18nProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <Routed />
-        </BrowserRouter>
-      </AuthProvider>
+      <A11yProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <Routed />
+          </BrowserRouter>
+        </AuthProvider>
+        <A11yPanel />
+      </A11yProvider>
     </I18nProvider>
   );
 }
