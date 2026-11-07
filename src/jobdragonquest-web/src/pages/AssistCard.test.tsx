@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { I18nProvider } from "../i18n/I18nContext";
@@ -13,13 +14,15 @@ beforeEach(() => Object.values(api).forEach((mock) => mock.mockReset()));
 const renderCard = () =>
   render(
     <I18nProvider initial="pt-BR">
-      <AssistCard
-        jobId="j1"
-        profiles={[
-          { id: "p1", name: "Java" },
-          { id: "p2", name: "Dados" },
-        ]}
-      />
+      <MemoryRouter>
+        <AssistCard
+          jobId="j1"
+          profiles={[
+            { id: "p1", name: "Java" },
+            { id: "p2", name: "Dados" },
+          ]}
+        />
+      </MemoryRouter>
     </I18nProvider>,
   );
 

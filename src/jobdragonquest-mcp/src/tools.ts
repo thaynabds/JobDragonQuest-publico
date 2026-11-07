@@ -207,6 +207,44 @@ export const TOOLS = [
     run: (client, args) => client.request("GET", apiPath(["jobs", args.vagaId, "assist", "review"], { profileId: args.perfilId })),
   }),
   tool({
+    name: "jobdragonquest_curriculo",
+    title: "Currículo do perfil",
+    description:
+      "Currículo montado do perfil, geral ou ajustado a uma vaga (o que a vaga pede vem primeiro e marcado como highlighted). Use só esses dados: nunca acrescente experiência, curso ou idioma que não esteja no perfil.",
+    schema: z.object({ perfilId: id, vagaId: id.optional() }),
+    readOnly: true,
+    run: (client, args) => client.request("GET", apiPath(["profiles", args.perfilId, "resume"], { jobId: args.vagaId })),
+  }),
+  tool({
+    name: "jobdragonquest_carta",
+    title: "Carta de apresentação",
+    description: "Carta montada com os dados do perfil (ou a carta salva, com empresa e cargo trocados). 'missing' lista o que falta no perfil.",
+    schema: z.object({ perfilId: id, vagaId: id.optional() }),
+    readOnly: true,
+    run: (client, args) => client.request("GET", apiPath(["profiles", args.perfilId, "cover-letter"], { jobId: args.vagaId })),
+  }),
+  tool({
+    name: "jobdragonquest_preparar_entrevista",
+    title: "Preparar entrevista",
+    description:
+      "Perguntas prováveis para a vaga, com dicas tiradas do perfil (projetos e tempo de cada tecnologia) e as lacunas para responder com honestidade. Bom para simular a entrevista com a pessoa.",
+    schema: z.object({ vagaId: id, perfilId: id }),
+    readOnly: true,
+    run: (client, args) => client.request("GET", apiPath(["jobs", args.vagaId, "interview"], { profileId: args.perfilId })),
+  }),
+  tool({
+    name: "jobdragonquest_mercado",
+    title: "Competências e salários nas vagas da conta",
+    description:
+      "Competências mais pedidas (marcando as que o perfil não tem) e faixa salarial por moeda e período, a partir das vagas que a pessoa coletou. Não usa dados de fora.",
+    schema: z.object({ perfilId: id.optional(), cargo: text(160).optional() }),
+    readOnly: true,
+    run: async (client, args) => ({
+      competencias: await client.request("GET", apiPath(["career", "skills"], { profileId: args.perfilId, title: args.cargo })),
+      salarios: await client.request("GET", apiPath(["career", "salary"], { title: args.cargo })),
+    }),
+  }),
+  tool({
     name: "jobdragonquest_compatibilidade",
     title: "Compatibilidade da vaga",
     description: "Nota de 0 a 100 da vaga para cada perfil, com o motivo de cada requisito e os impedimentos eliminatórios.",

@@ -136,3 +136,14 @@ Cada aviso traz `message` (pronta, em português) e campos estruturados (`type`,
 ### Modo de automação do perfil
 
 `automationMode` no perfil (`OFF`, `REVIEW` padrão, `AUTOMATIC`) decide o que a coleta automática faz com uma vaga compatível (recomendação `APPLY`): `OFF` só guarda a vaga; `REVIEW` cria a candidatura como `RECOMMENDED`, que aparece na fila de revisão do painel (`GET /applications?state=RECOMMENDED`; aprovar e descartar usam `POST /applications/batch/transitions` para `PREPARED` ou `CLOSED`); `AUTOMATIC` cria direto como `PREPARED`. Nenhum modo envia candidatura a site: o envio é sempre da pessoa.
+
+### Currículo, carta e carreira
+
+| Rota | Descrição |
+|---|---|
+| `GET /profiles/{id}/resume?jobId` | Currículo montado do perfil. Com `jobId`, o que a vaga pede vem primeiro e com `highlighted`; nada é acrescentado. O painel imprime em PDF pelo navegador |
+| `GET /profiles/{id}/cover-letter?jobId` | Carta com os dados do perfil, ou a carta salva com `{empresa}` e `{cargo}` trocados. `missing` lista o que falta no perfil |
+| `GET /jobs/{id}/interview?profileId` | Perguntas prováveis com dicas tiradas do perfil (projetos e tempo de cada tecnologia) e as lacunas |
+| `GET /career/skills?profileId&title` | Competências mais pedidas nas vagas da conta (até 300 mais recentes), com `inProfile` |
+| `GET /career/salary?title` | Faixa salarial por moeda e período: `min`, `median`, `max` e número de vagas |
+

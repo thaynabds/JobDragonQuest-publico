@@ -14,6 +14,7 @@ const NAV = [
   { to: "/vagas", key: "nav.jobs" },
   { to: "/fontes", key: "nav.sources" },
   { to: "/perfis", key: "nav.profiles" },
+  { to: "/carreira", key: "nav.career" },
   { to: "/configuracoes", key: "nav.settings" },
 ] as const;
 
