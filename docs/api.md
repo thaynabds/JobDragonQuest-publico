@@ -65,6 +65,7 @@ Resultado da análise: `score` (0–100 ou null), `recommendation` (APPLY, REVIE
 | `PUT /applications/{id}` | Edita os dados. Exige `version` |
 | `DELETE /applications/{id}` | 204 |
 | `POST /applications/{id}/transitions` | `{toState, source, evidence, confidence?, occurredAt?, nextAction?, nextDueAt?}`. 200 `APPLIED` ou `NOTED`. 202 `SUGGESTED` quando a confiança é baixa. 409 `invalid_transition` |
+| `POST /applications/batch/transitions` | `{ids (1 a 100), toState, evidence}`. Mudança manual em lote, cada candidatura na sua transação. 200 `{updated, failed[{id, code}]}`: candidatura de outra conta ou inexistente volta como `not_found`; mesma etapa vira anotação e não conta |
 | `POST /applications/{id}/notes` | `{text}`: anotação da pessoa |
 | `POST /applications/{id}/suggestions/{eventId}/accept` | Aplica a sugestão, conferindo de novo a transição |
 | `POST /applications/{id}/suggestions/{eventId}/dismiss` | 204 |

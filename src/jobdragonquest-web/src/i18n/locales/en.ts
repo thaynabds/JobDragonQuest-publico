@@ -548,4 +548,13 @@ export const en: Messages = {
   "error.invalid_skill_time": "Invalid skill time: up to 60 years, 11 months and 30 days.",
   "error.invalid_period": "The end date cannot be before the start date.",
   "error.profile_limit": "You reached the profile limit.",
+  "board.selectCard": "Select {title}",
+  "board.selected": "{count} selected",
+  "board.batchState": "Move to",
+  "board.batchEvidence": "Reason (kept in the history)",
+  "board.batchApply": "Move selected",
+  "board.batchDiscard": "Discard selected",
+  "board.batchDiscardReason": "Discarded in bulk from the board",
+  "board.batchClear": "Clear selection",
+  "board.batchDone": "{updated} application(s) updated. {failed} unchanged.",
 };

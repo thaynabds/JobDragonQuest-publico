@@ -547,6 +547,15 @@ export const ptBR = {
   "error.invalid_skill_time": "Tempo de competência inválido: até 60 anos, 11 meses e 30 dias.",
   "error.invalid_period": "A data de fim não pode ser antes da data de início.",
   "error.profile_limit": "Você chegou ao limite de perfis.",
+  "board.selectCard": "Selecionar {title}",
+  "board.selected": "{count} selecionada(s)",
+  "board.batchState": "Mover para",
+  "board.batchEvidence": "Motivo (fica no histórico)",
+  "board.batchApply": "Mover selecionadas",
+  "board.batchDiscard": "Descartar selecionadas",
+  "board.batchDiscardReason": "Descartada em lote pelo quadro",
+  "board.batchClear": "Limpar seleção",
+  "board.batchDone": "{updated} candidatura(s) atualizada(s). {failed} não mudaram.",
 };
 
 export type MessageKey = keyof typeof ptBR;

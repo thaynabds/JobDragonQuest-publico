@@ -4,6 +4,7 @@ import type {
   ApplicationDetail,
   ApplicationEvent,
   ApplicationState,
+  BatchTransitionResult,
   CreatedToken,
   BoardColumn,
   BulkCreateResult,
@@ -94,6 +95,8 @@ export const api = {
     applicationId: string,
     body: { toState: ApplicationState; source: EventSource; evidence: string; nextAction?: string | null },
   ) => request<TransitionResult>(`/api/v1/applications/${id(applicationId)}/transitions`, { method: "POST", body }),
+  batchTransition: (body: { ids: string[]; toState: ApplicationState; evidence: string }) =>
+    request<BatchTransitionResult>("/api/v1/applications/batch/transitions", { method: "POST", body }),
   addNote: (applicationId: string, text: string) =>
     request<ApplicationEvent>(`/api/v1/applications/${id(applicationId)}/notes`, { method: "POST", body: { text } }),
   acceptSuggestion: (applicationId: string, eventId: string) =>

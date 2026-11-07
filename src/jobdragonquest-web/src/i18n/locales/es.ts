@@ -548,4 +548,13 @@ export const es: Messages = {
   "error.invalid_skill_time": "Tiempo de competencia inválido: hasta 60 años, 11 meses y 30 días.",
   "error.invalid_period": "La fecha de fin no puede ser anterior a la de inicio.",
   "error.profile_limit": "Llegaste al límite de perfiles.",
+  "board.selectCard": "Seleccionar {title}",
+  "board.selected": "{count} seleccionada(s)",
+  "board.batchState": "Mover a",
+  "board.batchEvidence": "Motivo (queda en el historial)",
+  "board.batchApply": "Mover seleccionadas",
+  "board.batchDiscard": "Descartar seleccionadas",
+  "board.batchDiscardReason": "Descartada en lote desde el tablero",
+  "board.batchClear": "Limpiar selección",
+  "board.batchDone": "{updated} postulación(es) actualizada(s). {failed} sin cambios.",
 };
