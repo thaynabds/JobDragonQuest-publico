@@ -8,17 +8,17 @@
 
 > Language: [Português](README.md) | **English** | [Español](README.es.md)
 
-[![Version](https://img.shields.io/badge/version-0.3.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.3.0)
+[![Version](https://img.shields.io/badge/version-0.4.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.4.0)
 [![License](https://img.shields.io/badge/license-all%20rights%20reserved-6b7280)](#license)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-191%20passing-16a34a)](#quality-and-security)
+[![Tests](https://img.shields.io/badge/tests-295%20passing-16a34a)](#quality-and-security)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobdragonquest-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobdragonquest-api)
 [![React](https://img.shields.io/badge/React-19-0891b2)](src/jobdragonquest-web)
 
 **A career management and job application automation platform for jobs and internships, in Brazil and abroad.**
 
-**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.3.0
+**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.4.0
 
 ## Quick install
 
@@ -77,7 +77,7 @@ JobDragonQuest brings it all into one explainable hub:
 
 ## Features
 
-### Implemented (v0.3.0)
+### Implemented (v0.4.0)
 
 | Area | What it does |
 |---|---|
@@ -199,7 +199,7 @@ The full backlog is in the [repository issues](https://github.com/thaynabds/JobD
 
 ## Quality and security
 
-- **191 automated tests**: 127 in the API (unit and full-application integration tests), 43 in the dashboard, 11 in the MCP server and 10 in the Congo plugin. Plus checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobDragonQuest through MCP, 23 for installation, and the real collection test.
+- **295 automated tests**: 195 in the API (unit and full-application integration tests), 66 in the dashboard, 18 in the MCP server, 12 in the Congo plugin and 4 in the browser extension. Plus checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobDragonQuest through MCP, 29 for installation, and the real collection test.
 - **Coverage:** the build fails below 80% line coverage in critical modules. Overall API coverage is 93.6% today.
 - **Security** ([details](docs/seguranca.md)):
   - per-user isolation (someone else's resource returns 404);
