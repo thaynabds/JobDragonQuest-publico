@@ -16,7 +16,7 @@ async function get(url) {
 
 const page = await get(`${BASE}/`);
 check("painel responde 200", page.status === 200, page.status);
-check("página do JobFly com o ponto de montagem", page.text.includes('<div id="root">') && page.text.includes("<title>JobFly</title>"));
+check("página do JobDragonQuest com o ponto de montagem", page.text.includes('<div id="root">') && page.text.includes("<title>JobDragonQuest</title>"));
 check("CSP do build de produção presente", page.text.includes("Content-Security-Policy") && page.text.includes("script-src 'self'"));
 
 const deep = await get(`${BASE}/fontes`);

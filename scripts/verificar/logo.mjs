@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { check, finish, ROOT, run } from "./lib.mjs";
 
 const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
-const images = ["docs/assets/logo.png", "src/jobfly-web/public/logo.png", "src/jobfly-web/public/logo-192.png", "src/jobfly-web/public/favicon-32.png", "src/jobfly-web/public/favicon-64.png"];
+const images = ["docs/assets/logo.png", "src/jobdragonquest-web/public/logo.png", "src/jobdragonquest-web/public/logo-192.png", "src/jobdragonquest-web/public/favicon-32.png", "src/jobdragonquest-web/public/favicon-64.png"];
 for (const image of images) {
   const path = join(ROOT, image);
   const data = existsSync(path) ? readFileSync(path) : Buffer.alloc(0);
@@ -18,7 +18,7 @@ for (const image of images) {
 }
 check("docs/assets/logo.png com 512 px", readFileSync(join(ROOT, images[0])).readUInt32BE(16) === 512);
 
-const web = (file) => readFileSync(join(ROOT, "src", "jobfly-web", file), "utf8");
+const web = (file) => readFileSync(join(ROOT, "src", "jobdragonquest-web", file), "utf8");
 check("ícone da aba usa a logo", /href="\/favicon-32\.png"/.test(web("index.html")) && /apple-touch-icon" href="\/logo-192\.png"/.test(web("index.html")));
 check("barra lateral usa a logo", web("src/components/Layout.tsx").includes('src="/logo.png"'));
 check("tela de login usa a logo", web("src/pages/LoginPage.tsx").includes('src="/logo.png"'));
@@ -29,8 +29,8 @@ for (const readme of ["README.md", "README.en.md", "README.es.md"]) {
   check(`${readme} abre com a logo e texto alternativo`, /^<p align="center">\s*<img src="docs\/assets\/logo\.png" alt="[^"]{20,}"/.test(text));
 }
 
-const pdf = run("pdfimages", ["-list", "docs/resumo-jobfly.pdf"]);
+const pdf = run("pdfimages", ["-list", "docs/resumo-jobdragonquest.pdf"]);
 const rows = pdf.stdout.split("\n").filter((line) => /^\s*\d+\s+\d+\s+image/.test(line));
 check(`resumo em PDF tem a logo (${rows.length} imagem)`, pdf.status === 0 && rows.length >= 1, pdf.stderr);
-check("HTML do resumo versionado com a logo", readFileSync(join(ROOT, "docs", "resumo", "resumo-jobfly.html"), "utf8").includes("../assets/logo.png"));
+check("HTML do resumo versionado com a logo", readFileSync(join(ROOT, "docs", "resumo", "resumo-jobdragonquest.html"), "utf8").includes("../assets/logo.png"));
 finish("LOGO_OK");

@@ -23,7 +23,7 @@ check("OpenCode não lê .env, data/ nem a auditoria pessoal",
 check("instruções do projeto carregadas", Array.isArray(config?.instructions) && config.instructions.includes("AGENTS.md"));
 
 const agents = existsSync(join(ROOT, "AGENTS.md")) ? readFileSync(join(ROOT, "AGENTS.md"), "utf8") : "";
-check("AGENTS.md existe com as regras do projeto", agents.includes("crédito") && agents.includes(".env") && agents.includes("src/jobfly-api"));
+check("AGENTS.md existe com as regras do projeto", agents.includes("crédito") && agents.includes(".env") && agents.includes("src/jobdragonquest-api"));
 
 const resolved = run("opencode", ["debug", "config"], { timeout: 90_000 });
 check("OpenCode aceita a configuração do projeto", resolved.status === 0 && resolved.stdout.includes('"edit": "deny"'), resolved.stderr.slice(0, 300));

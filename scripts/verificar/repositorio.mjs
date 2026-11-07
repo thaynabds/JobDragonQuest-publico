@@ -20,7 +20,7 @@ for (const branch of ["main", "develop"]) {
   check(`${branch} publicada (local = origin)`, local !== "" && local === remote, `${local} ${remote}`);
 }
 
-const repo = run("gh", ["repo", "view", "thaynabds/JobFly", "--json", "visibility", "-q", ".visibility"]);
+const repo = run("gh", ["repo", "view", "thaynabds/JobDragonQuest", "--json", "visibility", "-q", ".visibility"]);
 check("repositório é privado", repo.stdout.trim() === "PRIVATE", repo.stdout || repo.stderr);
 
 const messages = run("git", ["log", "--all", "--format=%H%n%B%n%an <%ae>%n%cn <%ce>"]);

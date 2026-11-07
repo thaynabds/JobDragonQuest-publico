@@ -10,13 +10,13 @@ if [[ "$(stat -c '%a' "$env_file")" != "600" ]]; then
 fi
 
 # Origens extras passadas na linha de comando (ex.: endereço do Tailscale) valem mais que as do .env.
-override_origins="${JOBFLY_ALLOWED_ORIGINS:-}"
+override_origins="${JOBDRAGONQUEST_ALLOWED_ORIGINS:-}"
 set -a
 # shellcheck disable=SC1090
 source "$env_file"
 set +a
 if [[ -n "$override_origins" ]]; then
-  export JOBFLY_ALLOWED_ORIGINS="$override_origins"
+  export JOBDRAGONQUEST_ALLOWED_ORIGINS="$override_origins"
 fi
-cd "$root/src/jobfly-api"
+cd "$root/src/jobdragonquest-api"
 exec ./mvnw -q spring-boot:run

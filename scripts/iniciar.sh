@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sobe o JobFly inteiro com um comando: PostgreSQL local, API e painel web (build de produção).
+# Sobe o JobDragonQuest inteiro com um comando: PostgreSQL local, API e painel web (build de produção).
 #   scripts/iniciar.sh         sobe tudo e mostra o endereço do painel
 #   scripts/iniciar.sh parar   para o painel, a API e o banco
 # Logs em data/logs (fora do Git). Tudo escuta só em 127.0.0.1.
@@ -55,7 +55,7 @@ if ! curl -s -o /dev/null --max-time 2 http://127.0.0.1:8080/actuator/health; th
 fi
 wait_for http://127.0.0.1:8080/actuator/health api 600
 
-cd "$root/src/jobfly-web"
+cd "$root/src/jobdragonquest-web"
 [[ -d node_modules ]] || npm ci --no-audit --no-fund
 if ! curl -s -o /dev/null --max-time 2 http://127.0.0.1:5173/; then
   npm run build > "$logs/web-build.log" 2>&1
@@ -65,5 +65,5 @@ fi
 wait_for http://127.0.0.1:5173/ web 120
 
 echo
-echo "JobFly pronto: http://127.0.0.1:5173"
+echo "JobDragonQuest pronto: http://127.0.0.1:5173"
 echo "Para parar: scripts/iniciar.sh parar"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Gera docs/resumo-jobfly.pdf a partir de docs/resumo/resumo-jobfly.html com o Chrome/Chromium sem interface.
+# Gera docs/resumo-jobdragonquest.pdf a partir de docs/resumo/resumo-jobdragonquest.html com o Chrome/Chromium sem interface.
 # Uso: scripts/gerar-resumo-pdf.sh <versão>   (ex.: 0.3.0)
 set -euo pipefail
 version="${1:?informe a versão, ex.: 0.3.0}"
@@ -11,8 +11,8 @@ work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 mkdir -p "$work/resumo" "$work/assets"
 cp "$root/docs/assets/logo.png" "$work/assets/logo.png"
-sed "s/{{VERSAO}}/$version/" "$root/docs/resumo/resumo-jobfly.html" > "$work/resumo/resumo-jobfly.html"
+sed "s/{{VERSAO}}/$version/" "$root/docs/resumo/resumo-jobdragonquest.html" > "$work/resumo/resumo-jobdragonquest.html"
 "$browser" --headless=new --disable-gpu --no-sandbox --user-data-dir="$work/perfil" --no-pdf-header-footer \
-  --print-to-pdf="$work/resumo.pdf" "file://$work/resumo/resumo-jobfly.html" >/dev/null 2>&1
-mv "$work/resumo.pdf" "$root/docs/resumo-jobfly.pdf"
-echo "PDF gerado: docs/resumo-jobfly.pdf (versão $version)"
+  --print-to-pdf="$work/resumo.pdf" "file://$work/resumo/resumo-jobdragonquest.html" >/dev/null 2>&1
+mv "$work/resumo.pdf" "$root/docs/resumo-jobdragonquest.pdf"
+echo "PDF gerado: docs/resumo-jobdragonquest.pdf (versão $version)"

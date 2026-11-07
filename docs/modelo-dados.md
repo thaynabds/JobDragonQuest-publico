@@ -1,6 +1,6 @@
 # 03. Modelo de dados
 
-Migrações: `src/jobfly-api/src/main/resources/db/migration/` (Flyway): V1 esquema inicial, V2 fontes vigiadas, V3 reserva de coleta. Diagrama ER completo em [diagramas.md](diagramas.md). O Hibernate só **valida** o esquema (`ddl-auto: validate`): toda mudança passa por uma nova migração versionada.
+Migrações: `src/jobdragonquest-api/src/main/resources/db/migration/` (Flyway): V1 esquema inicial, V2 fontes vigiadas, V3 reserva de coleta. Diagrama ER completo em [diagramas.md](diagramas.md). O Hibernate só **valida** o esquema (`ddl-auto: validate`): toda mudança passa por uma nova migração versionada.
 
 ## Convenções
 

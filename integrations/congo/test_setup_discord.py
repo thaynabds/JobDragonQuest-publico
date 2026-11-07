@@ -21,10 +21,10 @@ HERE = Path(__file__).resolve().parent
 
 @unittest.skipIf(discord is None, "discord.py não instalado neste Python")
 class SetupTest(unittest.TestCase):
-    def test_registers_private_jobfly_group(self):
+    def test_registers_private_jobdragonquest_group(self):
         with tempfile.TemporaryDirectory() as tmp:
-            os.environ["JOBFLY_CONGO_CONFIG"] = str(Path(tmp) / "congo.env")
-            spec = importlib.util.spec_from_file_location("congo_plugin_jobfly", HERE / "jobfly.py")
+            os.environ["JOBDRAGONQUEST_CONGO_CONFIG"] = str(Path(tmp) / "congo.env")
+            spec = importlib.util.spec_from_file_location("congo_plugin_jobdragonquest", HERE / "jobdragonquest.py")
             plugin = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(plugin)
 
@@ -38,7 +38,7 @@ class SetupTest(unittest.TestCase):
 
                 client.store = Store()
                 plugin.setup(client)
-                group = client.tree.get_command("jobfly")
+                group = client.tree.get_command("jobdragonquest")
                 await client.close()
                 return group
 

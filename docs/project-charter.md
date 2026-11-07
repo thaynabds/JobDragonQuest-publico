@@ -1,10 +1,10 @@
-# Termo de Abertura do Projeto (Project Charter): JobFly
+# Termo de Abertura do Projeto (Project Charter): JobDragonQuest
 
 | Item | Valor |
 |---|---|
-| Projeto | JobFly: plataforma de gestão de carreira e automação de candidaturas |
+| Projeto | JobDragonQuest: plataforma de gestão de carreira e automação de candidaturas |
 | Responsável | Thayná Batista da Silva |
-| Repositório | https://github.com/thaynabds/JobFly (privado) |
+| Repositório | https://github.com/thaynabds/JobDragonQuest (privado) |
 | Data de abertura | 05/11/2026 |
 | Versão deste documento | 1.1 (06/11/2026, entrega v0.2.0) |
 
@@ -53,7 +53,7 @@ Princípios: veracidade (nunca inventar dados do perfil), respeito às regras da
 
 - Integração com Gmail e Outlook (leitura, classificação e respostas). Planejada para a v0.3.0.
 - Agentes de IA (análise de perguntas eliminatórias, revisão da candidatura e documentos personalizados).
-- Servidor MCP próprio do JobFly e extensão de navegador.
+- Servidor MCP próprio do JobDragonQuest e extensão de navegador.
 - Envio automático de formulários de candidatura.
 - Coleta automática em LinkedIn, Indeed, Glassdoor, Instagram e Facebook, proibida pelos termos de uso dessas plataformas. Elas ficam como fontes assistidas.
 - Implantação em nuvem, aplicativo móvel e múltiplos idiomas além de pt-BR e en.

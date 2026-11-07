@@ -15,7 +15,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const I18N = join(ROOT, "src", "jobfly-web", "src", "i18n");
+const I18N = join(ROOT, "src", "jobdragonquest-web", "src", "i18n");
 const MAX_RESPONSE = 64 * 1024;
 const TIMEOUT_MS = 20_000;
 

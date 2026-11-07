@@ -4,12 +4,12 @@ Este arquivo orienta ferramentas de IA que trabalham neste repositório. Ele é 
 
 ## Projeto
 
-O JobFly é uma plataforma de gestão de carreira e candidaturas. Visão geral no [README](README.md), requisitos em [docs/requisitos.md](docs/requisitos.md) e arquitetura em [docs/arquitetura.md](docs/arquitetura.md).
+O JobDragonQuest é uma plataforma de gestão de carreira e candidaturas. Visão geral no [README](README.md), requisitos em [docs/requisitos.md](docs/requisitos.md) e arquitetura em [docs/arquitetura.md](docs/arquitetura.md).
 
 | Parte | Pasta | Stack | Verificação |
 |---|---|---|---|
-| API | `src/jobfly-api` | Java 21, Spring Boot 4.1, PostgreSQL, Flyway | `./mvnw verify` (testes e cobertura mínima de 80% nos pacotes críticos) |
-| Painel | `src/jobfly-web` | React 19, Vite 7, TypeScript estrito | `npm run verify` (tipos, testes e build) |
+| API | `src/jobdragonquest-api` | Java 21, Spring Boot 4.1, PostgreSQL, Flyway | `./mvnw verify` (testes e cobertura mínima de 80% nos pacotes críticos) |
+| Painel | `src/jobdragonquest-web` | React 19, Vite 7, TypeScript estrito | `npm run verify` (tipos, testes e build) |
 | Execução local | `scripts/` | Bash e Python | `scripts/iniciar.sh`, `scripts/testar-api.py`, `scripts/testar-coleta.py` |
 
 ## Regras obrigatórias

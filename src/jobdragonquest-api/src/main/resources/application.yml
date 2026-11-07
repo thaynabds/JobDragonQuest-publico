@@ -1,0 +1,69 @@
+# Configuração do JobDragonQuest. Segredos e endereços vêm de variáveis de ambiente: nada sensível fica aqui.
+spring:
+  application:
+    name: jobdragonquest-api
+  datasource:
+    url: ${JOBDRAGONQUEST_DB_URL:jdbc:postgresql://127.0.0.1:5432/jobdragonquest}
+    username: ${JOBDRAGONQUEST_DB_USER:jobdragonquest}
+    password: ${JOBDRAGONQUEST_DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: ${JOBDRAGONQUEST_PORT:8080}
+  # Só esta máquina alcança a API. Para expor (atrás de um proxy com HTTPS), defina JOBDRAGONQUEST_ADDRESS=0.0.0.0.
+  address: ${JOBDRAGONQUEST_ADDRESS:127.0.0.1}
+  # Atrás de um proxy reverso, defina JOBDRAGONQUEST_FORWARD_HEADERS=native para confiar em X-Forwarded-*.
+  forward-headers-strategy: ${JOBDRAGONQUEST_FORWARD_HEADERS:none}
+  error:
+    include-stacktrace: never
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: never
+
+jobdragonquest:
+  security:
+    # Segredo HMAC do JWT em Base64, com no mínimo 32 bytes. A aplicação não sobe sem ele.
+    jwt-secret: ${JOBDRAGONQUEST_JWT_SECRET:}
+    issuer: jobdragonquest
+    audience: jobdragonquest-api
+    access-token-ttl: PT15M
+    refresh-token-ttl: P14D
+    # Marque false só em desenvolvimento local sem HTTPS.
+    secure-cookies: ${JOBDRAGONQUEST_SECURE_COOKIES:true}
+    allowed-origins: ${JOBDRAGONQUEST_ALLOWED_ORIGINS:http://127.0.0.1:5173,http://localhost:5173}
+    login:
+      max-attempts-per-window: 10
+      window: PT5M
+      lockout-after-failures: 5
+      lockout-duration: PT15M
+  applications:
+    # Dias sem evidência nova até uma candidatura ativa aparecer como "sem atualização".
+    stale-after-days: 21
+    duplicate-window-days: 60
+    # Abaixo desta confiança, uma mudança vinda de agente ou e-mail vira sugestão (RN-03).
+    min-automatic-confidence: 0.70
+  registration:
+    # Num servidor público, só estes e-mails podem criar conta (separados por vírgula). Vazio: qualquer um (uso local).
+    allowed-emails: ${JOBDRAGONQUEST_ALLOWED_EMAILS:}
+  notifications:
+    # Intervalo mínimo entre duas verificações de pendências da mesma pessoa.
+    refresh-interval: PT30S
+    # Avisos lidos mais antigos que isto são apagados.
+    retention: P90D

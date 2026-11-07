@@ -1,4 +1,4 @@
-# Requisitos do JobFly
+# Requisitos do JobDragonQuest
 
 Requisitos numerados e rastreáveis. Cada requisito aparece nas issues, nos casos de uso ([casos-de-uso.md](casos-de-uso.md)), nas histórias ([user-stories.md](user-stories.md)) e nos testes.
 
@@ -34,7 +34,7 @@ Requisitos numerados e rastreáveis. Cada requisito aparece nas issues, nos caso
 | [RF21] | O sistema deve conectar Gmail e Outlook por OAuth com escopos mínimos, classificar mensagens e relacioná-las às candidaturas, nunca apagando e-mails | ⬜ | v0.3.0 |
 | [RF22] | O sistema deve analisar perguntas de formulário potencialmente eliminatórias e sugerir respostas verdadeiras | ⬜ | Agentes de IA |
 | [RF23] | O sistema deve revisar a candidatura inteira antes do envio | ⬜ | Agentes de IA |
-| [RF24] | O sistema deve oferecer ferramentas MCP com permissões controladas | ✅ | ADR-007, `src/jobfly-mcp`, `scripts/verificar/mcp-real.mjs` |
+| [RF24] | O sistema deve oferecer ferramentas MCP com permissões controladas | ✅ | ADR-007, `src/jobdragonquest-mcp`, `scripts/verificar/mcp-real.mjs` |
 | [RF25] | O sistema deve importar histórico de candidaturas em CSV, com relatório de duplicatas | ⬜ | Roadmap |
 | [RF26] | O sistema deve avisar a pessoa de forma perceptível (pop-up, notificação do sistema e som) sobre etapas, pendências, prazos e vagas novas, com configuração por etapa, tipo e fonte, horário de silêncio e adiamento | ✅ | `NotificationIntegrationTest`, `notifications.test.tsx`, `SettingsPage.test.tsx` |
 | [RF27] | O sistema deve oferecer tokens de acesso pessoal revogáveis para integrações, sem expor a senha | ✅ | `PersonalTokenIntegrationTest`, `TokensSection.test.tsx` |

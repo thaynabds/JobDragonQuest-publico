@@ -30,7 +30,7 @@ Esta é a pesquisa de viabilidade de 05/11/2026. Nenhuma destas integrações es
 |---|---|---|
 | Instagram | ⚠️ | A Graph API faz busca por hashtag só com conta Business ou Creator, app aprovado na revisão da Meta e limite de 30 hashtags distintas em 7 dias. Alternativa sem restrição: colar link, texto ou imagem da publicação, com extração por IA e sinais de fraude |
 | Facebook (grupos) | ❌ automático | A Meta descontinuou a Groups API em 2024. Entradas: link, texto ou imagem colados, extensão |
-| LinkedIn (publicações) | ❌ automático | Mesma restrição das vagas. Entradas: link e extensão (a pessoa clica em "Enviar ao JobFly" na publicação aberta) |
+| LinkedIn (publicações) | ❌ automático | Mesma restrição das vagas. Entradas: link e extensão (a pessoa clica em "Enviar ao JobDragonQuest" na publicação aberta) |
 
 ## E-mail e agenda
 
@@ -50,7 +50,7 @@ Os tokens OAuth serão guardados cifrados (AES-GCM, chave fora do banco). Senha 
 | Claude (Anthropic API) | ✅ | Chave de API e créditos. Fica atrás da interface `LlmProvider` |
 | OpenAI | ✅ | Chave de API e créditos |
 | Modelo local (Ollama ou llama.cpp) | ✅ | Máquina com RAM ou GPU suficientes. Bom para classificação de e-mail sem enviar conteúdo para fora |
-| MCP | ✅ | Servidor `jobfly-mcp` (stdio) para Claude Desktop e Claude Code, chamando a API com token de escopo restrito |
+| MCP | ✅ | Servidor `jobdragonquest-mcp` (stdio) para Claude Desktop e Claude Code, chamando a API com token de escopo restrito |
 
 ## Candidatura automática
 
@@ -58,13 +58,13 @@ Envio automático de formulário só em ambiente autorizado. O primeiro alvo pre
 
 ## Congo Grey Parrot (Discord)
 
-O plugin `integrations/congo/jobfly.py` roda dentro do bot de Discord do Congo Grey Parrot e usa a API do JobFly com um token pessoal.
+O plugin `integrations/congo/jobdragonquest.py` roda dentro do bot de Discord do Congo Grey Parrot e usa a API do JobDragonQuest com um token pessoal.
 
 | Item | Como funciona |
 |---|---|
-| Instalação | `scripts/conectar-congo.sh` copia o plugin para `congo-grey-parrot-discord/plugins/` e grava `~/.config/jobfly/congo.env` (permissão 600). O histórico do repositório do Congo não muda |
-| Ativação | No Discord: `/funcoes ativar jobfly`. Plugins do Congo começam desligados |
-| Comandos | `/jobfly resumo`, `/jobfly avisos`, `/jobfly pendencias`. Só a dona configurada recebe resposta, sempre privada (ephemeral) |
+| Instalação | `scripts/conectar-congo.sh` copia o plugin para `congo-grey-parrot-discord/plugins/` e grava `~/.config/jobdragonquest/congo.env` (permissão 600). O histórico do repositório do Congo não muda |
+| Ativação | No Discord: `/funcoes ativar jobdragonquest`. Plugins do Congo começam desligados |
+| Comandos | `/jobdragonquest resumo`, `/jobdragonquest avisos`, `/jobdragonquest pendencias`. Só a dona configurada recebe resposta, sempre privada (ephemeral) |
 | Avisos | A cada 60 s (mínimo 30), os avisos com o canal "sistema" ligado viram mensagem direta, uma vez cada. Não marca como entregue: o painel aberto também mostra o pop-up |
 | Privacidade | Respeita "esconder empresa e cargo"; mensagens sem menções (`allowed_mentions` vazio) e cortadas em 1800 caracteres |
 | Segurança | API só local por HTTP ou HTTPS, sem redirecionamento, resposta limitada a 1 MiB; o token nunca aparece em mensagem, log ou erro; configuração com permissão frouxa é recusada |
