@@ -16,6 +16,7 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 | v0.2.0 | 06/11/2026 | Fontes vigiadas em lote para vários perfis, coleta de ATS públicos com agendador, lembretes de fontes assistidas, painel web completo pt/en, documentação obrigatória, Git Flow, CI e correções achadas na navegação real e na revisão com o OpenCode (#31, #32, #36, #38) |
 | v0.2.1 | 06/11/2026 | Correção da regra de crédito do AGENTS.md (#50) |
 | v0.3.0 | 07/11/2026 | Avisos configuráveis com pop-up, notificação do sistema, som e sino (#55, #56); tokens de acesso pessoal (#57); servidor MCP com 30 ferramentas (#58); instalação em um comando e conexão do MCP (#59); README com prompt pronto para IA e deploy opcional gratuito (#54); nova logo (#61); painel em português, inglês e espanhol com idiomas automatizados (#63); central de acessibilidade com os temas do Congo e os recursos do a11y-widget (#64); plugin do Congo Grey Parrot para o Discord (#65) |
+| v0.3.1 | 07/11/2026 | Espelho público com histórico limpo e script que audita antes de publicar (#89); PostgreSQL local resistente a mover a pasta (#87) |
 | v0.3.2 | 07/11/2026 | Correção da conexão do MCP com o Claude Code (registro por `claude mcp add-json`), token colado aceito mesmo com marcadores de colagem e mensagem de sucesso só quando conecta (#119) |
 | v0.4.0 | 07/11/2026 | Perfil completo (13 senioridades, competências em anos, meses e dias, idiomas por nome); filtros do perfil na coleta e na compatibilidade; ações em lote; contatos do processo; favoritas e vagas parecidas; modo de automação com fila de revisão; vaga pelo link e importação por CSV; perguntas e revisão antes de enviar; extensão do navegador; currículo e carta por vaga, entrevista, salário e competências; documentos e atualização do currículo por PDF, Word, link e foto; acessibilidade salva na conta; MCP com 30 ferramentas (#96 a #127) |
 
@@ -34,7 +35,7 @@ Medição da v0.2.0:
 | 3 | Buscar vagas automaticamente em fontes integradas | ✅ Greenhouse, Lever, SmartRecruiters e Ashby, com agendador |
 | 4 | Identificar oportunidades compatíveis | ✅ |
 | 5 | Selecionar o perfil correto | ✅ |
-| 6 | Gerar documentos personalizados | ⬜ Agentes de IA |
+| 6 | Gerar documentos personalizados | ✅ currículo e carta ajustados à vaga, só com dados do perfil (#118) |
 | 7 | Candidatura de teste em ambiente autorizado | ⬜ |
 | 8 | Registrar o resultado da candidatura | ✅ |
 | 9 | Identificar mensagens de processos seletivos | ⬜ 🔑 depende do item 2 |
@@ -54,23 +55,22 @@ Medição da v0.2.0:
 | # | Cenário | Situação |
 |---|---|---|
 | 1–4 | Registrar candidatura do LinkedIn, do site da empresa, do Instagram e de grupo do Facebook | ✅ |
-| 5 | Adicionar por link | 🟡 URL validada, canonicalizada e deduplicada. Falta extrair a página (exige proteção contra SSRF) |
+| 5 | Adicionar por link | ✅ a página é lida com proteção contra SSRF e a vaga é extraída (#114) |
 | 6 | Por encaminhamento de e-mail | ⬜ 🔑 |
-| 7 | Por extensão de navegador | ⬜ A API já aceita `origin=BROWSER_EXTENSION` com `Idempotency-Key` |
-| 8 | Importar histórico | ⬜ |
+| 7 | Por extensão de navegador | ✅ extensão gratuita salva a vaga da página aberta (#116) |
+| 8 | Importar histórico | ✅ importação por CSV com relatório de duplicatas (#114) |
 | 9–10 | Relacionar e-mail a candidatura e atualizar etapa | 🟡 A atualização por evidência está pronta |
 | 11 | Monitorar portais de empresas | ✅ por ATS público (fontes vigiadas). Páginas sem ATS ficam como fontes assistidas |
 | 12 | Vagas em publicações e imagens | 🟡 fontes assistidas com lembrete. A extração por IA está pendente |
-| 13–16 | Perguntas eliminatórias e revisão da candidatura | ⬜ Agentes de IA |
+| 13–16 | Perguntas eliminatórias e revisão da candidatura | ✅ análise de perguntas com respostas só a partir do perfil e revisão antes de enviar (#115) |
 | 17 | Impedir duplicadas | ✅ |
 | 18 | Sem informação suficiente, sem mudança | ✅ |
 | 19 | Todas as candidaturas num só painel | ✅ |
 
 ## Próximas entregas
 
-1. **v0.3.0: Gmail.** OAuth com escopos mínimos, classificação de mensagens, vínculo com a candidatura (com confirmação quando houver dúvida) e marcadores. Nunca apagar.
-2. **Camada de IA** (`LlmProvider`: Claude, OpenAI ou local): perguntas eliminatórias, revisão da candidatura, documentos só com dados reais, extração de vagas de publicações.
-3. **Servidor MCP** do JobDragonQuest com token de escopo restrito.
-4. **Extensão de navegador** "Enviar ao JobDragonQuest".
-5. **Documentos versionados**, anexos e importação CSV.
-6. **Operação:** Docker Compose, Redis para o limite de tentativas distribuído, OpenTelemetry, medição do p95 ([RNF07]), exportação de dados (LGPD).
+1. **E-mail (RF21).** Gmail e Outlook por OAuth com escopos mínimos, classificação de mensagens, vínculo com a candidatura (com confirmação quando houver dúvida) e marcadores. Nunca apagar. Destrava os critérios 2, 9, 10 e 12 e os cenários 6, 9 e 10.
+2. **Camada de IA opcional** (`LlmProvider`: Claude, OpenAI ou local) para extrair vagas de publicações e imagens (cenário 12), sempre sem inventar dado do perfil.
+3. **Testes ponta a ponta** do fluxo coleta → análise → candidatura no navegador.
+4. **Operação:** Docker Compose, Redis para o limite de tentativas distribuído, OpenTelemetry e logs estruturados, medição do p95 ([RNF07]).
+5. **Privacidade:** exportação dos dados da conta ([RNF12], LGPD).
