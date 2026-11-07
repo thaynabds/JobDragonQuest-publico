@@ -1000,3 +1000,8 @@ a:focus-visible {
 .star:focus-visible {
   border-color: var(--primary);
 }
+
+.btn:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

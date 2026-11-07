@@ -276,6 +276,23 @@ describe("ferramentas", () => {
     expect(request).toHaveBeenLastCalledWith("PUT", `/api/v1/jobs/${ID}/favorite`, { favorite: true });
   });
 
+  it("ler vaga do link só aceita http(s) e não grava (#114)", async () => {
+    const tool = byName.jobdragonquest_ler_vaga_do_link!;
+    expect(tool.readOnly).toBe(true);
+    expect(tool.schema.safeParse({ url: "file:///etc/passwd" }).success).toBe(false);
+    const request = vi.fn().mockResolvedValue({});
+    await tool.run({ request }, { url: "https://empresa.test/vagas/1" } as never);
+    expect(request).toHaveBeenCalledWith("POST", "/api/v1/jobs/from-link", { url: "https://empresa.test/vagas/1" });
+  });
+
+  it("respostas e revisão só leem, com ids validados (#115)", async () => {
+    expect(byName.jobdragonquest_respostas_para_vaga!.readOnly).toBe(true);
+    expect(byName.jobdragonquest_revisar_candidatura!.schema.safeParse({ vagaId: "../x", perfilId: ID }).success).toBe(false);
+    const request = vi.fn().mockResolvedValue({});
+    await byName.jobdragonquest_revisar_candidatura!.run({ request }, { vagaId: ID, perfilId: ID } as never);
+    expect(request).toHaveBeenCalledWith("GET", `/api/v1/jobs/${ID}/assist/review?profileId=${ID}`);
+  });
+
   it("marca os dados como não confiáveis e corta respostas longas", () => {
     expect(formatResult({ a: 1 })).toContain(UNTRUSTED_NOTE);
     const long = formatResult({ texto: "x".repeat(MAX_OUTPUT_CHARS * 2) });

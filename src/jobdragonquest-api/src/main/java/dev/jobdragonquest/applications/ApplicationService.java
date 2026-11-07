@@ -331,6 +331,18 @@ public class ApplicationService {
                 now.minus(properties.duplicateWindow())).stream().findFirst();
     }
 
+    /** Candidatura já registrada para a vaga (pela vaga ou pela mesma empresa e cargo na janela de duplicidade). */
+    @Transactional(readOnly = true)
+    public Optional<UUID> existingFor(UUID userId, UUID jobId, String company, String title) {
+        Optional<UUID> byJob = applications.findByUserId(userId).stream()
+                .filter(a -> jobId.equals(a.getJobId())).map(JobApplication::getId).findFirst();
+        if (byJob.isPresent() || company == null || title == null) {
+            return byJob;
+        }
+        return applications.findRecentSameRole(userId, TextNormalizer.normalizeCompany(company), TextNormalizer.normalize(title),
+                clock.instant().minus(properties.duplicateWindow())).stream().map(JobApplication::getId).findFirst();
+    }
+
     /** Vagas das candidaturas enviadas mais recentes (para a busca por vagas parecidas). */
     @Transactional(readOnly = true)
     public Set<UUID> recentSubmittedJobIds(UUID userId, int limit) {

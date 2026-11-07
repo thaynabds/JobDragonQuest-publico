@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>JobDragonQuest: configurar extensão</title>
+    <link rel="stylesheet" href="estilo.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Configurar a extensão</h1>
+      <form id="opcoes">
+        <label>Endereço da API local <input id="api" value="http://127.0.0.1:8080" required /></label>
+        <label
+          >Token pessoal (crie em Configurações → Integrações e tokens de acesso)
+          <input id="token" type="password" autocomplete="off" required />
+        </label>
+        <button type="submit">Salvar</button>
+      </form>
+      <p id="situacao" role="status" aria-live="polite"></p>
+      <p class="nota">O token fica só neste navegador, no armazenamento local da extensão. A extensão só conversa com a API no seu computador.</p>
+    </main>
+    <script type="module" src="opcoes.js"></script>
+  </body>
+</html>

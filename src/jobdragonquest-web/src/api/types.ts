@@ -230,8 +230,36 @@ export interface JobInput {
   workMode: WorkMode | null;
   seniority: Seniority | null;
   description: string | null;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  salaryCurrency?: string | null;
+  salaryPeriod?: string | null;
   requirements: Requirement[];
   languages: JobLanguage[];
+}
+
+export interface SuggestedAnswer {
+  category: string;
+  question: string;
+  answer: string | null;
+  source: string;
+  missing: string | null;
+}
+
+export interface AssistReview {
+  ready: boolean;
+  checks: { code: string; status: "OK" | "WARN" | "BLOCK"; message: string }[];
+}
+
+export interface LinkDraft {
+  job: JobInput;
+  extractedFrom: "JSON_LD" | "META";
+}
+
+export interface ImportResult {
+  created: number;
+  duplicates: number;
+  errors: { line: number; code: string }[];
 }
 
 export interface Job extends JobInput {

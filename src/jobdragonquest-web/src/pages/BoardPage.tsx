@@ -10,6 +10,15 @@ import { useAsync } from "../utils/useAsync";
 
 const blank = (value: string) => (value.trim() === "" ? null : value.trim());
 
+/** Lê o arquivo como texto com FileReader (funciona em todos os navegadores). */
+const readText = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(reader.error ?? new Error("leitura"));
+    reader.readAsText(file);
+  });
+
 export function BoardPage() {
   const { t, label, formatDate, errorMessage } = useI18n();
   const navigate = useNavigate();
@@ -124,15 +133,41 @@ export function BoardPage() {
     }
   };
 
+  const importFile = async (file: File | undefined) => {
+    if (!file) return;
+    setNotice(null);
+    if (file.size > 900_000) {
+      setNotice({ tone: "error", text: t("board.importTooBig") });
+      return;
+    }
+    try {
+      const { data } = await api.importApplications(await readText(file));
+      const lines = data.errors.map((e) => `${e.line} (${label("error", e.code)})`).join(", ");
+      setNotice({
+        tone: data.errors.length > 0 ? "error" : "success",
+        text: t("board.importDone", { created: data.created, duplicates: data.duplicates }) + (lines ? ` ${t("board.importErrors", { lines })}` : ""),
+      });
+      board.reload();
+    } catch (err) {
+      setNotice({ tone: "error", text: errorMessage(err) });
+    }
+  };
+
   const columns = (board.data ?? []).filter((column) => column.count > 0 || ["SUBMITTED", "INTERVIEW_SCHEDULED"].includes(column.state));
 
   return (
     <div className="page page-wide">
       <div className="page-header">
         <h1>{t("board.title")}</h1>
-        <Button variant="primary" onClick={() => setShowForm(!showForm)}>
-          {t("board.new")}
-        </Button>
+        <div className="row-actions">
+          <label className="btn btn-secondary">
+            {t("board.importCsv")}
+            <input type="file" accept=".csv,text/csv" className="visually-hidden" onChange={(e) => void importFile(e.target.files?.[0])} />
+          </label>
+          <Button variant="primary" onClick={() => setShowForm(!showForm)}>
+            {t("board.new")}
+          </Button>
+        </div>
       </div>
       {notice && (
         <Notice tone={notice.tone} onClose={() => setNotice(null)}>

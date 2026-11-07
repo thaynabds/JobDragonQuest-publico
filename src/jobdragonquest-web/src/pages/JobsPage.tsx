@@ -46,6 +46,25 @@ export function JobsPage() {
     }
   };
 
+  const [link, setLink] = useState("");
+  const [reading, setReading] = useState(false);
+  const [linkNote, setLinkNote] = useState<string | null>(null);
+
+  const readLink = async () => {
+    setError(null);
+    setLinkNote(null);
+    setReading(true);
+    try {
+      const { data } = await api.jobFromLink(link.trim());
+      setForm({ ...EMPTY, ...data.job });
+      setLinkNote(t(data.extractedFrom === "JSON_LD" ? "jobs.fromLinkStructured" : "jobs.fromLinkMeta"));
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setReading(false);
+    }
+  };
+
   const patch = (change: Partial<JobInput>) => setForm((current) => ({ ...current, ...change }));
   const setRequirement = (index: number, change: Partial<Requirement>) =>
     patch({
@@ -79,6 +98,15 @@ export function JobsPage() {
 
       {showForm && (
         <Card title={t("jobs.new")}>
+          <div className="filters" role="group" aria-label={t("jobs.fromLink")}>
+            <Field label={t("jobs.fromLink")} hint={t("jobs.fromLinkHint")}>
+              <input type="url" maxLength={2048} value={link} onChange={(e) => setLink(e.target.value)} />
+            </Field>
+            <Button type="button" disabled={!link.trim() || reading} onClick={() => void readLink()}>
+              {t("jobs.fromLinkButton")}
+            </Button>
+          </div>
+          {linkNote && <Notice tone="info">{linkNote}</Notice>}
           <form onSubmit={(event) => void submit(event)}>
             {error && <Notice tone="error">{error}</Notice>}
             <div className="form-grid">
