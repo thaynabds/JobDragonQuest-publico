@@ -46,6 +46,9 @@ export function NotificationsProvider({ children, pollMs = POLL_MS }: { children
   const busy = useRef(false);
   const hideRef = useRef(hideDetails);
   hideRef.current = hideDetails;
+  // A primeira entrega espera as preferências: sem isso, um aviso que chega antes delas mostraria empresa e cargo na
+  // notificação do sistema mesmo com "esconder detalhes" ligado.
+  const preferencesReady = useRef<Promise<void>>(Promise.resolve());
 
   const refreshUnread = useCallback(() => {
     api
@@ -88,6 +91,7 @@ export function NotificationsProvider({ children, pollMs = POLL_MS }: { children
     }
     busy.current = true;
     try {
+      await preferencesReady.current;
       const due = (await api.notificationsDue()).data.filter((n) => !seen.current.has(n.id));
       if (due.length === 0) {
         return;
@@ -111,9 +115,12 @@ export function NotificationsProvider({ children, pollMs = POLL_MS }: { children
   }, [showSystem, refreshUnread]);
 
   useEffect(() => {
-    api
+    preferencesReady.current = api
       .notificationPreferences()
-      .then((response) => setHideDetails(response.data.settings.hideDetails))
+      .then((response) => {
+        hideRef.current = response.data.settings.hideDetails;
+        setHideDetails(response.data.settings.hideDetails);
+      })
       .catch(() => undefined);
     refreshUnread();
     void poll();
