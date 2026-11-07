@@ -37,8 +37,12 @@ public class AuthService {
     // Hash fixo usado quando o e-mail não existe, para o tempo de resposta não revelar quem tem conta.
     private final String dummyHash;
 
+    private final RegistrationProperties registration;
+
     AuthService(UserAccountRepository users, RefreshTokenRepository refreshTokens, TokenService tokens,
-            PasswordEncoder passwordEncoder, AuditService audit, SecurityProperties properties, Clock clock) {
+            PasswordEncoder passwordEncoder, AuditService audit, SecurityProperties properties, Clock clock,
+            RegistrationProperties registration) {
+        this.registration = registration;
         this.users = users;
         this.refreshTokens = refreshTokens;
         this.tokens = tokens;
@@ -52,6 +56,10 @@ public class AuthService {
     @Transactional
     public Session register(RegisterRequest request) {
         String email = normalizeEmail(request.email());
+        if (!registration.allows(email)) {
+            // Mesma resposta para qualquer e-mail fora da lista: não revela quem pode se cadastrar.
+            throw new DomainException(HttpStatus.FORBIDDEN, "registration_closed", "Cadastro fechado neste servidor");
+        }
         if (users.existsByEmail(email)) {
             throw DomainException.conflict("email_taken", "Já existe uma conta com este e-mail");
         }

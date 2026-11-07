@@ -18,11 +18,17 @@ const contentSecurityPolicy: Plugin = {
 // Servidor e preview escutam só em 127.0.0.1: outros aparelhos da rede não alcançam o painel.
 const api = process.env.JOBFLY_API_URL ?? "http://127.0.0.1:8080";
 const proxy = { "/api": { target: api, changeOrigin: false } };
+// Nomes extras aceitos no cabeçalho Host (ex.: o endereço do Tailscale Serve). Sem a variável, só localhost e IPs,
+// o que protege contra DNS rebinding. Só nomes de host simples: nada de curinga solto.
+const allowedHosts = (process.env.JOBFLY_ALLOWED_HOSTS ?? "")
+  .split(",")
+  .map((host) => host.trim().toLowerCase())
+  .filter((host) => /^\.?[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(host));
 
 export default defineConfig({
   plugins: [react(), contentSecurityPolicy],
-  server: { host: "127.0.0.1", port: 5173, strictPort: true, proxy },
-  preview: { host: "127.0.0.1", port: 5173, strictPort: true, proxy },
+  server: { host: "127.0.0.1", port: 5173, strictPort: true, proxy, allowedHosts },
+  preview: { host: "127.0.0.1", port: 5173, strictPort: true, proxy, allowedHosts },
   build: { sourcemap: false, target: "es2022" },
   test: {
     environment: "jsdom",
