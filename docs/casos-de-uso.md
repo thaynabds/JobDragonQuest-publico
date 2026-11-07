@@ -1,4 +1,4 @@
-# Casos de uso do JobFly
+# Casos de uso do JobDragonQuest
 
 Operações centrais da v0.2.0. Os identificadores [RFnn] remetem a [requisitos.md](requisitos.md).
 

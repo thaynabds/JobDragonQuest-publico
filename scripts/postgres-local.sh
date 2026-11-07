@@ -23,13 +23,13 @@ init_cluster() {
   pwfile="$(mktemp)"
   trap 'rm -f "$pwfile"' RETURN
   printf '%s\n' "$admin_password" > "$pwfile"
-  "$bin_dir/initdb" -D "$data" -U jobfly_admin --pwfile="$pwfile" -E UTF8 --locale=C.UTF-8 \
+  "$bin_dir/initdb" -D "$data" -U jobdragonquest_admin --pwfile="$pwfile" -E UTF8 --locale=C.UTF-8 \
     --auth-local=scram-sha-256 --auth-host=scram-sha-256 >/dev/null
   printf '%s' "$admin_password" > "$data/.admin-password"
   chmod 600 "$data/.admin-password"
   cat >> "$data/postgresql.conf" <<EOF
 
-# JobFly: só local.
+# JobDragonQuest: só local.
 listen_addresses = '127.0.0.1'
 port = $port
 unix_socket_directories = '$data'

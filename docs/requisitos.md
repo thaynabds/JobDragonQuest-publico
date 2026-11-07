@@ -1,4 +1,4 @@
-# Requisitos do JobFly
+# Requisitos do JobDragonQuest
 
 Requisitos numerados e rastreáveis. Cada requisito aparece nas issues, nos casos de uso ([casos-de-uso.md](casos-de-uso.md)), nas histórias ([user-stories.md](user-stories.md)) e nos testes.
 
@@ -30,12 +30,15 @@ Requisitos numerados e rastreáveis. Cada requisito aparece nas issues, nos caso
 | [RF17] | O sistema deve mostrar uma visão geral com contadores e uma central de pendências priorizadas | ✅ | UC08, US11 |
 | [RF18] | O sistema deve mostrar as candidaturas em Kanban por etapa, com filtros por perfil, empresa, plataforma e país | ✅ | US12 |
 | [RF19] | O sistema deve mostrar o histórico completo de cada candidatura, com evidências, notas e sugestões | ✅ | US06 |
-| [RF20] | O sistema deve oferecer a interface em português e inglês | ✅ | US13, `messages.test.ts` |
+| [RF20] | O sistema deve oferecer a interface em português, inglês e espanhol, detectar o idioma do navegador e permitir criar idiomas novos automaticamente | ✅ | US13, `messages.test.ts`, `scripts/verificar/idiomas.mjs` |
 | [RF21] | O sistema deve conectar Gmail e Outlook por OAuth com escopos mínimos, classificar mensagens e relacioná-las às candidaturas, nunca apagando e-mails | ⬜ | v0.3.0 |
 | [RF22] | O sistema deve analisar perguntas de formulário potencialmente eliminatórias e sugerir respostas verdadeiras | ⬜ | Agentes de IA |
 | [RF23] | O sistema deve revisar a candidatura inteira antes do envio | ⬜ | Agentes de IA |
-| [RF24] | O sistema deve oferecer ferramentas MCP com permissões controladas | ⬜ | ADR-007 |
+| [RF24] | O sistema deve oferecer ferramentas MCP com permissões controladas | ✅ | ADR-007, `src/jobdragonquest-mcp`, `scripts/verificar/mcp-real.mjs` |
 | [RF25] | O sistema deve importar histórico de candidaturas em CSV, com relatório de duplicatas | ⬜ | Roadmap |
+| [RF26] | O sistema deve avisar a pessoa de forma perceptível (pop-up, notificação do sistema e som) sobre etapas, pendências, prazos e vagas novas, com configuração por etapa, tipo e fonte, horário de silêncio e adiamento | ✅ | `NotificationIntegrationTest`, `notifications.test.tsx`, `SettingsPage.test.tsx` |
+| [RF27] | O sistema deve oferecer tokens de acesso pessoal revogáveis para integrações, sem expor a senha | ✅ | `PersonalTokenIntegrationTest`, `TokensSection.test.tsx` |
+| [RF28] | O sistema deve ter uma central de acessibilidade com os temas e filtros de cor do Congo Grey Parrot e os recursos do a11y-widget, sem carregar script externo | ✅ | `a11y.test.tsx` |
 
 ## Requisitos não funcionais (RNF)
 

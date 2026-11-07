@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Prepara o ambiente local do JobFly e grava ../.env (permissão 600) com segredos gerados aqui.
+# Prepara o ambiente local do JobDragonQuest e grava ../.env (permissão 600) com segredos gerados aqui.
 #
 #   scripts/configurar-local.sh            PostgreSQL próprio do usuário, sem sudo (padrão)
 #   scripts/configurar-local.sh --sistema  usa o PostgreSQL do sistema (porta 5432, pede sudo)
 #
 # Modo padrão: cria um cluster em data/postgres (fora do Git), escutando só em 127.0.0.1:5433, com autenticação
-# SCRAM. O superusuário do cluster (jobfly_admin) só serve para criar o papel da aplicação (jobfly), que não é
+# SCRAM. O superusuário do cluster (jobdragonquest_admin) só serve para criar o papel da aplicação (jobdragonquest), que não é
 # superusuário. Nenhum segredo aparece na tela nem na lista de processos.
 # Pode rodar de novo: reaproveita o cluster existente e troca a senha da aplicação.
 set -euo pipefail
@@ -31,11 +31,11 @@ jwt_secret="$(openssl rand -base64 32)"
 provision_sql() {
   cat <<SQL
 \set senha '$app_password'
-SELECT format('CREATE ROLE jobfly LOGIN PASSWORD %L', :'senha')
-WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'jobfly') \gexec
-SELECT format('ALTER ROLE jobfly WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE PASSWORD %L', :'senha') \gexec
-SELECT 'CREATE DATABASE jobfly OWNER jobfly ENCODING ''UTF8'''
-WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'jobfly') \gexec
+SELECT format('CREATE ROLE jobdragonquest LOGIN PASSWORD %L', :'senha')
+WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'jobdragonquest') \gexec
+SELECT format('ALTER ROLE jobdragonquest WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE PASSWORD %L', :'senha') \gexec
+SELECT 'CREATE DATABASE jobdragonquest OWNER jobdragonquest ENCODING ''UTF8'''
+WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'jobdragonquest') \gexec
 SQL
 }
 
@@ -45,7 +45,7 @@ case "$mode" in
     "$root/scripts/postgres-local.sh" iniciar
     data="$root/data/postgres"
     admin_password="$(cat "$data/.admin-password")"
-    provision_sql | PGPASSWORD="$admin_password" psql -v ON_ERROR_STOP=1 -q -h 127.0.0.1 -p "$port" -U jobfly_admin -d postgres
+    provision_sql | PGPASSWORD="$admin_password" psql -v ON_ERROR_STOP=1 -q -h 127.0.0.1 -p "$port" -U jobdragonquest_admin -d postgres
     ;;
   --sistema)
     port=5432
@@ -59,14 +59,14 @@ esac
 
 umask 077
 cat > "$env_file" <<EOF
-JOBFLY_DB_URL=jdbc:postgresql://127.0.0.1:$port/jobfly
-JOBFLY_DB_USER=jobfly
-JOBFLY_DB_PASSWORD=$app_password
-JOBFLY_JWT_SECRET=$jwt_secret
-JOBFLY_ALLOWED_ORIGINS=http://127.0.0.1:5173,http://localhost:5173
-JOBFLY_SECURE_COOKIES=false
-JOBFLY_PORT=8080
+JOBDRAGONQUEST_DB_URL=jdbc:postgresql://127.0.0.1:$port/jobdragonquest
+JOBDRAGONQUEST_DB_USER=jobdragonquest
+JOBDRAGONQUEST_DB_PASSWORD=$app_password
+JOBDRAGONQUEST_JWT_SECRET=$jwt_secret
+JOBDRAGONQUEST_ALLOWED_ORIGINS=http://127.0.0.1:5173,http://localhost:5173
+JOBDRAGONQUEST_SECURE_COOKIES=false
+JOBDRAGONQUEST_PORT=8080
 EOF
 chmod 600 "$env_file"
-echo "Banco pronto (127.0.0.1:$port/jobfly) e $env_file gravado com permissão 600."
+echo "Banco pronto (127.0.0.1:$port/jobdragonquest) e $env_file gravado com permissão 600."
 echo "Para subir a API: scripts/iniciar-api.sh"

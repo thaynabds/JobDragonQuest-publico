@@ -1,0 +1,376 @@
+/* Central de acessibilidade. Temas e filtros do Congo Grey Parrot (ui/theme.py, ui/color_filter.py); recursos do
+   a11y-widget. Tudo por classes e atributos no <html>, sem style inline (a CSP do build não permite). */
+
+/* ---------- Temas do Congo: bg, surface, text, accent, primary, nav, field, border, texto sobre o destaque ---------- */
+html[data-theme="light"] {
+  --bg: #f4f7f5;
+  --surface: #ffffff;
+  --surface-2: #e5f3ec;
+  --text: #1c2420;
+  --muted: #4b5a52;
+  --border: #d5e4dc;
+  --primary: #1b6b45;
+  --primary-text: #ffffff;
+  --primary-soft: #e5f3ec;
+  --info: #1b6b45;
+  --info-soft: #e5f3ec;
+  --good: #137a3d;
+  --good-soft: #e3f5ea;
+  --warn: #8a5a00;
+  --warn-soft: #fff3d6;
+  --bad: #b42318;
+  --bad-soft: #fde8e6;
+  --link: #1b6b45;
+  color-scheme: light;
+}
+
+html[data-theme="dark"],
+html[data-theme="kuro"],
+html[data-theme="pink_void"],
+html[data-theme="red_void"],
+html[data-theme="yellow_void"] {
+  --good: #5cd18f;
+  --good-soft: #15301f;
+  --warn: #f2c35b;
+  --warn-soft: #33290f;
+  --bad: #ff8a80;
+  --bad-soft: #3a1b19;
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] {
+  --bg: #121816;
+  --surface: #1b2621;
+  --surface-2: #17382c;
+  --text: #eef5f1;
+  --muted: #a9bdb3;
+  --border: #2a3b34;
+  --primary: #2f9e6b;
+  --primary-text: #ffffff;
+  --primary-soft: #17382c;
+  --info: #9fd8bc;
+  --info-soft: #17382c;
+  --link: #9fd8bc;
+}
+
+html[data-theme="kuro"] {
+  --bg: #100e16;
+  --surface: #1c1730;
+  --surface-2: #171228;
+  --text: #f4eefe;
+  --muted: #b9aed3;
+  --border: #3a2d58;
+  --primary: #6d46c2;
+  --primary-text: #ffffff;
+  --primary-soft: #171228;
+  --info: #c4b0f2;
+  --info-soft: #171228;
+  --link: #c4b0f2;
+}
+
+html[data-theme="pink_void"] {
+  --bg: #160e12;
+  --surface: #2a1520;
+  --surface-2: #241018;
+  --text: #fbeff4;
+  --muted: #d8b3c5;
+  --border: #5a3048;
+  --primary: #b43b78;
+  --primary-text: #ffffff;
+  --primary-soft: #241018;
+  --info: #f39ac6;
+  --info-soft: #241018;
+  --link: #f39ac6;
+}
+
+html[data-theme="red_void"] {
+  --bg: #160e0e;
+  --surface: #2a1515;
+  --surface-2: #240f0f;
+  --text: #fbeeee;
+  --muted: #d8b4b4;
+  --border: #5a3030;
+  --primary: #b43b3b;
+  --primary-text: #ffffff;
+  --primary-soft: #240f0f;
+  --info: #f39a9a;
+  --info-soft: #240f0f;
+  --link: #f39a9a;
+}
+
+html[data-theme="yellow_void"] {
+  --bg: #14120c;
+  --surface: #262014;
+  --surface-2: #221e12;
+  --text: #fbf6e8;
+  --muted: #d6cba8;
+  --border: #5a4c28;
+  --primary: #e6c200;
+  --primary-text: #1a1404;
+  --primary-soft: #221e12;
+  --info: #e6c200;
+  --info-soft: #221e12;
+  --link: #e6c200;
+}
+
+html[data-theme="high_contrast"] {
+  --bg: #000000;
+  --surface: #000000;
+  --surface-2: #000000;
+  --text: #ffffff;
+  --muted: #ffffff;
+  --border: #ffff00;
+  --primary: #ffff00;
+  --primary-text: #000000;
+  --primary-soft: #000000;
+  --info: #ffff00;
+  --info-soft: #000000;
+  --good: #00ff7f;
+  --good-soft: #000000;
+  --warn: #ffff00;
+  --warn-soft: #000000;
+  --bad: #ff6b6b;
+  --bad-soft: #000000;
+  --link: #ffff00;
+  color-scheme: dark;
+}
+
+html[data-theme="high_contrast"] .card,
+html[data-theme="high_contrast"] .btn,
+html[data-theme="high_contrast"] input,
+html[data-theme="high_contrast"] select,
+html[data-theme="high_contrast"] textarea {
+  border: 2px solid #ffff00;
+}
+
+html[data-theme] a {
+  color: var(--link, var(--primary));
+}
+
+/* ---------- Tamanho do texto (80% a 140%, base de 15px) ---------- */
+html[data-font-scale="80"] { font-size: 12px; }
+html[data-font-scale="90"] { font-size: 13.5px; }
+html[data-font-scale="110"] { font-size: 16.5px; }
+html[data-font-scale="120"] { font-size: 18px; }
+html[data-font-scale="130"] { font-size: 19.5px; }
+html[data-font-scale="140"] { font-size: 21px; }
+
+/* ---------- Filtros de cor (Congo) e de contraste/saturação (a11y-widget), combináveis ---------- */
+:root {
+  --a11y-color: opacity(1);
+  --a11y-contrast: opacity(1);
+  --a11y-saturate: opacity(1);
+}
+
+html.a11y-filter-invert { --a11y-color: invert(1); }
+html.a11y-filter-smart_invert { --a11y-color: invert(1) hue-rotate(180deg); }
+html.a11y-filter-protanopia { --a11y-color: url("#a11y-protanopia"); }
+html.a11y-filter-deuteranopia { --a11y-color: url("#a11y-deuteranopia"); }
+html.a11y-filter-tritanopia { --a11y-color: url("#a11y-tritanopia"); }
+html.a11y-filter-grayscale { --a11y-color: url("#a11y-grayscale"); }
+html.a11y-contrast { --a11y-contrast: contrast(2.4); }
+html.a11y-saturate { --a11y-saturate: saturate(3) contrast(1.1); }
+
+/* O filtro vai no conteúdo (#root), não no body: assim o botão, o painel e os avisos fixos continuam no lugar. */
+html.a11y-filtered #root {
+  filter: var(--a11y-color) var(--a11y-contrast) var(--a11y-saturate);
+}
+
+/* Inversão inteligente: fotos e vídeos voltam às cores reais. */
+html.a11y-filter-smart_invert #root img,
+html.a11y-filter-smart_invert #root video {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.a11y-svg-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ---------- Recursos do a11y-widget ---------- */
+html.a11y-hide-images #root img,
+html.a11y-hide-images #root [role="img"] {
+  visibility: hidden;
+}
+
+html.a11y-dyslexia-font body,
+html.a11y-dyslexia-font button,
+html.a11y-dyslexia-font input,
+html.a11y-dyslexia-font select,
+html.a11y-dyslexia-font textarea {
+  font-family: "OpenDyslexic", system-ui, sans-serif;
+}
+
+html.a11y-line-height body,
+html.a11y-line-height body * {
+  line-height: 2.2 !important;
+}
+
+html.a11y-spacing body * {
+  letter-spacing: 0.14em !important;
+  word-spacing: 0.2em !important;
+}
+
+html.a11y-highlight-links a {
+  background: #ffff00 !important;
+  color: #000000 !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+}
+
+html.a11y-highlight-headings h1,
+html.a11y-highlight-headings h2,
+html.a11y-highlight-headings h3,
+html.a11y-highlight-headings h4,
+html.a11y-highlight-headings h5,
+html.a11y-highlight-headings h6 {
+  border-left: 4px solid var(--primary);
+  padding-left: 0.4em;
+}
+
+html.a11y-pause-animations *,
+html.a11y-pause-animations *::before,
+html.a11y-pause-animations *::after {
+  animation-play-state: paused !important;
+  transition-duration: 0ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html.a11y-big-cursor,
+html.a11y-big-cursor * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M6 4l30 18-13 3 8 15-6 3-8-15-11 9z' fill='%23000' stroke='%23fff' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E") 6 4, auto !important;
+}
+
+html.a11y-focus-ring :focus,
+html.a11y-focus-ring :focus-visible {
+  outline: 3px solid #ffcc00 !important;
+  outline-offset: 2px !important;
+}
+
+.a11y-reading-guide-band {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 40%;
+  height: 48px;
+  pointer-events: none;
+  z-index: 9998;
+  box-shadow: 0 0 0 100vmax rgb(0 0 0 / 45%);
+}
+
+/* ---------- Botão flutuante e painel ---------- */
+.a11y-button {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10000;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  background: var(--primary);
+  color: var(--primary-text);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: grab;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 30%);
+  touch-action: none;
+}
+
+.a11y-button:focus-visible {
+  outline: 3px solid #ffcc00;
+  outline-offset: 3px;
+}
+
+.a11y-panel {
+  position: fixed;
+  right: 16px;
+  bottom: 80px;
+  z-index: 10000;
+  width: min(360px, calc(100vw - 32px));
+  max-height: min(80vh, 720px);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 30%);
+}
+
+.a11y-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.a11y-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.a11y-stepper output {
+  min-width: 3.5em;
+  text-align: center;
+  font-weight: 600;
+}
+
+.a11y-toggles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.35rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+}
+
+.a11y-toggles .check {
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+}
+
+.a11y-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.a11y-note {
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* Link para pular a navegação: aparece ao receber foco pelo teclado. */
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -3rem;
+  z-index: 10001;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  background: var(--primary);
+  color: var(--primary-text);
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+}

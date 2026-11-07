@@ -14,6 +14,8 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 |---|---|---|
 | v0.1.0 | 05/11/2026 | Núcleo da API: contas, perfis, vagas, compatibilidade, candidaturas de qualquer origem, Kanban, pendências e auditoria |
 | v0.2.0 | 06/11/2026 | Fontes vigiadas em lote para vários perfis, coleta de ATS públicos com agendador, lembretes de fontes assistidas, painel web completo pt/en, documentação obrigatória, Git Flow, CI e correções achadas na navegação real e na revisão com o OpenCode (#31, #32, #36, #38) |
+| v0.2.1 | 06/11/2026 | Correção da regra de crédito do AGENTS.md (#50) |
+| v0.3.0 | 07/11/2026 | Avisos configuráveis com pop-up, notificação do sistema, som e sino (#55, #56); tokens de acesso pessoal (#57); servidor MCP com 17 ferramentas (#58); instalação em um comando e conexão do MCP (#59); README com prompt pronto para IA e deploy opcional gratuito (#54); nova logo (#61); painel em português, inglês e espanhol com idiomas automatizados (#63); central de acessibilidade com os temas do Congo e os recursos do a11y-widget (#64); plugin do Congo Grey Parrot para o Discord (#65) |
 
 Medição da v0.2.0:
 - API: 108 testes, cobertura geral de 94,3%.
@@ -40,10 +42,10 @@ Medição da v0.2.0:
 | 13 | Histórico completo | ✅ |
 | 14 | Atividades no painel web | ✅ |
 | 15 | Tarefas em segundo plano | ✅ agendador de coleta com reserva, recuo e histórico |
-| 16 | Ferramentas de IA com permissão controlada | 🟡 OpenCode configurado com permissões restritas e testado. O servidor MCP próprio está planejado |
+| 16 | Ferramentas de IA com permissão controlada | ✅ servidor MCP próprio (17 ferramentas sem exclusão, token pessoal revogável) e OpenCode com permissões restritas |
 | 17 | Recuperação de falhas de integração | ✅ recuo exponencial, reserva vencida liberada, falha nas pendências |
 | 18 | Testes automatizados | ✅ |
-| 19 | Instalar e executar pela documentação | ✅ `scripts/configurar-local.sh` e `scripts/iniciar.sh` |
+| 19 | Instalar e executar pela documentação | ✅ `scripts/instalar.sh` em um comando, ou pelo prompt pronto para IA do README |
 
 ## Cenários adicionais (seção 29)
 
@@ -66,7 +68,7 @@ Medição da v0.2.0:
 
 1. **v0.3.0: Gmail.** OAuth com escopos mínimos, classificação de mensagens, vínculo com a candidatura (com confirmação quando houver dúvida) e marcadores. Nunca apagar.
 2. **Camada de IA** (`LlmProvider`: Claude, OpenAI ou local): perguntas eliminatórias, revisão da candidatura, documentos só com dados reais, extração de vagas de publicações.
-3. **Servidor MCP** do JobFly com token de escopo restrito.
-4. **Extensão de navegador** "Enviar ao JobFly".
+3. **Servidor MCP** do JobDragonQuest com token de escopo restrito.
+4. **Extensão de navegador** "Enviar ao JobDragonQuest".
 5. **Documentos versionados**, anexos e importação CSV.
 6. **Operação:** Docker Compose, Redis para o limite de tentativas distribuído, OpenTelemetry, medição do p95 ([RNF07]), exportação de dados (LGPD).

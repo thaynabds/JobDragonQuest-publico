@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Teste de fumaça do JobFly contra a API em execução (padrão: http://127.0.0.1:8080).
+"""Teste de fumaça do JobDragonQuest contra a API em execução (padrão: http://127.0.0.1:8080).
 
 Percorre o fluxo real: cadastro, perfil, vaga, compatibilidade, candidatura externa, deduplicação, evidência,
 sugestão de baixa confiança, Kanban, pendências e fontes vigiadas em lote para vários perfis. Cria um usuário descartável com e-mail aleatório e nunca imprime
@@ -61,7 +61,7 @@ status, _, body = call("POST", "/api/v1/auth/register",
                        {"email": email, "password": password, "displayName": "Teste de Fumaça"})
 check("cadastro", status == 201 and body.get("tokenType") == "Bearer", status)
 token = body["accessToken"]
-check("cookie de refresh HttpOnly", any(c.name == "jobfly_rt" for c in jar))
+check("cookie de refresh HttpOnly", any(c.name == "jobdragonquest_rt" for c in jar))
 
 status, _, body = call("GET", "/api/v1/me")
 check("me", status == 200 and body["email"] == email, status)

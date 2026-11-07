@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Teste de coleta real do JobFly contra um ATS público (padrão: board "gitlab" no Greenhouse).
+"""Teste de coleta real do JobDragonQuest contra um ATS público (padrão: board "gitlab" no Greenhouse).
 
 Cria um usuário descartável, um perfil e uma fonte Greenhouse, pede a coleta pela API e confere:
 - que vagas reais foram gravadas e ligadas à fonte;

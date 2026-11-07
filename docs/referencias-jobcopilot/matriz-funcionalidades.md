@@ -1,4 +1,4 @@
-# Matriz de funcionalidades: JobCopilot × JobFly
+# Matriz de funcionalidades: JobCopilot × JobDragonQuest
 
 Fontes:
 - páginas públicas do jobcopilot.com;
@@ -6,7 +6,7 @@ Fontes:
 
 O JobCopilot é referência funcional, não limite. Nenhum código, texto ou identidade visual foi copiado.
 
-| Recurso | JobCopilot (observado ou anunciado) | JobFly: decisão | JobFly: situação |
+| Recurso | JobCopilot (observado ou anunciado) | JobDragonQuest: decisão | JobDragonQuest: situação |
 |---|---|---|---|
 | Busca automática de vagas | Varre páginas de carreira. Anuncia "500.000+" fontes | APIs públicas de ATS e Empresas Monitoradas. Nada de scraping proibido | ⬜ |
 | Filtros do copiloto | Cargos (até 5), países, modalidade, senioridade, palavras incluídas e excluídas, empresas excluídas, salário mensal | Preferências por perfil (cargos, locais, modalidades, senioridade, nota mínima) | ✅ no perfil |
@@ -25,7 +25,7 @@ O JobCopilot é referência funcional, não limite. Nenhum código, texto ou ide
 | API, MCP, exportação | Não há API pública | API REST documentada e servidor MCP | ✅ REST. ⬜ MCP |
 | Transparência | Sem justificativa de decisão | Cada decisão registra origem, evidência e confiança, mais trilha de auditoria | ✅ |
 
-Melhorias do JobFly em relação à referência:
+Melhorias do JobDragonQuest em relação à referência:
 1. central única de todas as candidaturas, mesmo as externas;
 2. explicação de cada nota;
 3. impedimentos eliminatórios separados da nota;

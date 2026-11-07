@@ -4,14 +4,14 @@
 
 ```
                     ┌──────────────────────────────┐
-  Navegador ───────▶│  jobfly-web (React + Vite)   │   pt-BR / en
+  Navegador ───────▶│  jobdragonquest-web (React + Vite)   │   pt-BR / en
   Extensão Chrome ─▶│  SPA, consome a API REST     │
                     └──────────────┬───────────────┘
                                    │ HTTPS + JWT (Bearer)
                     ┌──────────────▼───────────────┐
-  Cliente MCP ─────▶│  jobfly-api (Spring Boot 4)  │──▶ PostgreSQL
+  Cliente MCP ─────▶│  jobdragonquest-api (Spring Boot 4)  │──▶ PostgreSQL
   (Claude Desktop)  │  monólito modular            │──▶ (Redis, fase 2)
-   via jobfly-mcp   │  identity · profiles · jobs  │
+   via jobdragonquest-mcp   │  identity · profiles · jobs  │
                     │  matching · applications     │──▶ Provedores LLM (fase 2)
                     │  pending · audit · tasks     │──▶ Gmail / Graph (fase 2)
                     └──────────────────────────────┘──▶ ATS públicos (fase 2)
@@ -45,7 +45,7 @@
 - O login OIDC (Google, Microsoft) usa o mesmo emissor interno depois da federação (fase 2).
 
 ### ADR-007: servidor MCP como processo separado e fino
-- `jobfly-mcp` fala stdio com o cliente (Claude Desktop/Code) e chama a API REST com um token de escopo restrito (`mcp:read`, `mcp:write`). Assim, o MCP não tem acesso direto ao banco e herda toda a autorização da API.
+- `jobdragonquest-mcp` fala stdio com o cliente (Claude Desktop/Code) e chama a API REST com um token de escopo restrito (`mcp:read`, `mcp:write`). Assim, o MCP não tem acesso direto ao banco e herda toda a autorização da API.
 
 ### ADR-008: navegação automatizada só onde é permitida
 - LinkedIn, Indeed e Glassdoor proíbem scraping e automação nos termos de uso. Para eles, as entradas são link, extensão de navegador (ação iniciada pela usuária), e-mail de alerta e importação.
@@ -78,5 +78,5 @@ A API REST é versionada em `/api/v1`. Os erros seguem o formato Problem Details
 | Ambiente | Banco | Como |
 |---|---|---|
 | Testes | H2 em memória, modo PostgreSQL | `./mvnw verify` |
-| Local | PostgreSQL 127.0.0.1:5432 | variáveis `JOBFLY_DB_*` e `./mvnw spring-boot:run` |
+| Local | PostgreSQL 127.0.0.1:5432 | variáveis `JOBDRAGONQUEST_DB_*` e `./mvnw spring-boot:run` |
 | Docker | `compose.yaml` (Postgres + API + Web) | `docker compose up` (Docker não está instalado nesta máquina) |

@@ -1,4 +1,4 @@
-# Diagramas do JobFly
+# Diagramas do JobDragonQuest
 
 Diagramas em Mermaid, renderizados pelo GitHub. Eles refletem o código da v0.2.0 e as migrações Flyway V1 a V3.
 
@@ -6,25 +6,25 @@ Diagramas em Mermaid, renderizados pelo GitHub. Eles refletem o código da v0.2.
 
 ```mermaid
 C4Context
-  title JobFly: contexto do sistema
+  title JobDragonQuest: contexto do sistema
   Person(candidata, "Candidata", "Procura emprego ou estágio e acompanha as candidaturas")
-  System(jobfly, "JobFly", "Central de perfis, fontes vigiadas, vagas, compatibilidade e candidaturas")
+  System(jobdragonquest, "JobDragonQuest", "Central de perfis, fontes vigiadas, vagas, compatibilidade e candidaturas")
   System_Ext(ats, "ATS públicos", "Greenhouse, Lever, SmartRecruiters e Ashby: API pública de vagas")
   System_Ext(assistidas, "Plataformas assistidas", "LinkedIn, Instagram, Facebook, Gupy: sem coleta automática permitida")
   System_Ext(email, "Gmail / Outlook", "Planejado (v0.3.0), por OAuth")
-  Rel(candidata, jobfly, "Usa o painel", "HTTP em 127.0.0.1")
-  Rel(jobfly, ats, "Coleta vagas", "HTTPS/JSON, só leitura")
+  Rel(candidata, jobdragonquest, "Usa o painel", "HTTP em 127.0.0.1")
+  Rel(jobdragonquest, ats, "Coleta vagas", "HTTPS/JSON, só leitura")
   Rel(candidata, assistidas, "Confere vagas quando lembrada")
-  Rel(jobfly, email, "Lerá e classificará mensagens", "OAuth, escopos mínimos")
+  Rel(jobdragonquest, email, "Lerá e classificará mensagens", "OAuth, escopos mínimos")
 ```
 
 ## C4: nível 2, contêineres
 
 ```mermaid
 C4Container
-  title JobFly: contêineres
+  title JobDragonQuest: contêineres
   Person(candidata, "Candidata")
-  System_Boundary(jobfly, "JobFly (máquina local)") {
+  System_Boundary(jobdragonquest, "JobDragonQuest (máquina local)") {
     Container(web, "Painel web", "React 19, TypeScript, Vite 7", "SPA em pt-BR/en. Token em memória, proxy /api")
     Container(api, "API", "Java 21, Spring Boot 4.1", "REST /api/v1, segurança, compatibilidade, candidaturas, agendador de coleta")
     ContainerDb(db, "Banco", "PostgreSQL 16", "Cluster do usuário em 127.0.0.1:5433, migrações Flyway")

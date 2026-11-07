@@ -13,13 +13,13 @@
 
 | Método e rota | Corpo | Resposta |
 |---|---|---|
-| `POST /auth/register` | `email`, `password` (12–128), `displayName`, `locale` (`pt-BR` ou `en`), `timeZone` | 201 `{accessToken, tokenType, expiresIn}` + cookie `jobfly_rt` |
+| `POST /auth/register` | `email`, `password` (12–128), `displayName`, `locale` (`pt-BR` ou `en`), `timeZone` | 201 `{accessToken, tokenType, expiresIn}` + cookie `jobdragonquest_rt` |
 | `POST /auth/login` | `email`, `password` | 200, igual ao register. 401 genérico. 429 quando o limite estoura |
-| `POST /auth/refresh` | cookie `jobfly_rt` | 200 com novo par. Reusar o token antigo revoga a família inteira |
+| `POST /auth/refresh` | cookie `jobdragonquest_rt` | 200 com novo par. Reusar o token antigo revoga a família inteira |
 | `POST /auth/logout` | cookie | 204, revoga e limpa o cookie |
 | `GET /me` | — | Dados da conta (sem hash) |
 
-O cookie `jobfly_rt` é `HttpOnly`, `SameSite=Strict`, `Secure` (configurável) e tem `Path=/api/v1/auth`. O token de acesso dura 15 minutos e deve ficar só em memória no front.
+O cookie `jobdragonquest_rt` é `HttpOnly`, `SameSite=Strict`, `Secure` (configurável) e tem `Path=/api/v1/auth`. O token de acesso dura 15 minutos e deve ficar só em memória no front.
 
 ## Perfis
 
@@ -86,6 +86,30 @@ Campos da fonte: `collectionMode`, `openUrl` (página para conferir), `nextRunAt
 |---|---|
 | `GET /dashboard/summary` | Contadores: vagas, candidaturas, enviadas, em andamento, entrevistas, testes, propostas, aprovações, reprovações, sem atualização, pendências, fontes vigiadas, fontes a conferir e total por etapa |
 | `GET /dashboard/pending` | Pendências ordenadas por prioridade e prazo: ACTION_REQUIRED, TECH_TEST, INTERVIEW_SOON, DEADLINE_SOON, SUGGESTION_TO_REVIEW, SOURCE_TO_CHECK, SOURCE_FAILING, NO_UPDATE. Cada item traz `message` (em português) e campos estruturados (`suggestedState`, `confidence`, `detail`, `sourceId`, `url`) para o cliente montar a frase no idioma dele |
+
+## Tokens de acesso pessoal
+
+| Rota | Descrição |
+|---|---|
+| `GET /tokens` | Tokens da conta, sem o valor: `name`, `prefix` (início do token), `createdAt`, `expiresAt`, `lastUsedAt`, `revokedAt` e `active` |
+| `POST /tokens` | `{name, days?}` (nome de 1 a 80 caracteres; validade de 1 a 365 dias, padrão 90). Resposta 201 `{token, value}`: é a única vez em que o valor aparece. 409 `too_many_tokens` com 10 ativos |
+| `DELETE /tokens/{id}` | Revoga na hora. 404 se o token não for da conta |
+
+O token tem o formato `jdq_` seguido de 43 caracteres e vai no cabeçalho `Authorization: Bearer jdq_…`, como o JWT. O banco guarda só o hash SHA-256. Token revogado, vencido, desconhecido ou malformado recebe 401, sem dizer o motivo. As rotas de `/tokens` exigem login no painel: com um token elas respondem 403 `session_required`, então quem obtiver um token não consegue criar outros para continuar na conta depois da revogação.
+
+## Avisos
+
+| Rota | Descrição |
+|---|---|
+| `GET /notifications?unreadOnly&page&size` | Histórico do sino (até 50 por página) e `unreadCount`. Verifica pendências antes de responder |
+| `GET /notifications/due` | Avisos esperando entrega (pop-up, sistema ou som), inclusive os adiados cujo prazo passou. O painel consulta a cada poucos segundos |
+| `POST /notifications/delivered` | `{ids[]}` (1 a 100): marca como entregues. Ids de outra conta são ignorados |
+| `POST /notifications/{id}/read` · `POST /notifications/read-all` | Marca como lido |
+| `POST /notifications/{id}/snooze` | `{minutes}` (5 a 1440): volta como não lido depois do prazo |
+| `POST /notifications/test` | Cria um aviso de teste com todos os canais, para conferir pop-up, som e a permissão do navegador |
+| `GET/PUT /notifications/preferences` | Preferências por tópico e horário de silêncio. Tópicos: `STAGE:<ETAPA>` (19), `ACTION_REQUIRED`, `TECH_TEST`, `INTERVIEW_REMINDER` e `DEADLINE_REMINDER` (com `leadMinutes`, até 5 valores de 5 a 20160), `SUGGESTION_TO_REVIEW`, `SOURCE_FAILING`, `SOURCE_TO_CHECK`, `NO_UPDATE` (com `staleDays`, 1 a 90) e `NEW_JOBS:<id da fonte>` (com `minScore`, 0 a 100). Cada preferência tem `enabled`, `popup`, `system` e `sound`. O silêncio usa `quietStart` e `quietEnd` (HH:mm) no fuso da conta, com `quietAllowHigh` e `hideDetails` |
+
+Cada aviso traz `message` (pronta, em português) e campos estruturados (`type`, `state`, `company`, `title`, `detail`, `dueAt`, `itemCount`, `leadMinutes`) para o cliente montar a frase no idioma dele. Mudanças de etapa feitas pela própria pessoa não geram aviso. O mesmo fato nunca vira dois avisos (chave única por conta), e avisos lidos com mais de 90 dias são apagados.
 
 ## Operação
 
