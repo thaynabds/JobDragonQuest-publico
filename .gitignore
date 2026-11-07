@@ -33,3 +33,6 @@ GATES.md
 # Cache do Python
 __pycache__/
 *.pyc
+
+# Notas internas da auditoria (dados da conta da dona; não publicar)
+docs/referencias-jobcopilot/_notas_trabalho.md
