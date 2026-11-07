@@ -133,11 +133,15 @@ export interface Answer {
 }
 
 /** Campos do perfil que não dependem do formato de idioma (iguais na edição e na resposta). */
+export const AUTOMATION_MODES = ["OFF", "REVIEW", "AUTOMATIC"] as const;
+export type AutomationMode = (typeof AUTOMATION_MODES)[number];
+
 export interface ProfileFields {
   name: string;
   objective: string | null;
   seniority: Seniority;
   minMatchScore: number;
+  automationMode: AutomationMode;
   salaryExpectation: number | null;
   salaryCurrency: string | null;
   availability: string | null;

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router";
 
 import { api } from "../api/endpoints";
 import {
+  AUTOMATION_MODES,
   DEGREES,
   EMPLOYMENT_TYPES,
   ENTRY_KINDS,
@@ -13,6 +14,7 @@ import {
   TRAVEL_AVAILABILITIES,
   WORK_MODES,
   type Answer,
+  type AutomationMode,
   type EmploymentType,
   type Entry,
   type LanguageInput,
@@ -36,6 +38,7 @@ const EMPTY: ProfileInput = {
   objective: null,
   seniority: "JUNIOR",
   minMatchScore: 60,
+  automationMode: "REVIEW",
   salaryExpectation: null,
   salaryCurrency: "BRL",
   availability: null,
@@ -294,6 +297,15 @@ export function ProfileEditorPage() {
         </Field>
         <Field label={t("profiles.minMatch")}>
           <input type="number" min={0} max={100} value={form.minMatchScore} onChange={(e) => patch({ minMatchScore: Number(e.target.value) })} />
+        </Field>
+        <Field label={t("profiles.automationMode")} hint={t(`profiles.automationHint.${form.automationMode}`)}>
+          <select value={form.automationMode} onChange={(e) => patch({ automationMode: e.target.value as AutomationMode })}>
+            {AUTOMATION_MODES.map((mode) => (
+              <option key={mode} value={mode}>
+                {label("automationMode", mode)}
+              </option>
+            ))}
+          </select>
         </Field>
         <Field label={t("profiles.preferredLanguage")}>
           <select value={form.preferredLanguage} onChange={(e) => patch({ preferredLanguage: e.target.value })}>

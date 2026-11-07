@@ -590,6 +590,22 @@ export const ptBR = {
   "similar.skills": "competências em comum",
   "similar.emptyFavorites": "Favorite vagas na lista abaixo (estrela) para ver as parecidas, ou baixe a semelhança mínima.",
   "similar.emptyApplied": "Nenhuma vaga parecida com as suas últimas candidaturas enviadas. Baixe a semelhança mínima ou cadastre mais vagas.",
+  "nav.review": "Fila de revisão",
+  "review.title": "Fila de revisão",
+  "review.intro": "Vagas compatíveis que a coleta encontrou para perfis no modo revisar. Aprovar deixa a candidatura preparada para você enviar; descartar encerra. Nada é enviado sozinho.",
+  "review.empty": "Nada para revisar agora.",
+  "review.approve": "Aprovar {title}",
+  "review.discard": "Descartar {title}",
+  "review.approveSelected": "Aprovar selecionadas",
+  "review.approvedReason": "Aprovada na fila de revisão",
+  "review.discardedReason": "Descartada na fila de revisão",
+  "profiles.automationMode": "Vagas compatíveis encontradas pela coleta",
+  "profiles.automationHint.OFF": "Só guarda a vaga, sem criar candidatura.",
+  "profiles.automationHint.REVIEW": "Vai para a fila de revisão para você aprovar ou descartar.",
+  "profiles.automationHint.AUTOMATIC": "Já entra como preparada. Você ainda revisa e envia: nada é enviado sozinho.",
+  "automationMode.OFF": "Só guardar a vaga",
+  "automationMode.REVIEW": "Fila de revisão",
+  "automationMode.AUTOMATIC": "Preparar automaticamente",
 };
 
 export type MessageKey = keyof typeof ptBR;

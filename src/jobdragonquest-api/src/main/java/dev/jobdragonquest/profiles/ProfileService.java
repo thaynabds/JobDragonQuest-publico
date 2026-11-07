@@ -130,7 +130,7 @@ public class ProfileService {
                 blankToNull(request.availability()), blankToNull(request.restrictions()),
                 request.preferredLanguage() == null ? "pt-BR" : request.preferredLanguage(),
                 strip(request.desiredTitles()), strip(request.locations()), workModes, skills, languages, entries,
-                toDetails(request));
+                toDetails(request), request.automationMode());
     }
 
     private static ProfileDetails toDetails(ProfileRequest r) {

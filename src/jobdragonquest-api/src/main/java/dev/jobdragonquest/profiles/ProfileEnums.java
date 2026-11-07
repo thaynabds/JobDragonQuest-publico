@@ -20,6 +20,19 @@ public final class ProfileEnums {
         VOLUNTEER
     }
 
+    /**
+     * O que a coleta automática faz com uma vaga compatível com o perfil. Nunca envia candidatura a site nenhum: o
+     * envio é sempre da pessoa.
+     */
+    public enum AutomationMode {
+        /** Só guarda a vaga, sem criar candidatura. */
+        OFF,
+        /** Cria a candidatura como recomendada, na fila de revisão. */
+        REVIEW,
+        /** Cria a candidatura já como preparada, pronta para a pessoa enviar. */
+        AUTOMATIC
+    }
+
     public enum TravelAvailability {
         NONE,
         OCCASIONAL,

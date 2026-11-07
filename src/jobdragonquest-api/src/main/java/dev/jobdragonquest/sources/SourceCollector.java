@@ -32,6 +32,7 @@ import dev.jobdragonquest.jobs.JobService;
 import dev.jobdragonquest.matching.MatchResult;
 import dev.jobdragonquest.matching.MatchingEngine;
 import dev.jobdragonquest.matching.PreferenceFilters;
+import dev.jobdragonquest.profiles.ProfileEnums.AutomationMode;
 import dev.jobdragonquest.profiles.ProfileService;
 import dev.jobdragonquest.profiles.ProfileSnapshot;
 import dev.jobdragonquest.sources.SourceDtos.RunResponse;
@@ -210,13 +211,24 @@ public class SourceCollector {
                 !PreferenceFilters.hardBlockers(profile.filters(), plan.companyName(), job.title(), job.description()).isEmpty());
     }
 
+    /**
+     * Vaga compatível vira candidatura conforme o modo do perfil: OFF não cria nada, REVIEW cria como recomendada (fila
+     * de revisão) e AUTOMATIC já cria como preparada. O envio para a empresa é sempre feito pela pessoa.
+     */
     private boolean recommend(Plan plan, UUID jobId, MatchResult best) {
         if (best == null || best.recommendation() != MatchResult.Recommendation.APPLY) {
             return false;
         }
+        AutomationMode mode = plan.profiles().stream().filter(profile -> profile.id().equals(best.profileId()))
+                .map(ProfileSnapshot::automationMode).findFirst().orElse(AutomationMode.REVIEW);
+        if (mode == AutomationMode.OFF) {
+            return false;
+        }
+        ApplicationState state = mode == AutomationMode.AUTOMATIC ? ApplicationState.PREPARED : ApplicationState.RECOMMENDED;
+        String note = mode == AutomationMode.AUTOMATIC ? best.summary() + " Preparada pela automação do perfil: revise e envie."
+                : best.summary();
         applications.create(plan.userId(), new CreateApplicationRequest(jobId, best.profileId(), Origin.AUTOMATION,
-                plan.kind().label(), null, null, null, null, null, ApplicationState.RECOMMENDED, best.summary(), null, null),
-                "src-" + jobId);
+                plan.kind().label(), null, null, null, null, null, state, note, null, null), "src-" + jobId);
         return true;
     }
 
