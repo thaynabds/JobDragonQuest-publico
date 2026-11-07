@@ -80,3 +80,17 @@ jobs:
         run: npm audit --audit-level=high
       - name: Tipos, testes e build
         run: npm run verify
+
+  congo:
+    name: Plugin do Congo (Python 3.12, unittest)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Testes do plugin sem rede
+        run: python -m unittest discover -s integrations/congo -p 'test_*.py' -v
