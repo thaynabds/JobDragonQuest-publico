@@ -35,7 +35,7 @@ const diagramas = read("docs/diagramas.md");
 check("diagramas C4, de classes e DER em Mermaid",
   count(diagramas, /```mermaid/g) >= 3 && diagramas.includes("erDiagram") && diagramas.includes("classDiagram") && diagramas.includes("C4"));
 
-for (const dir of ["src/jobfly-api", "src/jobfly-web"]) {
+for (const dir of ["src/jobdragonquest-api", "src/jobdragonquest-web"]) {
   check(`${dir} existe`, existsSync(join(ROOT, dir)) && statSync(join(ROOT, dir)).isDirectory());
 }
 const gitignore = read(".gitignore");

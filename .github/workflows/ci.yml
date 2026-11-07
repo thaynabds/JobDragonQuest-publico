@@ -1,4 +1,4 @@
-# Integração contínua do JobFly: compila e testa a API, o painel e o servidor MCP em cada push e PR para develop e main.
+# Integração contínua do JobDragonQuest: compila e testa a API, o painel e o servidor MCP em cada push e PR para develop e main.
 name: CI
 
 on:
@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 30
     defaults:
       run:
-        working-directory: src/jobfly-api
+        working-directory: src/jobdragonquest-api
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,7 +41,7 @@ jobs:
     timeout-minutes: 20
     defaults:
       run:
-        working-directory: src/jobfly-web
+        working-directory: src/jobdragonquest-web
     steps:
       - uses: actions/checkout@v4
         with:
@@ -50,7 +50,7 @@ jobs:
         with:
           node-version: "20.19"
           cache: npm
-          cache-dependency-path: src/jobfly-web/package-lock.json
+          cache-dependency-path: src/jobdragonquest-web/package-lock.json
       - name: Dependências exatas do lockfile
         run: npm ci --no-audit --no-fund
       - name: Auditoria das dependências de produção
@@ -64,7 +64,7 @@ jobs:
     timeout-minutes: 15
     defaults:
       run:
-        working-directory: src/jobfly-mcp
+        working-directory: src/jobdragonquest-mcp
     steps:
       - uses: actions/checkout@v4
         with:
@@ -73,7 +73,7 @@ jobs:
         with:
           node-version: "20.19"
           cache: npm
-          cache-dependency-path: src/jobfly-mcp/package-lock.json
+          cache-dependency-path: src/jobdragonquest-mcp/package-lock.json
       - name: Dependências exatas do lockfile
         run: npm ci --no-audit --no-fund
       - name: Auditoria das dependências

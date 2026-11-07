@@ -68,7 +68,7 @@ Medição da v0.2.0:
 
 1. **v0.3.0: Gmail.** OAuth com escopos mínimos, classificação de mensagens, vínculo com a candidatura (com confirmação quando houver dúvida) e marcadores. Nunca apagar.
 2. **Camada de IA** (`LlmProvider`: Claude, OpenAI ou local): perguntas eliminatórias, revisão da candidatura, documentos só com dados reais, extração de vagas de publicações.
-3. **Servidor MCP** do JobFly com token de escopo restrito.
-4. **Extensão de navegador** "Enviar ao JobFly".
+3. **Servidor MCP** do JobDragonQuest com token de escopo restrito.
+4. **Extensão de navegador** "Enviar ao JobDragonQuest".
 5. **Documentos versionados**, anexos e importação CSV.
 6. **Operação:** Docker Compose, Redis para o limite de tentativas distribuído, OpenTelemetry, medição do p95 ([RNF07]), exportação de dados (LGPD).

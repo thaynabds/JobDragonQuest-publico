@@ -8,7 +8,7 @@ import { check, finish, ROOT, run } from "./lib.mjs";
 // Padrões montados em partes para este arquivo não casar consigo mesmo.
 const PERSONAL_EMAIL = new RegExp(["thaynabds", "tec@", "gmail\\.com"].join(""), "i");
 const SECRETS = [
-  ["token pessoal do JobFly", new RegExp("jfp" + "_[A-Za-z0-9_-]{43}(?![A-Za-z0-9_-])")],
+  ["token pessoal do JobDragonQuest", new RegExp("jdq" + "_[A-Za-z0-9_-]{43}(?![A-Za-z0-9_-])")],
   ["JWT", new RegExp("ey" + "J[A-Za-z0-9_-]{10,}\\.ey" + "J[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}")],
   ["chave privada", new RegExp("-----BEGIN [A-Z ]*PRIVATE" + " KEY")],
   ["token do GitHub", new RegExp("gh" + "[pousr]_[A-Za-z0-9]{30,}")],
@@ -18,7 +18,7 @@ const SECRETS = [
 ];
 // Exceções conferidas à mão: só estas linhas, com o motivo. Qualquer outro achado reprova.
 const ALLOWED = [
-  { file: "src/jobfly-api/src/test/java/dev/jobfly/identity/AuthIntegrationTest.java", marker: ".Zm9yamFkbw\"", reason: "JWT forjado de propósito (assinatura \"forjado\") para testar que a API recusa token falso" },
+  { file: "src/jobdragonquest-api/src/test/java/dev/jobdragonquest/identity/AuthIntegrationTest.java", marker: ".Zm9yamFkbw\"", reason: "JWT forjado de propósito (assinatura \"forjado\") para testar que a API recusa token falso" },
 ];
 const allowed = (file, line) => ALLOWED.some((entry) => entry.file === file && line.includes(entry.marker));
 const CPF = /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/;
@@ -55,7 +55,7 @@ const withMetadata = pngs.filter((file) => {
   return ["tEXt", "iTXt", "zTXt", "eXIf"].some((chunk) => data.includes(Buffer.from(chunk, "latin1")));
 });
 check(`${pngs.length} imagens PNG sem metadados (texto ou EXIF)`, pngs.length > 0 && withMetadata.length === 0, withMetadata.join(" "));
-const pdfInfo = run("pdfinfo", ["docs/resumo-jobfly.pdf"]);
+const pdfInfo = run("pdfinfo", ["docs/resumo-jobdragonquest.pdf"]);
 check("PDF sem e-mail nos metadados", pdfInfo.status === 0 && !PERSONAL_EMAIL.test(pdfInfo.stdout) && !/@/.test(pdfInfo.stdout), pdfInfo.stdout);
 
 // Código: nada de registrar token ou senha, e o painel não guarda token no navegador.
@@ -64,13 +64,13 @@ const logLines = [];
 for (const file of source) {
   readFileSync(join(ROOT, file), "utf8").split("\n").forEach((line, index) => {
     if (/(log\.(info|warn|debug|error|trace)|console\.(log|warn|error|info)|print\(|logging\.)/.test(line) &&
-        /(token|password|senha|secret|authorization)\b(?!\s*(inválido|ausente|não|do JobFly|em formato))/i.test(line.replace(/"[^"]*"/g, '""'))) {
+        /(token|password|senha|secret|authorization)\b(?!\s*(inválido|ausente|não|do JobDragonQuest|em formato))/i.test(line.replace(/"[^"]*"/g, '""'))) {
       logLines.push(`${file}:${index + 1}`);
     }
   });
 }
 check(`nenhum log de token, senha ou segredo em ${source.length} arquivos de código`, logLines.length === 0, logLines.join(" "));
-const storage = source.filter((file) => file.startsWith("src/jobfly-web/")).flatMap((file) =>
+const storage = source.filter((file) => file.startsWith("src/jobdragonquest-web/")).flatMap((file) =>
   readFileSync(join(ROOT, file), "utf8").split("\n").filter((line) => /(local|session)Storage\.setItem/.test(line) && /token/i.test(line)).map(() => file));
 check("o painel não guarda token no localStorage ou sessionStorage", storage.length === 0, storage.join(" "));
 
@@ -79,7 +79,7 @@ const logsDir = join(ROOT, "data", "logs");
 const logFiles = existsSync(logsDir) ? readdirSync(logsDir).filter((name) => name.endsWith(".log")) : [];
 const leakedLogs = logFiles.filter((name) => {
   const text = readFileSync(join(logsDir, name), "utf8");
-  return SECRETS.slice(0, 2).some(([, pattern]) => pattern.test(text)) || /password=|senha=|JOBFLY_JWT_SECRET=/i.test(text);
+  return SECRETS.slice(0, 2).some(([, pattern]) => pattern.test(text)) || /password=|senha=|JOBDRAGONQUEST_JWT_SECRET=/i.test(text);
 });
 check(`logs locais sem token, JWT ou senha (${logFiles.length} arquivos)`, leakedLogs.length === 0, leakedLogs.join(" "));
 

@@ -5,7 +5,7 @@ import { join } from "node:path";
 
 import { check, finish, ROOT } from "./lib.mjs";
 
-const tools = new Set([...readFileSync(join(ROOT, "src", "jobfly-mcp", "src", "tools.ts"), "utf8").matchAll(/name: "(jobfly_[a-z_]+)"/g)].map((m) => m[1]));
+const tools = new Set([...readFileSync(join(ROOT, "src", "jobdragonquest-mcp", "src", "tools.ts"), "utf8").matchAll(/name: "(jobdragonquest_[a-z_]+)"/g)].map((m) => m[1]));
 check(`ferramentas do MCP lidas (${tools.size})`, tools.size >= 17);
 
 const languages = {
@@ -18,13 +18,13 @@ for (const [file, rules] of Object.entries(languages)) {
   const readme = readFileSync(join(ROOT, file), "utf8");
   const block = /```text\n([\s\S]*?)```/.exec(readme)?.[1] ?? "";
   check(`${file}: tem o bloco de prompt`, block.length > 500);
-  check(`${file}: prompt traz o link do repositório`, block.includes("https://github.com/thaynabds/JobFly"));
-  check(`${file}: prompt manda clonar e instalar`, block.includes("git clone https://github.com/thaynabds/JobFly.git") && block.includes("scripts/instalar.sh"));
-  check(`${file}: prompt liga o MCP`, block.includes("scripts/conectar-mcp.mjs") && block.includes('"jobfly"'));
+  check(`${file}: prompt traz o link do repositório`, block.includes("https://github.com/thaynabds/JobDragonQuest"));
+  check(`${file}: prompt manda clonar e instalar`, block.includes("git clone https://github.com/thaynabds/JobDragonQuest.git") && block.includes("scripts/instalar.sh"));
+  check(`${file}: prompt liga o MCP`, block.includes("scripts/conectar-mcp.mjs") && block.includes('"jobdragonquest"'));
   check(`${file}: prompt pergunta sobre deploy opcional`, rules.question.test(block) && block.includes("docs/deploy.md"));
   check(`${file}: prompt protege senha e token`, rules.never.test(block));
   check(`${file}: prompt recusa serviço pago`, rules.paid.test(block));
-  const cited = [...block.matchAll(/\b(jobfly_[a-z_]+)\b/g)].map((m) => m[1]);
+  const cited = [...block.matchAll(/\b(jobdragonquest_[a-z_]+)\b/g)].map((m) => m[1]);
   const unknown = cited.filter((name) => !tools.has(name));
   check(`${file}: ferramentas citadas existem (${cited.length})`, cited.length >= 3 && unknown.length === 0, unknown.join(" "));
   const paths = [...block.matchAll(/\b((?:scripts|docs)\/[\w./-]+?)(?=[\s,;:)]|$)/g)].map((m) => m[1].replace(/\.$/, ""));
@@ -36,7 +36,7 @@ for (const [file, rules] of Object.entries(languages)) {
 const deploy = existsSync(join(ROOT, "docs", "deploy.md")) ? readFileSync(join(ROOT, "docs", "deploy.md"), "utf8") : "";
 check("docs/deploy.md existe", deploy.length > 1000);
 check("deploy só com opções gratuitas", /gratuit/i.test(deploy) && /pedir pagamento/.test(deploy));
-check("deploy exige a lista de e-mails permitidos", deploy.includes("JOBFLY_ALLOWED_EMAILS"));
+check("deploy exige a lista de e-mails permitidos", deploy.includes("JOBDRAGONQUEST_ALLOWED_EMAILS"));
 check("deploy diz o que não foi testado", deploy.includes("O que não foi testado aqui"));
-check("Dockerfile da API existe e roda sem root", /USER jobfly/.test(readFileSync(join(ROOT, "src", "jobfly-api", "Dockerfile"), "utf8")));
+check("Dockerfile da API existe e roda sem root", /USER jobdragonquest/.test(readFileSync(join(ROOT, "src", "jobdragonquest-api", "Dockerfile"), "utf8")));
 finish("README_PROMPT_OK");

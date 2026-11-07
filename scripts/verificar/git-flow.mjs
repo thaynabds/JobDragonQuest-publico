@@ -24,7 +24,7 @@ const work = git("log", "--no-merges", "--format=%s", "v0.1.0..origin/main").spl
 const bad = work.filter((subject) => !conventional.test(subject));
 check(`commits seguem Conventional Commits e citam a issue (${work.length} commits)`, work.length > 0 && bad.length === 0, bad.join(" | "));
 
-const prs = run("gh", ["pr", "list", "-R", "thaynabds/JobFly", "--state", "merged", "--limit", "100", "--json", "number,baseRefName,headRefName,body"]);
+const prs = run("gh", ["pr", "list", "-R", "thaynabds/JobDragonQuest", "--state", "merged", "--limit", "100", "--json", "number,baseRefName,headRefName,body"]);
 const merged = prs.status === 0 ? JSON.parse(prs.stdout) : [];
 const features = merged.filter((pr) => pr.baseRefName === "develop");
 check("PRs de feature com branch feature/issue-NN e 'Closes #N'",

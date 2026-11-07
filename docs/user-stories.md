@@ -1,4 +1,4 @@
-# Histórias de usuário do JobFly
+# Histórias de usuário do JobDragonQuest
 
 Padrão: **Como** [ator], **quero** [ação] **para que** [valor]. Os critérios de aceite estão em Gherkin (Dado / Quando / Então). Situação de cada história:
 - ✅ implementada e testada na v0.2.0.

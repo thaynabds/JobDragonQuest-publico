@@ -8,7 +8,7 @@ import { join } from "node:path";
 import { readReference } from "../novo-idioma.mjs";
 import { check, finish, ROOT, run } from "./lib.mjs";
 
-const web = join(ROOT, "src", "jobfly-web");
+const web = join(ROOT, "src", "jobdragonquest-web");
 const i18n = join(web, "src", "i18n");
 check("arquivo do espanhol existe", existsSync(join(i18n, "locales", "es.ts")));
 const hub = readFileSync(join(i18n, "messages.ts"), "utf8");
@@ -43,7 +43,7 @@ function script(args) {
   });
 }
 
-const dir = mkdtempSync(join(tmpdir(), "jobfly-idioma-"));
+const dir = mkdtempSync(join(tmpdir(), "jobdragonquest-idioma-"));
 try {
   const created = await script(["fr", "--nome", "Français", "--tradutor", `http://127.0.0.1:${port}`, "--saida", dir, "--nao-registrar"]);
   check("script cria o idioma novo com o tradutor local", created.status === 0 && created.out.includes("NOVO_IDIOMA_OK"), created.out);

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Instala e sobe o JobFly num comando, no próprio computador (sem deploy e sem nada pago).
+# Instala e sobe o JobDragonQuest num comando, no próprio computador (sem deploy e sem nada pago).
 #
 #   scripts/instalar.sh               confere pré-requisitos, configura o banco local, instala, compila e sobe tudo
 #   scripts/instalar.sh --verificar   só confere os pré-requisitos
@@ -59,11 +59,11 @@ else
 fi
 
 echo "Instalando o painel..."
-(cd src/jobfly-web && npm ci --no-audit --no-fund --loglevel=error)
+(cd src/jobdragonquest-web && npm ci --no-audit --no-fund --loglevel=error)
 echo "Instalando e compilando o servidor MCP..."
-(cd src/jobfly-mcp && npm ci --no-audit --no-fund --loglevel=error && npm run build --silent)
+(cd src/jobdragonquest-mcp && npm ci --no-audit --no-fund --loglevel=error && npm run build --silent)
 echo "Compilando a API..."
-(cd src/jobfly-api && ./mvnw -q -B -DskipTests package)
+(cd src/jobdragonquest-api && ./mvnw -q -B -DskipTests package)
 
 if [[ "$mode" == "--sem-iniciar" ]]; then
   echo "Instalado. Para subir: scripts/iniciar.sh"
@@ -76,7 +76,7 @@ cat <<'EOF'
 Próximos passos:
   1. Abra http://127.0.0.1:5173 e crie sua conta.
   2. Em Configurações > Integrações e tokens de acesso, crie um token.
-  3. Ligue a sua IA ao JobFly pelo MCP (o token é digitado sem aparecer na tela):
+  3. Ligue a sua IA ao JobDragonQuest pelo MCP (o token é digitado sem aparecer na tela):
        node scripts/conectar-mcp.mjs --cliente claude-desktop   (ou claude-code, cursor, json)
   4. Opcional: avisos pelo Discord com o Congo Grey Parrot: scripts/conectar-congo.sh
 EOF

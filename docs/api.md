@@ -13,13 +13,13 @@
 
 | Método e rota | Corpo | Resposta |
 |---|---|---|
-| `POST /auth/register` | `email`, `password` (12–128), `displayName`, `locale` (`pt-BR` ou `en`), `timeZone` | 201 `{accessToken, tokenType, expiresIn}` + cookie `jobfly_rt` |
+| `POST /auth/register` | `email`, `password` (12–128), `displayName`, `locale` (`pt-BR` ou `en`), `timeZone` | 201 `{accessToken, tokenType, expiresIn}` + cookie `jobdragonquest_rt` |
 | `POST /auth/login` | `email`, `password` | 200, igual ao register. 401 genérico. 429 quando o limite estoura |
-| `POST /auth/refresh` | cookie `jobfly_rt` | 200 com novo par. Reusar o token antigo revoga a família inteira |
+| `POST /auth/refresh` | cookie `jobdragonquest_rt` | 200 com novo par. Reusar o token antigo revoga a família inteira |
 | `POST /auth/logout` | cookie | 204, revoga e limpa o cookie |
 | `GET /me` | — | Dados da conta (sem hash) |
 
-O cookie `jobfly_rt` é `HttpOnly`, `SameSite=Strict`, `Secure` (configurável) e tem `Path=/api/v1/auth`. O token de acesso dura 15 minutos e deve ficar só em memória no front.
+O cookie `jobdragonquest_rt` é `HttpOnly`, `SameSite=Strict`, `Secure` (configurável) e tem `Path=/api/v1/auth`. O token de acesso dura 15 minutos e deve ficar só em memória no front.
 
 ## Perfis
 
@@ -95,7 +95,7 @@ Campos da fonte: `collectionMode`, `openUrl` (página para conferir), `nextRunAt
 | `POST /tokens` | `{name, days?}` (nome de 1 a 80 caracteres; validade de 1 a 365 dias, padrão 90). Resposta 201 `{token, value}`: é a única vez em que o valor aparece. 409 `too_many_tokens` com 10 ativos |
 | `DELETE /tokens/{id}` | Revoga na hora. 404 se o token não for da conta |
 
-O token tem o formato `jfp_` seguido de 43 caracteres e vai no cabeçalho `Authorization: Bearer jfp_…`, como o JWT. O banco guarda só o hash SHA-256. Token revogado, vencido, desconhecido ou malformado recebe 401, sem dizer o motivo. As rotas de `/tokens` exigem login no painel: com um token elas respondem 403 `session_required`, então quem obtiver um token não consegue criar outros para continuar na conta depois da revogação.
+O token tem o formato `jdq_` seguido de 43 caracteres e vai no cabeçalho `Authorization: Bearer jdq_…`, como o JWT. O banco guarda só o hash SHA-256. Token revogado, vencido, desconhecido ou malformado recebe 401, sem dizer o motivo. As rotas de `/tokens` exigem login no painel: com um token elas respondem 403 `session_required`, então quem obtiver um token não consegue criar outros para continuar na conta depois da revogação.
 
 ## Avisos
 

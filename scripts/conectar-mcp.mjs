@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// Liga um cliente de IA ao JobFly pelo MCP. O token é digitado sem aparecer na tela (ou vem de JOBFLY_TOKEN), fica
+// Liga um cliente de IA ao JobDragonQuest pelo MCP. O token é digitado sem aparecer na tela (ou vem de JOBDRAGONQUEST_TOKEN), fica
 // num arquivo com permissão 600 e a configuração do cliente guarda só o caminho desse arquivo, nunca o token.
 //
 //   node scripts/conectar-mcp.mjs --cliente claude-desktop
 //   node scripts/conectar-mcp.mjs --cliente claude-code
 //   node scripts/conectar-mcp.mjs --cliente cursor
 //   node scripts/conectar-mcp.mjs --cliente json          (só mostra o bloco para colar em outro cliente)
-// Opções: --api http://127.0.0.1:8080  --nome jobfly  --token-arquivo <caminho>  --config <arquivo do cliente>
+// Opções: --api http://127.0.0.1:8080  --nome jobdragonquest  --token-arquivo <caminho>  --config <arquivo do cliente>
 import { spawnSync } from "node:child_process";
 import { chmodSync, copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
@@ -14,8 +14,8 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const SERVER = join(ROOT, "src", "jobfly-mcp", "dist", "index.js");
-const TOKEN = /^jfp_[A-Za-z0-9_-]{43}$/;
+const SERVER = join(ROOT, "src", "jobdragonquest-mcp", "dist", "index.js");
+const TOKEN = /^jdq_[A-Za-z0-9_-]{43}$/;
 const CLIENTS = ["claude-desktop", "claude-code", "cursor", "json"];
 
 function fail(message) {
@@ -24,7 +24,7 @@ function fail(message) {
 }
 
 export function parseArgs(argv) {
-  const options = { client: null, api: "http://127.0.0.1:8080", name: "jobfly", tokenFile: join(homedir(), ".config", "jobfly", "mcp-token"), config: null };
+  const options = { client: null, api: "http://127.0.0.1:8080", name: "jobdragonquest", tokenFile: join(homedir(), ".config", "jobdragonquest", "mcp-token"), config: null };
   const rest = [...argv];
   while (rest.length > 0) {
     const arg = rest.shift();
@@ -86,7 +86,7 @@ export function mergeConfig(path, name, entry) {
 }
 
 async function askHidden(question) {
-  if (!process.stdin.isTTY) fail("defina JOBFLY_TOKEN ou rode num terminal para digitar o token");
+  if (!process.stdin.isTTY) fail("defina JOBDRAGONQUEST_TOKEN ou rode num terminal para digitar o token");
   process.stdout.write(question);
   return new Promise((resolvePromise) => {
     const stdin = process.stdin;
@@ -115,20 +115,20 @@ async function askHidden(question) {
 export async function main(argv) {
   const options = parseArgs(argv);
   if (!validApi(options.api)) fail("--api precisa ser http://127.0.0.1 (ou localhost) ou HTTPS");
-  if (!existsSync(SERVER)) fail("servidor MCP não compilado: rode scripts/instalar.sh (ou npm ci && npm run build em src/jobfly-mcp)");
+  if (!existsSync(SERVER)) fail("servidor MCP não compilado: rode scripts/instalar.sh (ou npm ci && npm run build em src/jobdragonquest-mcp)");
 
-  const token = process.env.JOBFLY_TOKEN?.trim() || (await askHidden("Cole o token do JobFly (não aparece na tela): "));
+  const token = process.env.JOBDRAGONQUEST_TOKEN?.trim() || (await askHidden("Cole o token do JobDragonQuest (não aparece na tela): "));
   if (!TOKEN.test(token)) fail("token em formato inválido: crie um em Configurações > Integrações e tokens de acesso");
   writePrivate(options.tokenFile, token + "\n");
 
-  const env = { JOBFLY_TOKEN_FILE: options.tokenFile, JOBFLY_API_URL: options.api };
+  const env = { JOBDRAGONQUEST_TOKEN_FILE: options.tokenFile, JOBDRAGONQUEST_API_URL: options.api };
   // Caminho absoluto do Node: apps de desktop não herdam o PATH do terminal (nvm).
   const entry = { command: process.execPath, args: [SERVER], env };
 
   if (options.client === "json") {
     console.log(JSON.stringify({ mcpServers: { [options.name]: entry } }, null, 2));
   } else if (options.client === "claude-code") {
-    const args = ["mcp", "add", "--scope", "user", "-e", `JOBFLY_TOKEN_FILE=${options.tokenFile}`, "-e", `JOBFLY_API_URL=${options.api}`, options.name, "--", process.execPath, SERVER];
+    const args = ["mcp", "add", "--scope", "user", "-e", `JOBDRAGONQUEST_TOKEN_FILE=${options.tokenFile}`, "-e", `JOBDRAGONQUEST_API_URL=${options.api}`, options.name, "--", process.execPath, SERVER];
     spawnSync("claude", ["mcp", "remove", "--scope", "user", options.name], { stdio: "ignore" });
     const result = spawnSync("claude", args, { stdio: "inherit" });
     if (result.error || result.status !== 0) {
