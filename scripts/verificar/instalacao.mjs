@@ -62,6 +62,41 @@ try {
   const json = run(process.execPath, ["scripts/conectar-mcp.mjs", "--cliente", "json", "--token-arquivo", tokenFile], { env });
   check("modo json mostra o bloco sem o token", json.status === 0 && json.stdout.includes("JOBDRAGONQUEST_TOKEN_FILE") && !json.stdout.includes(token));
 
+  // Issue #119: token colado com marcadores de colagem do terminal e com espaços precisa ser aceito.
+  const pasted = run(process.execPath, ["scripts/conectar-mcp.mjs", "--cliente", "json", "--token-arquivo", tokenFile],
+    { env: { ...process.env, JOBDRAGONQUEST_TOKEN: `\u001b[200~ ${token} \u001b[201~` } });
+  check("aceita token colado com marcadores de colagem e espaços", pasted.status === 0 && readFileSync(tokenFile, "utf8").trim() === token, pasted.stderr);
+  const shortToken = run(process.execPath, ["scripts/conectar-mcp.mjs", "--cliente", "json", "--token-arquivo", tokenFile],
+    { env: { ...process.env, JOBDRAGONQUEST_TOKEN: "jdq_curto" } });
+  check("erro de token explica o problema sem mostrar o valor", shortToken.status === 1 && shortToken.stderr.includes("deveria ter 47") && !shortToken.stderr.includes("jdq_curto"));
+  const revoked = run(process.execPath, ["scripts/conectar-mcp.mjs", "--cliente", "json", "--token-arquivo", join(dir, "outro-token")],
+    { env: { ...process.env, JOBDRAGONQUEST_TOKEN: "jdq_" + "Z".repeat(43) } });
+  check("token que a API recusa não é salvo", revoked.status === 1 && revoked.stderr.includes("recusou o token") && !existsSync(join(dir, "outro-token")));
+
+  // Claude Code falso: grava os argumentos e falha no "mcp get" quando pedido, para provar os dois caminhos.
+  const bin = join(dir, "bin");
+  mkdirSync(bin);
+  const log = join(dir, "claude-args.json");
+  writeFileSync(join(bin, "claude"), `#!/usr/bin/env node
+const fs = require("node:fs");
+const args = process.argv.slice(2);
+if (args[1] === "add-json") fs.writeFileSync(${JSON.stringify(log)}, JSON.stringify(args));
+if (args[1] === "get" && process.env.FAKE_CLAUDE_FAIL === "1") process.exit(1);
+process.exit(0);
+`, { mode: 0o755 });
+  const fakeEnv = { ...env, PATH: `${bin}:${process.env.PATH}` };
+  const code = run(process.execPath, ["scripts/conectar-mcp.mjs", "--cliente", "claude-code", "--token-arquivo", tokenFile], { env: fakeEnv });
+  const recorded = existsSync(log) ? JSON.parse(readFileSync(log, "utf8")) : [];
+  const registered = recorded[5] ? JSON.parse(recorded[5]) : {};
+  check("Claude Code registrado com add-json, nome antes da configuração", code.status === 0 && code.stdout.includes("MCP_CONECTADO_OK")
+    && JSON.stringify(recorded.slice(0, 5)) === JSON.stringify(["mcp", "add-json", "--scope", "user", "jobdragonquest"]), code.stderr);
+  check("configuração do Claude Code aponta para o arquivo do token, sem o token", registered.env?.JOBDRAGONQUEST_TOKEN_FILE === tokenFile
+    && !recorded.join(" ").includes(token));
+  const failed = run(process.execPath, ["scripts/conectar-mcp.mjs", "--cliente", "claude-code", "--token-arquivo", tokenFile],
+    { env: { ...fakeEnv, FAKE_CLAUDE_FAIL: "1" } });
+  check("falha no registro não diz que conectou", failed.status === 1 && !failed.stdout.includes("MCP_CONECTADO_OK")
+    && failed.stderr.includes("claude mcp add-json --scope user jobdragonquest '{"));
+
   // Sobe o servidor MCP exatamente como o cliente de IA subiria, pela entrada gravada.
   const entry = saved.mcpServers?.jobdragonquest;
   const { Client } = await import(join(SDK, "client", "index.js"));
