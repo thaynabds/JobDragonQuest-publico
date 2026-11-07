@@ -77,7 +77,6 @@ El estado de cada requisito está en [docs/requisitos.md](docs/requisitos.md) y 
 | [Integraciones](docs/integracoes.md) | Qué permite cada plataforma y cómo |
 | [Roadmap](docs/roadmap.md) | Estado y próximas entregas |
 | [Deploy opcional](docs/deploy.md) | Deploy gratuito y opcional, con lista de seguridad |
-| [Estudio de JobCopilot](docs/referencias-jobcopilot/matriz-funcionalidades.md) | Matriz comparativa de funcionalidades |
 
 ## Instalar con una IA (prompt listo)
 

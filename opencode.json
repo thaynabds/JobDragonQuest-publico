@@ -12,7 +12,7 @@
       ".env": "deny",
       ".env.*": "deny",
       "data/**": "deny",
-      "docs/referencias-jobcopilot/**": "deny",
+      "privado/**": "deny",
       "**/*.pem": "deny",
       "**/*.key": "deny"
     }

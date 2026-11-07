@@ -5,7 +5,7 @@
 #   1. árvore de trabalho limpa;
 #   2. auditoria de vazamento (scripts/verificar/vazamento.mjs);
 #   3. todos os commits e tags enviados com e-mail privado do GitHub (nunca um e-mail pessoal);
-#   4. nenhum commit com as notas internas da auditoria do JobCopilot.
+#   4. nenhum commit com notas internas ou com a pasta privado/.
 # Stashes, branches de trabalho e arquivos ignorados nunca vão. Não usa --force: se o espelho divergir, para.
 #
 # Uso: scripts/publicar-espelho.sh [--verificar]   (--verificar faz as checagens e não envia nada)
@@ -36,7 +36,7 @@ for tag in "${tags[@]}"; do
   tagger="$(git for-each-ref "refs/tags/$tag" --format='%(taggeremail)' | tr -d '<>')"
   [[ -z "$tagger" || "$tagger" =~ $allowed ]] || { echo "A tag $tag tem e-mail que não é privado do GitHub: nada foi enviado." >&2; exit 1; }
 done
-notes="$(git log --format=%H "${refs[@]}" -- 'docs/referencias-jobcopilot/_notas_trabalho.md' 'auditoria-jobcopilot/_notas_trabalho.md' | wc -l)"
+notes="$(git log --format=%H "${refs[@]}" -- ':(glob)**/_notas_trabalho.md' ':(glob)privado/**' | wc -l)"
 [[ "$notes" -eq 0 ]] || { echo "Algum commit traz as notas internas da auditoria: nada foi enviado." >&2; exit 1; }
 echo "Checagens ok: ${#tags[@]} tags, e-mails privados, sem notas internas."
 

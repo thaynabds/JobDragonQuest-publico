@@ -77,7 +77,6 @@ The status of each requirement is in [docs/requisitos.md](docs/requisitos.md) an
 | [Integrations](docs/integracoes.md) | What each platform allows and how |
 | [Roadmap](docs/roadmap.md) | Status and next deliveries |
 | [Optional deployment](docs/deploy.md) | Free, optional deployment with a security checklist |
-| [JobCopilot study](docs/referencias-jobcopilot/matriz-funcionalidades.md) | Feature comparison matrix |
 
 ## Install with an AI (ready-made prompt)
 
