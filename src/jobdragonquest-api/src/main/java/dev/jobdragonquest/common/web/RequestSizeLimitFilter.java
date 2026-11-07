@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import dev.jobdragonquest.common.error.ProblemResponses;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -43,9 +43,7 @@ public class RequestSizeLimitFilter extends OncePerRequestFilter {
         String type = request.getContentType() == null ? "" : request.getContentType().toLowerCase(Locale.ROOT);
         long limit = type.startsWith("multipart/form-data") && UPLOAD_PATHS.matcher(path).matches() ? MAX_UPLOAD_BYTES : MAX_BODY_BYTES;
         if (hasBody && (length > limit || (length < 0 && chunked))) {
-            response.setStatus(HttpStatus.CONTENT_TOO_LARGE.value());
-            response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-            response.getWriter().write("{\"status\":413,\"code\":\"payload_too_large\",\"detail\":\"Corpo acima do limite\"}");
+            ProblemResponses.write(request, response, HttpStatus.CONTENT_TOO_LARGE, "payload_too_large", "Corpo acima do limite");
             return;
         }
         chain.doFilter(request, response);
