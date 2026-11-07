@@ -1,5 +1,5 @@
-// Preferências de acessibilidade. Ficam só neste navegador (localStorage): não são dado sensível e funcionam antes
-// do login. Temas e filtros vêm do Congo Grey Parrot; os demais recursos, do a11y-widget.
+// Preferências de acessibilidade. Ficam neste navegador (localStorage), para valer antes do login, e na conta depois
+// do login (A11yAccountSync), para voltar em outro navegador. Temas e filtros vêm do Congo Grey Parrot; os demais recursos, do a11y-widget.
 
 export const THEMES = ["system", "light", "dark", "high_contrast", "kuro", "pink_void", "red_void", "yellow_void"] as const;
 export type Theme = (typeof THEMES)[number];

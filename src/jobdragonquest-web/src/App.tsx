@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 
+import { A11yAccountSync } from "./a11y/A11yAccountSync";
 import { A11yProvider } from "./a11y/A11yContext";
 import { A11yPanel } from "./a11y/A11yPanel";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
@@ -55,6 +56,7 @@ export function App() {
     <I18nProvider>
       <A11yProvider>
         <AuthProvider>
+          <A11yAccountSync />
           <BrowserRouter>
             <Routed />
           </BrowserRouter>
