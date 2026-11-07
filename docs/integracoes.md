@@ -55,3 +55,20 @@ Os tokens OAuth serão guardados cifrados (AES-GCM, chave fora do banco). Senha 
 ## Candidatura automática
 
 Envio automático de formulário só em ambiente autorizado. O primeiro alvo previsto é um formulário de teste próprio (critério 21.7). Em ATS reais, a regra é preencher, pausar para revisão e enviar só com a política de autonomia permitindo, parando em qualquer CAPTCHA ou MFA. Os termos de cada plataforma precisam ser conferidos antes de ligar o envio automático nela.
+
+## Congo Grey Parrot (Discord)
+
+O plugin `integrations/congo/jobfly.py` roda dentro do bot de Discord do Congo Grey Parrot e usa a API do JobFly com um token pessoal.
+
+| Item | Como funciona |
+|---|---|
+| Instalação | `scripts/conectar-congo.sh` copia o plugin para `congo-grey-parrot-discord/plugins/` e grava `~/.config/jobfly/congo.env` (permissão 600). O histórico do repositório do Congo não muda |
+| Ativação | No Discord: `/funcoes ativar jobfly`. Plugins do Congo começam desligados |
+| Comandos | `/jobfly resumo`, `/jobfly avisos`, `/jobfly pendencias`. Só a dona configurada recebe resposta, sempre privada (ephemeral) |
+| Avisos | A cada 60 s (mínimo 30), os avisos com o canal "sistema" ligado viram mensagem direta, uma vez cada. Não marca como entregue: o painel aberto também mostra o pop-up |
+| Privacidade | Respeita "esconder empresa e cargo"; mensagens sem menções (`allowed_mentions` vazio) e cortadas em 1800 caracteres |
+| Segurança | API só local por HTTP ou HTTPS, sem redirecionamento, resposta limitada a 1 MiB; o token nunca aparece em mensagem, log ou erro; configuração com permissão frouxa é recusada |
+| Custo | Nenhum: Discord e Congo são gratuitos |
+
+Testes: `python3 -m unittest discover -s integrations/congo -p 'test_*.py'` (o teste do `setup()` com o discord.py roda com o Python do ambiente do Congo).
+
