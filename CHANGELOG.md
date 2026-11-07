@@ -16,7 +16,7 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 - Conjunto padrão de 23 labels nos dois repositórios (#130).
 
 - CI publica os relatórios de teste e cobertura como artefato e o total de testes no resumo de cada execução (#131).
-- Análise de dependências com OSV-Scanner na API (com transitivas), no painel e no MCP (#131).
+- Análise de dependências com OSV-Scanner no SBOM CycloneDX da API (com as transitivas), no painel e no MCP (#131).
 - Checagem de Conventional Commits em cada PR (`scripts/verificar/commits.mjs`, com testes) (#131).
 - ESLint no painel, dentro do `npm run verify`, com regras contra `eval` e injeção de HTML (#131).
 - Formato de erro da API documentado em `docs/api.md` e coberto pelo `ErrorFormatTest` (#131).
@@ -24,6 +24,8 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 ### Corrigido
 - Notificação do sistema podia mostrar empresa e cargo antes de carregar a preferência "esconder detalhes"; o teste
   que cobria isso era instável e agora reproduz a corrida de forma determinística (#131).
+- minimatch 10.2.6 (GHSA-g3hv-75wg-m249, negação de serviço), trazida pelo ESLint, fixada em 11.0.1 (#131).
+- Teste do editor de perfil falhava com a máquina carregada: a espera depois de salvar tinha só 1 s (#131).
 - 401 da segurança saía sem corpo e 413 do limite de tamanho saía fora do formato Problem Details (#131).
 - Verificador de Git Flow recusava commits com várias issues e branches com número de três dígitos (#131).
 - RF22, RF23 e RF25 constavam como planejados embora entregues na v0.4.0 (#130).
