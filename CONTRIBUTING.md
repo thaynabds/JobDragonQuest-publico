@@ -29,9 +29,10 @@ Para rodar depois: `scripts/iniciar.sh`. Detalhes no [README](README.md#instala�
 Conventional Commits citando a issue:
 
 ```text
-tipo(escopo): descrição no imperativo, em minúsculas (#NN)
+tipo(escopo): descrição curta, sem ponto final (#NN)
 ```
 
+- Várias issues: `(#12, #13)`. Exceções sem issue: `chore(release): versão X.Y.Z` e as atualizações do Dependabot.
 - Tipos: `feat`, `fix`, `docs`, `test`, `refactor`, `perf`, `ci`, `build`, `chore`, `style`, `revert`.
 - Escopo opcional, curto: `sources`, `web`, `mcp`, `api`, `scripts`, `docs`...
 - Um commit faz uma coisa. Se a mensagem precisa de "e", provavelmente são dois commits.

@@ -1,4 +1,5 @@
 // G14: Git Flow, Conventional Commits, PRs que fecham issues e tags SemVer anotadas.
+import { problems } from "./commits.mjs";
 import { check, finish, run } from "./lib.mjs";
 
 const git = (...args) => run("git", args).stdout.trim();
@@ -19,16 +20,20 @@ const mainCommits = git("rev-list", "--first-parent", "v0.1.0..origin/main").spl
 const direct = mainCommits.filter((sha) => git("rev-list", "--parents", "-n", "1", sha).split(" ").length < 3);
 check(`main só recebeu merges depois da v0.1.0 (${mainCommits.length} commits)`, mainCommits.length > 0 && direct.length === 0, direct.join(" "));
 
-const conventional = /^(feat|fix|docs|refactor|test|chore|ci|build|perf|style)(\([a-z0-9-]+\))?!?: .+ \(#\d+\)$/;
-const work = git("log", "--no-merges", "--format=%s", "v0.1.0..origin/main").split("\n").filter(Boolean);
-const bad = work.filter((subject) => !conventional.test(subject));
+// Mesma regra do CI (scripts/verificar/commits.mjs): Conventional Commits citando a issue, sem crédito a IA.
+const work = git("log", "--no-merges", "--format=%B%x1e", "v0.1.0..origin/main").split("\x1e").map((m) => m.trim()).filter(Boolean);
+const bad = work.filter((message) => problems(message).length > 0).map((message) => message.split("\n")[0]);
 check(`commits seguem Conventional Commits e citam a issue (${work.length} commits)`, work.length > 0 && bad.length === 0, bad.join(" | "));
 
-const prs = run("gh", ["pr", "list", "-R", "thaynabds/JobDragonQuest", "--state", "merged", "--limit", "100", "--json", "number,baseRefName,headRefName,body"]);
+const prs = run("gh", ["pr", "list", "-R", "thaynabds/JobDragonQuest", "--state", "merged", "--limit", "1000", "--json", "number,baseRefName,headRefName,body"]);
 const merged = prs.status === 0 ? JSON.parse(prs.stdout) : [];
 const features = merged.filter((pr) => pr.baseRefName === "develop");
-check("PRs de feature com branch feature/issue-NN e 'Closes #N'",
-  features.length >= 15 && features.every((pr) => /^(feature|fix)\/issue-\d{2}-/.test(pr.headRefName) && /Closes #\d+/.test(pr.body)),
-  `${features.length} PRs`);
-check("release mesclado na main por PR", merged.some((pr) => pr.baseRefName === "main" && pr.headRefName === "develop"));
+// PRs de trabalho saem de feature/issue-NN ou fix/issue-NN (dois antigos usaram docs/ e chore/) e fecham a issue. As voltas da main para a develop depois de
+// release ou hotfix (chore/main-para-develop-X.Y.Z) e as atualizações do Dependabot não têm issue própria.
+const backMerge = (pr) => /^chore\/main-para-develop-\d+\.\d+\.\d+$/.test(pr.headRefName) || /^dependabot\//.test(pr.headRefName);
+const work_prs = features.filter((pr) => !backMerge(pr));
+const offFlow = work_prs.filter((pr) => !(/^(feature|fix|docs|chore)\/issue-\d+-/.test(pr.headRefName) && /Closes #\d+/.test(pr.body)));
+check(`PRs de trabalho com branch feature/issue-NN ou fix/issue-NN e 'Closes #N' (${work_prs.length} PRs)`,
+  work_prs.length >= 15 && offFlow.length === 0, offFlow.map((pr) => `#${pr.number} ${pr.headRefName}`).join(", "));
+check("release mesclada na main por PR", merged.some((pr) => pr.baseRefName === "main" && /^(develop|release\/\d+\.\d+\.\d+)$/.test(pr.headRefName)));
 finish("GIT_FLOW_OK");
