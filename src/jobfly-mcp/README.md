@@ -14,7 +14,7 @@ Servidor MCP (stdio) para uma IA usar o JobFly que roda no seu computador. O cli
     "jobfly": {
       "command": "node",
       "args": ["/caminho/para/JobFly/src/jobfly-mcp/dist/index.js"],
-      "env": { "JOBFLY_TOKEN": "jfp_…", "JOBFLY_API_URL": "http://127.0.0.1:8080" }
+      "env": { "JOBFLY_TOKEN_FILE": "/home/voce/.config/jobfly/mcp-token", "JOBFLY_API_URL": "http://127.0.0.1:8080" }
     }
   }
 }
@@ -22,7 +22,8 @@ Servidor MCP (stdio) para uma IA usar o JobFly que roda no seu computador. O cli
 
 | Variável | Padrão | Regra |
 |---|---|---|
-| `JOBFLY_TOKEN` | — | Obrigatória. Token pessoal `jfp_…` |
+| `JOBFLY_TOKEN_FILE` | — | Recomendada. Arquivo com o token (permissão 600): a configuração do cliente guarda só o caminho |
+| `JOBFLY_TOKEN` | — | Alternativa: o token `jfp_…` direto na variável |
 | `JOBFLY_API_URL` | `http://127.0.0.1:8080` | Só a própria máquina por HTTP. Servidor remoto exige HTTPS e `JOBFLY_ALLOW_REMOTE=1` |
 
 ## Ferramentas
