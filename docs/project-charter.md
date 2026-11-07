@@ -17,7 +17,7 @@ Na prática, isso gera três problemas:
 - **Perda de controle.** A pessoa não sabe em que etapa está cada processo, quais testes estão pendentes e quais e-mails esperam resposta.
 - **Candidaturas fracas.** Sem uma análise clara dos requisitos, a pessoa se candidata a vagas incompatíveis ou deixa de destacar o que tem de relevante.
 
-Ferramentas como o JobCopilot automatizam parte do envio, mas acompanham só o que elas mesmas enviaram, decidem sem explicar e não respeitam os limites de plataformas que proíbem automação (estudo em [referencias-jobcopilot/matriz-funcionalidades.md](referencias-jobcopilot/matriz-funcionalidades.md)).
+Ferramentas de candidatura automática costumam acompanhar só o que elas mesmas enviaram, decidir sem explicar e ignorar os limites de plataformas que proíbem automação.
 
 ## 2. Visão do produto
 

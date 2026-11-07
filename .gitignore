@@ -34,5 +34,6 @@ GATES.md
 __pycache__/
 *.pyc
 
-# Notas internas da auditoria (dados da conta da dona; não publicar)
-docs/referencias-jobcopilot/_notas_trabalho.md
+# Material privado (auditorias, notas de trabalho, dados da dona): nunca versionar
+privado/
+*_notas_trabalho.md
