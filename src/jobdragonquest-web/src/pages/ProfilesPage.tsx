@@ -28,6 +28,7 @@ export function ProfilesPage() {
               <Badge tone="info">{label("seniority", profile.seniority)}</Badge>{" "}
               <span className="muted">{t("profiles.skillCount", { count: profile.skillCount })}</span>
             </p>
+            {profile.headline && <p>{profile.headline}</p>}
             {profile.desiredTitles.length > 0 && <p className="muted">{profile.desiredTitles.join(" · ")}</p>}
           </Card>
         ))}

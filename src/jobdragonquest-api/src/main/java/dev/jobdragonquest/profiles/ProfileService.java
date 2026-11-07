@@ -1,5 +1,7 @@
 package dev.jobdragonquest.profiles;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Clock;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -17,6 +19,8 @@ import dev.jobdragonquest.common.error.NotFoundException;
 import dev.jobdragonquest.common.text.SkillNormalizer;
 import dev.jobdragonquest.common.text.UrlCanonicalizer;
 import dev.jobdragonquest.profiles.Profile.ProfileData;
+import dev.jobdragonquest.profiles.Profile.ProfileDetails;
+import dev.jobdragonquest.profiles.ProfileEnums.EmploymentType;
 import dev.jobdragonquest.profiles.ProfileDtos.EntryDto;
 import dev.jobdragonquest.profiles.ProfileDtos.LanguageDto;
 import dev.jobdragonquest.profiles.ProfileDtos.ProfileRequest;
@@ -125,24 +129,82 @@ public class ProfileService {
                 request.salaryExpectation(), request.salaryExpectation() == null ? null : request.salaryCurrency(),
                 blankToNull(request.availability()), blankToNull(request.restrictions()),
                 request.preferredLanguage() == null ? "pt-BR" : request.preferredLanguage(),
-                strip(request.desiredTitles()), strip(request.locations()), workModes, skills, languages, entries);
+                strip(request.desiredTitles()), strip(request.locations()), workModes, skills, languages, entries,
+                toDetails(request));
     }
 
-    private static ProfileSkill toSkill(SkillDto dto) {
+    private static ProfileDetails toDetails(ProfileRequest r) {
+        Set<EmploymentType> types = r.employmentTypes() == null || r.employmentTypes().isEmpty()
+                ? EnumSet.noneOf(EmploymentType.class) : EnumSet.copyOf(r.employmentTypes());
+        List<ProfileAnswer> answers = nullToEmpty(r.answers()).stream()
+                .map(a -> new ProfileAnswer(a.question().strip(), a.answer().strip())).toList();
+        boolean disability = Boolean.TRUE.equals(r.disability());
+        return new ProfileDetails(blankToNull(r.headline()), blankToNull(r.summary()), blankToNull(r.currentTitle()),
+                blankToNull(r.city()), blankToNull(r.stateRegion()), r.country(), r.requiresSponsorship(),
+                r.willingToRelocate(), r.travelAvailability(), r.noticePeriodDays(), r.availableFrom(), r.currentSalary(),
+                r.salaryPeriod(), link(r.linkedinUrl()), link(r.githubUrl()), link(r.portfolioUrl()), link(r.websiteUrl()),
+                blankToNull(r.coverLetter()), r.disability(), disability ? blankToNull(r.disabilityDetails()) : null,
+                strip(r.workAuthorization()), types, strip(r.excludedCompanies()), strip(r.includeKeywords()),
+                strip(r.excludeKeywords()), strip(r.industries()), answers);
+    }
+
+    /** Link do perfil: só http ou https (nada de javascript:, data: ou file:). */
+    private static String link(String value) {
+        return UrlCanonicalizer.optional(blankToNull(value));
+    }
+
+    /**
+     * Anos, meses e dias. Sem meses e dias, um {@code years} decimal (formato antigo) vira anos e meses: 1,5 = 1 ano e
+     * 6 meses.
+     */
+    static ProfileSkill toSkill(SkillDto dto) {
         String name = dto.name().strip();
-        return new ProfileSkill(name, SkillNormalizer.normalize(name), dto.level(), dto.years());
+        Integer years = null;
+        Integer months = dto.months();
+        Integer days = dto.days();
+        if (dto.years() != null) {
+            BigDecimal whole = dto.years().setScale(0, RoundingMode.DOWN);
+            years = whole.intValueExact();
+            BigDecimal fraction = dto.years().subtract(whole);
+            if (fraction.signum() > 0) {
+                if (months != null || days != null) {
+                    throw DomainException.badRequest("invalid_skill_time",
+                            "Use anos inteiros quando informar meses ou dias: " + name);
+                }
+                int extra = fraction.multiply(BigDecimal.valueOf(12)).setScale(0, RoundingMode.HALF_UP).intValue();
+                if (extra == 12) {
+                    years++;
+                    extra = 0;
+                }
+                months = extra;
+            }
+        }
+        return new ProfileSkill(name, SkillNormalizer.normalize(name), dto.level(), years, months, days);
     }
 
     private static ProfileLanguage toLanguage(LanguageDto dto) {
-        return new ProfileLanguage(dto.code(), dto.level());
+        String typed = dto.name() != null && !dto.name().isBlank() ? dto.name() : dto.code();
+        if (typed == null || typed.isBlank()) {
+            throw DomainException.badRequest("unknown_language", "Informe o nome do idioma");
+        }
+        String code = LanguageCatalog.resolve(typed).orElseThrow(() -> DomainException.badRequest("unknown_language",
+                "Idioma não reconhecido: " + typed.strip()));
+        return new ProfileLanguage(code, dto.level());
     }
 
     private static ProfileEntry toEntry(EntryDto dto) {
         if (dto.startDate() != null && dto.endDate() != null && dto.endDate().isBefore(dto.startDate())) {
             throw DomainException.badRequest("invalid_period", "A data final não pode ser anterior à inicial: " + dto.title());
         }
+        if (dto.startDate() != null && dto.expirationDate() != null && dto.expirationDate().isBefore(dto.startDate())) {
+            throw DomainException.badRequest("invalid_period", "A validade não pode ser anterior à emissão: " + dto.title());
+        }
+        boolean current = Boolean.TRUE.equals(dto.current());
+        ProfileEntry.Details details = new ProfileEntry.Details(blankToNull(dto.location()), dto.employmentType(),
+                current ? Boolean.TRUE : dto.current(), dto.degree(), blankToNull(dto.fieldOfStudy()), dto.status(),
+                blankToNull(dto.credentialId()), dto.expirationDate(), dto.hours(), blankToNull(dto.skills()));
         return new ProfileEntry(dto.kind(), dto.title().strip(), blankToNull(dto.organization()), dto.startDate(),
-                dto.endDate(), blankToNull(dto.description()), UrlCanonicalizer.optional(dto.url()));
+                current ? null : dto.endDate(), blankToNull(dto.description()), UrlCanonicalizer.optional(dto.url()), details);
     }
 
     private static void rejectDuplicates(List<String> values, String code, String message) {
