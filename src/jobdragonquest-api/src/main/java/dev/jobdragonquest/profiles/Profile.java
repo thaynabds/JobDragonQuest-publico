@@ -15,6 +15,7 @@ import org.hibernate.type.SqlTypes;
 
 import dev.jobdragonquest.common.domain.Seniority;
 import dev.jobdragonquest.common.domain.WorkMode;
+import dev.jobdragonquest.profiles.ProfileEnums.AutomationMode;
 import dev.jobdragonquest.profiles.ProfileEnums.EmploymentType;
 import dev.jobdragonquest.profiles.ProfileEnums.SalaryPeriod;
 import dev.jobdragonquest.profiles.ProfileEnums.TravelAvailability;
@@ -115,6 +116,11 @@ public class Profile extends AssignedIdEntity {
     @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "salary_period", length = 10)
     private SalaryPeriod salaryPeriod;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "automation_mode", nullable = false, length = 20)
+    private AutomationMode automationMode = AutomationMode.REVIEW;
 
     @Column(name = "linkedin_url", length = 2048)
     private String linkedinUrl;
@@ -249,6 +255,7 @@ public class Profile extends AssignedIdEntity {
         replace(skills, data.skills());
         replace(languages, data.languages());
         replace(entries, data.entries());
+        this.automationMode = data.automationMode() == null ? AutomationMode.REVIEW : data.automationMode();
         ProfileDetails d = data.details();
         this.headline = d.headline();
         this.summary = d.summary();
@@ -291,7 +298,7 @@ public class Profile extends AssignedIdEntity {
             BigDecimal salaryExpectation, String salaryCurrency, String availability, String restrictions,
             String preferredLanguage, List<String> desiredTitles, List<String> locations, Set<WorkMode> workModes,
             List<ProfileSkill> skills, List<ProfileLanguage> languages, List<ProfileEntry> entries,
-            ProfileDetails details) {
+            ProfileDetails details, AutomationMode automationMode) {
     }
 
     /** Campos do perfil completo (identificação, localização, contratação, links, filtros e respostas). */
@@ -330,6 +337,10 @@ public class Profile extends AssignedIdEntity {
 
     public Seniority getSeniority() {
         return seniority;
+    }
+
+    public AutomationMode getAutomationMode() {
+        return automationMode;
     }
 
     public int getMinMatchScore() {

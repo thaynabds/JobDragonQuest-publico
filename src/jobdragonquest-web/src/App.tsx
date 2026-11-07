@@ -17,6 +17,7 @@ import { ProfileEditorPage } from "./pages/ProfileEditorPage";
 import { ProfilesPage } from "./pages/ProfilesPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SourcesPage } from "./pages/SourcesPage";
+import { ReviewQueuePage } from "./pages/ReviewQueuePage";
 
 function Routed() {
   const { user, ready } = useAuth();
@@ -31,6 +32,7 @@ function Routed() {
       <Route element={<Layout />}>
         <Route index element={<DashboardPage />} />
         <Route path="candidaturas" element={<BoardPage />} />
+        <Route path="revisao" element={<ReviewQueuePage />} />
         <Route path="candidaturas/:id" element={<ApplicationDetailPage />} />
         <Route path="vagas" element={<JobsPage />} />
         <Route path="vagas/:id" element={<JobDetailPage />} />

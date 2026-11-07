@@ -10,6 +10,7 @@ import java.util.UUID;
 import dev.jobdragonquest.common.domain.LanguageLevel;
 import dev.jobdragonquest.common.domain.Seniority;
 import dev.jobdragonquest.common.domain.WorkMode;
+import dev.jobdragonquest.profiles.ProfileEnums.AutomationMode;
 import dev.jobdragonquest.profiles.ProfileEnums.Degree;
 import dev.jobdragonquest.profiles.ProfileEnums.EmploymentType;
 import dev.jobdragonquest.profiles.ProfileEnums.EntryStatus;
@@ -75,7 +76,8 @@ public final class ProfileDtos {
             @Size(max = 50) List<@NotBlank @Size(max = 80) String> includeKeywords,
             @Size(max = 50) List<@NotBlank @Size(max = 80) String> excludeKeywords,
             @Size(max = 20) List<@NotBlank @Size(max = 120) String> industries,
-            @Size(max = 50) List<@Valid @NotNull AnswerDto> answers) {
+            @Size(max = 50) List<@Valid @NotNull AnswerDto> answers,
+            AutomationMode automationMode) {
     }
 
     /**
@@ -137,7 +139,8 @@ public final class ProfileDtos {
             String linkedinUrl, String githubUrl, String portfolioUrl, String websiteUrl, String coverLetter,
             Boolean disability, String disabilityDetails, List<String> workAuthorization, Set<EmploymentType> employmentTypes,
             List<String> excludedCompanies, List<String> includeKeywords, List<String> excludeKeywords,
-            List<String> industries, List<AnswerDto> answers, Instant createdAt, Instant updatedAt, long version) {
+            List<String> industries, List<AnswerDto> answers, Instant createdAt, Instant updatedAt, long version,
+            AutomationMode automationMode) {
 
         static ProfileResponse of(Profile p) {
             Profile.ProfileDetails d = p.getDetails();
@@ -154,7 +157,7 @@ public final class ProfileDtos {
                     d.websiteUrl(), d.coverLetter(), d.disability(), d.disabilityDetails(), d.workAuthorization(),
                     d.employmentTypes(), d.excludedCompanies(), d.includeKeywords(), d.excludeKeywords(), d.industries(),
                     d.answers().stream().map(a -> new AnswerDto(a.getQuestion(), a.getAnswer())).toList(),
-                    p.getCreatedAt(), p.getUpdatedAt(), p.getVersion());
+                    p.getCreatedAt(), p.getUpdatedAt(), p.getVersion(), p.getAutomationMode());
         }
 
         private static EntryDto entry(ProfileEntry e) {

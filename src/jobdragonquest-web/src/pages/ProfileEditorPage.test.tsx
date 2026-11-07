@@ -34,6 +34,7 @@ const saved: Profile = {
   objective: null,
   seniority: "SPECIALIST",
   minMatchScore: 60,
+  automationMode: "REVIEW",
   salaryExpectation: 6000,
   salaryCurrency: "BRL",
   availability: null,

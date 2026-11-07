@@ -128,3 +128,7 @@ Cada aviso traz `message` (pronta, em português) e campos estruturados (`type`,
 ## Operação
 
 `GET /actuator/health` é público e não mostra detalhes. `GET /actuator/prometheus` exige o papel `ADMIN`.
+
+### Modo de automação do perfil
+
+`automationMode` no perfil (`OFF`, `REVIEW` padrão, `AUTOMATIC`) decide o que a coleta automática faz com uma vaga compatível (recomendação `APPLY`): `OFF` só guarda a vaga; `REVIEW` cria a candidatura como `RECOMMENDED`, que aparece na fila de revisão do painel (`GET /applications?state=RECOMMENDED`; aprovar e descartar usam `POST /applications/batch/transitions` para `PREPARED` ou `CLOSED`); `AUTOMATIC` cria direto como `PREPARED`. Nenhum modo envia candidatura a site: o envio é sempre da pessoa.

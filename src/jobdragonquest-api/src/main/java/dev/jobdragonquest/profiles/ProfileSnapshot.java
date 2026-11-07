@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import dev.jobdragonquest.common.domain.LanguageLevel;
 import dev.jobdragonquest.common.domain.Seniority;
 import dev.jobdragonquest.common.domain.WorkMode;
+import dev.jobdragonquest.profiles.ProfileEnums.AutomationMode;
 import dev.jobdragonquest.profiles.ProfileEnums.EmploymentType;
 import dev.jobdragonquest.profiles.ProfileEnums.SalaryPeriod;
 
@@ -28,7 +29,8 @@ public record ProfileSnapshot(
         Set<WorkMode> workModes,
         Map<String, Skill> skills,
         Map<String, LanguageLevel> languages,
-        Filters filters) {
+        Filters filters,
+        AutomationMode automationMode) {
 
     public record Skill(String name, int level, BigDecimal years) {
     }
@@ -56,8 +58,16 @@ public record ProfileSnapshot(
         this(id, name, seniority, minMatchScore, desiredTitles, locations, workModes, skills, languages, Filters.NONE);
     }
 
+    /** Perfil com filtros e modo de automação padrão (fila de revisão). */
+    public ProfileSnapshot(UUID id, String name, Seniority seniority, int minMatchScore, List<String> desiredTitles,
+            List<String> locations, Set<WorkMode> workModes, Map<String, Skill> skills, Map<String, LanguageLevel> languages,
+            Filters filters) {
+        this(id, name, seniority, minMatchScore, desiredTitles, locations, workModes, skills, languages, filters, AutomationMode.REVIEW);
+    }
+
     public ProfileSnapshot {
         filters = filters == null ? Filters.NONE : filters;
+        automationMode = automationMode == null ? AutomationMode.REVIEW : automationMode;
     }
 
     static ProfileSnapshot of(Profile profile) {
@@ -71,6 +81,7 @@ public record ProfileSnapshot(
                 details.workAuthorization().stream().map(code -> code.toUpperCase(Locale.ROOT)).collect(Collectors.toUnmodifiableSet()),
                 profile.getSalaryExpectation(), profile.getSalaryCurrency(), details.salaryPeriod());
         return new ProfileSnapshot(profile.getId(), profile.getName(), profile.getSeniority(), profile.getMinMatchScore(),
-                profile.getDesiredTitles(), profile.getLocations(), profile.getWorkModes(), skills, languages, filters);
+                profile.getDesiredTitles(), profile.getLocations(), profile.getWorkModes(), skills, languages, filters,
+                profile.getAutomationMode());
     }
 }
