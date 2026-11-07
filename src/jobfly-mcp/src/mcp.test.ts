@@ -1,5 +1,9 @@
 import { Client as McpClient } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
 import { describe, expect, it, vi } from "vitest";
 
 import { ApiError, apiPath, createClient, MAX_RESPONSE_BYTES, type Client } from "./client.js";
@@ -32,6 +36,26 @@ describe("configuração", () => {
       expect(String((error as Error).message)).not.toContain(secret);
     }
     expect(() => loadConfig({})).toThrow(ConfigError);
+  });
+});
+
+describe("token em arquivo", () => {
+  it("lê o token de um arquivo 600 e recusa arquivo legível por outras contas", () => {
+    const dir = mkdtempSync(join(tmpdir(), "jobfly-mcp-"));
+    try {
+      const file = join(dir, "token");
+      writeFileSync(file, TOKEN + "\n");
+      chmodSync(file, 0o600);
+      expect(loadConfig({ JOBFLY_TOKEN_FILE: file }).token).toBe(TOKEN);
+      chmodSync(file, 0o644);
+      expect(() => loadConfig({ JOBFLY_TOKEN_FILE: file })).toThrow("chmod 600");
+      expect(() => loadConfig({ JOBFLY_TOKEN_FILE: join(dir, "nao-existe") })).toThrow(ConfigError);
+      writeFileSync(file, "x".repeat(1000));
+      chmodSync(file, 0o600);
+      expect(() => loadConfig({ JOBFLY_TOKEN_FILE: file })).toThrow("arquivo pequeno");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 
