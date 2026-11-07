@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -165,5 +165,21 @@ describe("pop-ups e notificações do sistema", () => {
     expect(await screen.findByText("Acme (Dev Java): etapa mudou para Entrevista agendada")).toBeTruthy();
     await userEvent.click(screen.getByRole("button", { name: "Marcar todos como lidos" }));
     await waitFor(() => expect(mocks.markAllRead).toHaveBeenCalled());
+  });
+
+  it("com o sino aberto, a lista acompanha um aviso lido pelo pop-up", async () => {
+    mocks.notificationsDue.mockResolvedValue({ data: [item({ id: "p1" })] });
+    mocks.notifications.mockResolvedValue({ data: { items: [item({ id: "p1" })], unreadCount: 1, page: 0, size: 20, totalItems: 1 } });
+    renderProvider(
+      <>
+        <Bell />
+        <Toasts />
+      </>,
+    );
+    await userEvent.click(await screen.findByRole("button", { name: "Avisos: 1 não lido(s)" }));
+    await waitFor(() => expect(screen.getAllByRole("button", { name: "Marcar como lido" }).length).toBe(2));
+    mocks.notifications.mockResolvedValue({ data: { items: [item({ id: "p1", readAt: "2026-11-07T01:00:00Z" })], unreadCount: 0, page: 0, size: 20, totalItems: 1 } });
+    await userEvent.click(within(screen.getByRole("alert")).getByRole("button", { name: "Marcar como lido" }));
+    await waitFor(() => expect(screen.queryAllByRole("button", { name: "Marcar como lido" })).toHaveLength(0));
   });
 });
