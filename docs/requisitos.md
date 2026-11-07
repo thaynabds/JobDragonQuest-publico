@@ -36,6 +36,8 @@ Requisitos numerados e rastreáveis. Cada requisito aparece nas issues, nos caso
 | [RF23] | O sistema deve revisar a candidatura inteira antes do envio | ⬜ | Agentes de IA |
 | [RF24] | O sistema deve oferecer ferramentas MCP com permissões controladas | ⬜ | ADR-007 |
 | [RF25] | O sistema deve importar histórico de candidaturas em CSV, com relatório de duplicatas | ⬜ | Roadmap |
+| [RF26] | O sistema deve avisar a pessoa de forma perceptível (pop-up, notificação do sistema e som) sobre etapas, pendências, prazos e vagas novas, com configuração por etapa, tipo e fonte, horário de silêncio e adiamento | ✅ | `NotificationIntegrationTest`, `notifications.test.tsx`, `SettingsPage.test.tsx` |
+| [RF27] | O sistema deve oferecer tokens de acesso pessoal revogáveis para integrações, sem expor a senha | ✅ | `PersonalTokenIntegrationTest`, `TokensSection.test.tsx` |
 
 ## Requisitos não funcionais (RNF)
 

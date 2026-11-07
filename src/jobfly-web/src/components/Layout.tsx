@@ -2,6 +2,9 @@ import { NavLink, Outlet } from "react-router";
 
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
+import { Bell } from "../notifications/Bell";
+import { NotificationsProvider } from "../notifications/NotificationsContext";
+import { Toasts } from "../notifications/Toasts";
 import { LanguageSelect } from "./LanguageSelect";
 
 const NAV = [
@@ -17,6 +20,7 @@ export function Layout() {
   const { t } = useI18n();
   const { user, logout } = useAuth();
   return (
+    <NotificationsProvider>
     <div className="shell">
       <aside className="sidebar">
         <div className="brand">
@@ -25,6 +29,7 @@ export function Layout() {
             <strong>{t("app.name")}</strong>
             <span className="brand-tagline">{t("app.tagline")}</span>
           </div>
+          <Bell />
         </div>
         <nav aria-label="JobFly">
           {NAV.map((item) => (
@@ -45,5 +50,7 @@ export function Layout() {
         <Outlet />
       </main>
     </div>
+    <Toasts />
+    </NotificationsProvider>
   );
 }

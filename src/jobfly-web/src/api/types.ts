@@ -393,3 +393,102 @@ export interface CreatedToken {
   token: PersonalToken;
   value: string;
 }
+
+export type NotificationType =
+  | "STAGE_CHANGED"
+  | "ACTION_REQUIRED"
+  | "TECH_TEST"
+  | "INTERVIEW_REMINDER"
+  | "DEADLINE_REMINDER"
+  | "SUGGESTION_TO_REVIEW"
+  | "SOURCE_FAILING"
+  | "SOURCE_TO_CHECK"
+  | "NO_UPDATE"
+  | "NEW_JOBS"
+  | "TEST";
+
+export const NOTIFICATION_TYPES: NotificationType[] = [
+  "STAGE_CHANGED",
+  "ACTION_REQUIRED",
+  "TECH_TEST",
+  "INTERVIEW_REMINDER",
+  "DEADLINE_REMINDER",
+  "SUGGESTION_TO_REVIEW",
+  "SOURCE_FAILING",
+  "SOURCE_TO_CHECK",
+  "NO_UPDATE",
+  "NEW_JOBS",
+  "TEST",
+];
+
+export type NotificationPriority = "HIGH" | "MEDIUM" | "LOW";
+
+export interface NotificationItem {
+  id: string;
+  topic: string;
+  type: NotificationType;
+  priority: NotificationPriority;
+  applicationId: string | null;
+  sourceId: string | null;
+  state: ApplicationState | null;
+  company: string | null;
+  title: string | null;
+  detail: string | null;
+  message: string;
+  dueAt: string | null;
+  itemCount: number | null;
+  leadMinutes: number | null;
+  popup: boolean;
+  system: boolean;
+  sound: boolean;
+  quiet: boolean;
+  createdAt: string;
+  deliveredAt: string | null;
+  readAt: string | null;
+  snoozedUntil: string | null;
+}
+
+export interface NotificationList {
+  items: NotificationItem[];
+  unreadCount: number;
+  page: number;
+  size: number;
+  totalItems: number;
+}
+
+export interface NotificationPreference {
+  topic: string;
+  enabled: boolean;
+  popup: boolean;
+  system: boolean;
+  sound: boolean;
+  leadMinutes: number[] | null;
+  minScore: number | null;
+  staleDays: number | null;
+}
+
+export interface NotificationSettings {
+  quietEnabled: boolean;
+  quietStart: string;
+  quietEnd: string;
+  quietAllowHigh: boolean;
+  hideDetails: boolean;
+}
+
+export interface PreferenceView {
+  topic: string;
+  group: "STAGE" | "PENDING" | "SOURCE";
+  key: string;
+  label: string | null;
+  priority: NotificationPriority;
+  supportsLead: boolean;
+  supportsStaleDays: boolean;
+  supportsMinScore: boolean;
+  preference: NotificationPreference;
+}
+
+export interface PreferencesView {
+  settings: NotificationSettings;
+  timeZone: string;
+  preferences: PreferenceView[];
+}
