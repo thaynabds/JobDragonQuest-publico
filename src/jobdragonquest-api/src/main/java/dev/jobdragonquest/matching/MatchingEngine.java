@@ -32,7 +32,8 @@ import dev.jobdragonquest.profiles.ProfileSnapshot;
  *
  * <p>Nota: obrigatórios pesam 70% e desejáveis 30%. Atendido vale 1, parcial vale 0,5 e não atendido vale 0.
  * Requisitos sem competência identificável ficam fora da conta e aparecem como "não avaliado".
- * Os impedimentos (modalidade, local, idioma exigido, senioridade) não entram na nota: eles bloqueiam a recomendação.
+ * Os impedimentos (modalidade, local, idioma exigido, senioridade e os filtros de preferência do perfil em
+ * {@link PreferenceFilters}) não entram na nota: eles bloqueiam a recomendação.
  */
 @Component
 public class MatchingEngine {
@@ -54,6 +55,7 @@ public class MatchingEngine {
         checkLocation(profile, job, blockers);
         checkLanguages(profile, job, blockers, warnings);
         checkSeniority(profile, job, blockers, warnings);
+        PreferenceFilters.check(profile, job, blockers, warnings);
 
         Integer score = score(assessments);
         List<String> strengths = strengths(profile, assessments);

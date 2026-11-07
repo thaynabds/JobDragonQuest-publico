@@ -10,9 +10,11 @@ import { LanguageSelect } from "./LanguageSelect";
 const NAV = [
   { to: "/", key: "nav.dashboard" },
   { to: "/candidaturas", key: "nav.board" },
+  { to: "/revisao", key: "nav.review" },
   { to: "/vagas", key: "nav.jobs" },
   { to: "/fontes", key: "nav.sources" },
   { to: "/perfis", key: "nav.profiles" },
+  { to: "/carreira", key: "nav.career" },
   { to: "/configuracoes", key: "nav.settings" },
 ] as const;
 

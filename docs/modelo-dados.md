@@ -33,8 +33,11 @@ app_user 1─┬─* refresh_token          (hash SHA-256, família, revogação
 | `app_user` | Conta, senha Argon2id, bloqueio por tentativas | `email` único (minúsculo) |
 | `refresh_token` | Sessões renováveis; só o hash é guardado | `token_hash` único, índice por `family_id` |
 | `profile` | Perfil profissional independente | `(user_id, name)` único |
-| `job` | Vaga encontrada ou registrada | `(user_id, url_hash)` único; índice `(user_id, company_norm, title_norm)` |
+| `job` | Vaga encontrada ou registrada; `favorite` marca as favoritas (base da busca por vagas parecidas) | `(user_id, url_hash)` único; índice `(user_id, company_norm, title_norm)` |
 | `job_application` | Candidatura de qualquer origem | `(user_id, idempotency_key)` único; índices por estado, URL, empresa/cargo |
+| `account_setting` | Preferências da conta que valem em qualquer navegador (acessibilidade), em JSON já validado | chave `(user_id, setting_key)` |
+| `stored_document` | Documentos do perfil (currículo e carta com versão, certificados) e anexos de candidatura: tipo real, tamanho, SHA-256, conteúdo e texto extraído. Some com o perfil, a candidatura ou a conta | índices `(user_id, profile_id)` e `(user_id, application_id)` |
+| `application_contact` | Contatos do processo (papel, nome, cargo, e-mail, LinkedIn, notas, quando conversou). Dado de terceiro: some com a candidatura e nunca vai para log; a auditoria guarda só o id | índice `(application_id, created_at)` |
 | `application_event` | Histórico: mudança de etapa, nota ou sugestão, com origem, evidência e confiança | índice `(application_id, created_at)` |
 | `audit_log` | Quem fez o quê e quando (sem conteúdo sensível) | índice `(user_id, created_at)` |
 | `watched_source` (V2, V3) | Fonte vigiada: ATS automático ou plataforma assistida, frequência, próxima execução, último resultado e reserva de coleta (`running_until`) | `(user_id, dedup_key)` único; índice `(enabled, collection_mode, next_run_at)` |

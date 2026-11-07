@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 
+import { A11yAccountSync } from "./a11y/A11yAccountSync";
 import { A11yProvider } from "./a11y/A11yContext";
 import { A11yPanel } from "./a11y/A11yPanel";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
@@ -17,6 +18,9 @@ import { ProfileEditorPage } from "./pages/ProfileEditorPage";
 import { ProfilesPage } from "./pages/ProfilesPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SourcesPage } from "./pages/SourcesPage";
+import { ReviewQueuePage } from "./pages/ReviewQueuePage";
+import { CareerPage } from "./pages/CareerPage";
+import { ResumePage } from "./pages/ResumePage";
 
 function Routed() {
   const { user, ready } = useAuth();
@@ -31,12 +35,15 @@ function Routed() {
       <Route element={<Layout />}>
         <Route index element={<DashboardPage />} />
         <Route path="candidaturas" element={<BoardPage />} />
+        <Route path="revisao" element={<ReviewQueuePage />} />
         <Route path="candidaturas/:id" element={<ApplicationDetailPage />} />
         <Route path="vagas" element={<JobsPage />} />
         <Route path="vagas/:id" element={<JobDetailPage />} />
         <Route path="fontes" element={<SourcesPage />} />
         <Route path="perfis" element={<ProfilesPage />} />
         <Route path="perfis/:id" element={<ProfileEditorPage />} />
+        <Route path="perfis/:id/curriculo" element={<ResumePage />} />
+        <Route path="carreira" element={<CareerPage />} />
         <Route path="configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
@@ -49,6 +56,7 @@ export function App() {
     <I18nProvider>
       <A11yProvider>
         <AuthProvider>
+          <A11yAccountSync />
           <BrowserRouter>
             <Routed />
           </BrowserRouter>

@@ -10,10 +10,24 @@ import { useAsync } from "../utils/useAsync";
 
 const blank = (value: string) => (value.trim() === "" ? null : value.trim());
 
+/** Lê o arquivo como texto com FileReader (funciona em todos os navegadores). */
+const readText = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(reader.error ?? new Error("leitura"));
+    reader.readAsText(file);
+  });
+
 export function BoardPage() {
   const { t, label, formatDate, errorMessage } = useI18n();
   const navigate = useNavigate();
-  const [filters, setFilters] = useState({ profileId: "", platform: "", company: "", country: "" });
+  const [filters, setFilters] = useState({
+    profileId: "",
+    platform: "",
+    company: "",
+    country: "",
+  });
   const [applied, setApplied] = useState(filters);
   const board = useAsync(
     () =>
@@ -42,7 +56,10 @@ export function BoardPage() {
     appliedLocal: "",
   });
   const [idempotencyKey, setIdempotencyKey] = useState(() => newIdempotencyKey("ext"));
-  const [notice, setNotice] = useState<{ tone: "error" | "success"; text: string } | null>(null);
+  const [notice, setNotice] = useState<{
+    tone: "error" | "success";
+    text: string;
+  } | null>(null);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -65,8 +82,72 @@ export function BoardPage() {
       );
       setIdempotencyKey(newIdempotencyKey("ext"));
       const duplicate = response.headers.get("X-Duplicate-Of");
-      setNotice({ tone: "success", text: duplicate ? t("application.duplicate") : t("application.created") });
+      setNotice({
+        tone: "success",
+        text: duplicate ? t("application.duplicate") : t("application.created"),
+      });
       navigate(`/candidaturas/${response.data.id}`);
+    } catch (err) {
+      setNotice({ tone: "error", text: errorMessage(err) });
+    }
+  };
+
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [batch, setBatch] = useState<{
+    toState: ApplicationState;
+    evidence: string;
+  }>({ toState: "SCREENING", evidence: "" });
+  const [busy, setBusy] = useState(false);
+
+  const toggle = (cardId: string) =>
+    setSelected((current) => {
+      const next = new Set(current);
+      if (next.has(cardId)) next.delete(cardId);
+      else next.add(cardId);
+      return next;
+    });
+
+  const runBatch = async (toState: ApplicationState, evidence: string) => {
+    setNotice(null);
+    setBusy(true);
+    try {
+      const response = await api.batchTransition({
+        ids: [...selected],
+        toState,
+        evidence: evidence.trim(),
+      });
+      setNotice({
+        tone: response.data.failed.length > 0 ? "error" : "success",
+        text: t("board.batchDone", {
+          updated: response.data.updated,
+          failed: response.data.failed.length,
+        }),
+      });
+      setSelected(new Set());
+      setBatch({ ...batch, evidence: "" });
+      board.reload();
+    } catch (err) {
+      setNotice({ tone: "error", text: errorMessage(err) });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const importFile = async (file: File | undefined) => {
+    if (!file) return;
+    setNotice(null);
+    if (file.size > 900_000) {
+      setNotice({ tone: "error", text: t("board.importTooBig") });
+      return;
+    }
+    try {
+      const { data } = await api.importApplications(await readText(file));
+      const lines = data.errors.map((e) => `${e.line} (${label("error", e.code)})`).join(", ");
+      setNotice({
+        tone: data.errors.length > 0 ? "error" : "success",
+        text: t("board.importDone", { created: data.created, duplicates: data.duplicates }) + (lines ? ` ${t("board.importErrors", { lines })}` : ""),
+      });
+      board.reload();
     } catch (err) {
       setNotice({ tone: "error", text: errorMessage(err) });
     }
@@ -78,9 +159,15 @@ export function BoardPage() {
     <div className="page page-wide">
       <div className="page-header">
         <h1>{t("board.title")}</h1>
-        <Button variant="primary" onClick={() => setShowForm(!showForm)}>
-          {t("board.new")}
-        </Button>
+        <div className="row-actions">
+          <label className="btn btn-secondary">
+            {t("board.importCsv")}
+            <input type="file" accept=".csv,text/csv" className="visually-hidden" onChange={(e) => void importFile(e.target.files?.[0])} />
+          </label>
+          <Button variant="primary" onClick={() => setShowForm(!showForm)}>
+            {t("board.new")}
+          </Button>
+        </div>
       </div>
       {notice && (
         <Notice tone={notice.tone} onClose={() => setNotice(null)}>
@@ -107,12 +194,7 @@ export function BoardPage() {
               </select>
             </Field>
             <Field label={t("board.platform")}>
-              <input
-                value={form.platform ?? ""}
-                maxLength={80}
-                list="platforms"
-                onChange={(e) => setForm({ ...form, platform: e.target.value })}
-              />
+              <input value={form.platform ?? ""} maxLength={80} list="platforms" onChange={(e) => setForm({ ...form, platform: e.target.value })} />
               <datalist id="platforms">
                 {["LinkedIn", "Gupy", "Indeed", "Site da empresa", "Instagram", "Facebook", "E-mail", "Indicação", "Workday", "Greenhouse"].map((p) => (
                   <option key={p} value={p} />
@@ -126,7 +208,15 @@ export function BoardPage() {
               <input type="datetime-local" value={form.appliedLocal} onChange={(e) => setForm({ ...form, appliedLocal: e.target.value })} />
             </Field>
             <Field label={t("application.state")}>
-              <select value={form.state ?? "SUBMITTED"} onChange={(e) => setForm({ ...form, state: e.target.value as ApplicationState })}>
+              <select
+                value={form.state ?? "SUBMITTED"}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    state: e.target.value as ApplicationState,
+                  })
+                }
+              >
                 {APPLICATION_STATES.map((state) => (
                   <option key={state} value={state}>
                     {label("state", state)}
@@ -182,6 +272,48 @@ export function BoardPage() {
         <Button type="submit">{t("common.filter")}</Button>
       </form>
 
+      {selected.size > 0 && (
+        <form
+          className="batch-bar"
+          aria-label={t("board.selected", { count: selected.size })}
+          onSubmit={(event) => {
+            event.preventDefault();
+            void runBatch(batch.toState, batch.evidence);
+          }}
+        >
+          <strong>{t("board.selected", { count: selected.size })}</strong>
+          <Field label={t("board.batchState")}>
+            <select
+              value={batch.toState}
+              onChange={(e) =>
+                setBatch({
+                  ...batch,
+                  toState: e.target.value as ApplicationState,
+                })
+              }
+            >
+              {APPLICATION_STATES.map((state) => (
+                <option key={state} value={state}>
+                  {label("state", state)}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label={t("board.batchEvidence")}>
+            <input required maxLength={4000} value={batch.evidence} onChange={(e) => setBatch({ ...batch, evidence: e.target.value })} />
+          </Field>
+          <Button type="submit" variant="primary" disabled={busy}>
+            {t("board.batchApply")}
+          </Button>
+          <Button type="button" disabled={busy} onClick={() => void runBatch("CLOSED", t("board.batchDiscardReason"))}>
+            {t("board.batchDiscard")}
+          </Button>
+          <Button type="button" disabled={busy} onClick={() => setSelected(new Set())}>
+            {t("board.batchClear")}
+          </Button>
+        </form>
+      )}
+
       {board.error ? <Notice tone="error">{errorMessage(board.error)}</Notice> : null}
       {board.loading && !board.data ? <Loading /> : null}
       <div className="board">
@@ -193,18 +325,28 @@ export function BoardPage() {
             </header>
             {column.cards.length === 0 && <p className="muted small">{t("board.empty")}</p>}
             {column.cards.map((card) => (
-              <Link key={card.id} to={`/candidaturas/${card.id}`} className="kanban-card">
-                <strong>{card.title}</strong>
-                <span>{card.company}</span>
-                <span className="small muted">
-                  {card.platform ?? label("origin", card.origin)} · {formatDate(card.appliedAt ?? card.createdAt)}
-                </span>
-                <span className="card-badges">
-                  {card.matchScore !== null && <Badge tone="info">{card.matchScore}%</Badge>}
-                  {card.stale && <Badge tone="warn">{t("board.stale")}</Badge>}
-                </span>
-                {card.nextAction && <span className="small">→ {card.nextAction}</span>}
-              </Link>
+              <div key={card.id} className="kanban-item">
+                <input
+                  type="checkbox"
+                  aria-label={t("board.selectCard", {
+                    title: card.title ?? card.company ?? card.id,
+                  })}
+                  checked={selected.has(card.id)}
+                  onChange={() => toggle(card.id)}
+                />
+                <Link to={`/candidaturas/${card.id}`} className="kanban-card">
+                  <strong>{card.title}</strong>
+                  <span>{card.company}</span>
+                  <span className="small muted">
+                    {card.platform ?? label("origin", card.origin)} · {formatDate(card.appliedAt ?? card.createdAt)}
+                  </span>
+                  <span className="card-badges">
+                    {card.matchScore !== null && <Badge tone="info">{card.matchScore}%</Badge>}
+                    {card.stale && <Badge tone="warn">{t("board.stale")}</Badge>}
+                  </span>
+                  {card.nextAction && <span className="small">→ {card.nextAction}</span>}
+                </Link>
+              </div>
             ))}
           </section>
         ))}

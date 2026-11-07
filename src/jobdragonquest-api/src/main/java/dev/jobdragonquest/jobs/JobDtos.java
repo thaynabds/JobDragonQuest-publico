@@ -77,15 +77,27 @@ public final class JobDtos {
     }
 
     public record JobSummary(UUID id, String company, String title, String location, WorkMode workMode,
-            JobStatus status, String source, String url, Instant foundAt, UUID watchedSourceId) {
+            JobStatus status, String source, String url, Instant foundAt, UUID watchedSourceId, boolean favorite) {
 
         static JobSummary of(JobPosting job) {
             return new JobSummary(job.getId(), job.getCompany(), job.getTitle(), job.getLocation(), job.getWorkMode(),
-                    job.getStatus(), job.getSource(), job.getSourceUrl(), job.getFoundAt(), job.getWatchedSourceId());
+                    job.getStatus(), job.getSource(), job.getSourceUrl(), job.getFoundAt(), job.getWatchedSourceId(),
+                    job.isFavorite());
         }
     }
 
     /** Resultado do cadastro: {@code duplicate} indica que a vaga já existia e nada foi criado. */
     public record JobCreated(JobResponse job, boolean duplicate) {
+    }
+
+    public record FavoriteRequest(boolean favorite) {
+    }
+
+    /**
+     * Vaga parecida com uma base (favorita ou candidatura recente). {@code score} de 0 a 100; a explicação traz a vaga
+     * de base mais parecida e as palavras do cargo e competências em comum.
+     */
+    public record SimilarJob(JobSummary job, int score, UUID basisJobId, String basisTitle, List<String> sharedWords,
+            List<String> sharedSkills) {
     }
 }

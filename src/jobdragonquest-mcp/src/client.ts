@@ -51,10 +51,11 @@ export function createClient(config: Config, fetchImpl: typeof fetch = fetch): C
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${config.token}`,
-            ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+            // FormData (envio de arquivo): o fetch monta o Content-Type com o boundary.
+            ...(body === undefined || body instanceof FormData ? {} : { "Content-Type": "application/json" }),
             ...headers,
           },
-          body: body === undefined ? undefined : JSON.stringify(body),
+          body: body === undefined ? undefined : body instanceof FormData ? body : JSON.stringify(body),
         });
       } catch {
         throw new ApiError(0, "unreachable", "Não consegui falar com o JobDragonQuest. Ele está ligado? (scripts/iniciar.sh)");

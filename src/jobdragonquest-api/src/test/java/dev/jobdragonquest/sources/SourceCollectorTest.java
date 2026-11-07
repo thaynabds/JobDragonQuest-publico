@@ -101,12 +101,64 @@ class SourceCollectorTest extends ApiTestSupport {
         org.assertj.core.api.Assertions.assertThat(saved.getNextRunAt()).isAfter(Instant.now().plusSeconds(5 * 3600));
     }
 
+    /** Issue #102: palavra excluída tira a vaga da coleta; empresa excluída tira todas; a compatibilidade explica. */
+    @Test
+    void profileFiltersApplyToCollectionAndMatching() throws Exception {
+        when(greenhouse.kind()).thenReturn(SourceKind.GREENHOUSE);
+        when(greenhouse.fetch("acme")).thenReturn(BOARD);
+        String token = newUser();
+        String profile = read(postJson(token, "/api/v1/profiles", """
+                {"name":"Java","seniority":"JUNIOR","minMatchScore":60,"workModes":["REMOTE"],
+                 "desiredTitles":["Desenvolvedora Java"],"excludeKeywords":["Kafka"],
+                 "skills":[{"name":"Java","level":4},{"name":"Spring Boot","level":3}]}"""), "$.id");
+        String source = read(postJson(token, "/api/v1/sources/bulk", """
+                {"profileIds":["%s"],"sources":[{"name":"Acme","kind":"GREENHOUSE","identifier":"acme"}]}""".formatted(profile))
+                .andExpect(status().isCreated()), "$.created[0].id");
+
+        // A vaga 4 cita Kafka: fica de fora; a 3 é inválida; sobra só a 1.
+        postJson(token, "/api/v1/sources/" + source + "/run", "")
+                .andExpect(jsonPath("$.created").value(1))
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("1 fora das preferências")));
+
+        // Excluir a empresa: nada mais entra.
+        String other = newUser();
+        String blocked = read(postJson(other, "/api/v1/profiles", """
+                {"name":"Java","seniority":"JUNIOR","minMatchScore":60,"workModes":["REMOTE"],
+                 "desiredTitles":["Desenvolvedora Java"],"excludedCompanies":["acme"]}"""), "$.id");
+        String otherSource = read(postJson(other, "/api/v1/sources/bulk", """
+                {"profileIds":["%s"],"sources":[{"name":"Acme","kind":"GREENHOUSE","identifier":"acme"}]}""".formatted(blocked))
+                .andExpect(status().isCreated()), "$.created[0].id");
+        postJson(other, "/api/v1/sources/" + otherSource + "/run", "").andExpect(jsonPath("$.created").value(0));
+
+        // Vaga cadastrada à mão de empresa excluída: a compatibilidade mostra o impedimento.
+        String job = read(postJson(other, "/api/v1/jobs", """
+                {"source":"MANUAL","url":"https://acme.test/vagas/9","company":"Acme","title":"Desenvolvedora Java",
+                 "workMode":"REMOTE","requirements":[{"kind":"MANDATORY","text":"Java","skill":"Java"}]}""")
+                .andExpect(status().isCreated()), "$.id");
+        getJson(other, "/api/v1/jobs/" + job + "/matches/" + blocked)
+                .andExpect(jsonPath("$.recommendation").value("SKIP"))
+                .andExpect(jsonPath("$.blockers[0].code").value("EXCLUDED_COMPANY"));
+    }
+
+    @Autowired
+    private org.springframework.jdbc.core.JdbcTemplate jdbc;
+
+    /**
+     * Os testes dividem o banco: fontes vencidas de outras classes entrariam no lote do agendador. Adia todas as outras
+     * para o teste enxergar só a própria fonte, seja qual for a ordem em que as classes rodam.
+     */
+    private void onlyThisSourceDue(UUID source) {
+        jdbc.update("update watched_source set next_run_at = ? where id <> ?",
+                java.sql.Timestamp.from(Instant.now().plusSeconds(30L * 24 * 3600)), source);
+    }
+
     @Test
     void schedulerCollectsDueSourcesOnceAndRespectsOwnership() throws Exception {
         when(greenhouse.kind()).thenReturn(SourceKind.GREENHOUSE);
         when(greenhouse.fetch("acme")).thenReturn(BOARD);
         String token = newUser();
         String source = setup(token);
+        onlyThisSourceDue(UUID.fromString(source));
 
         org.assertj.core.api.Assertions.assertThat(collector.runDue()).isGreaterThanOrEqualTo(1);
         getJson(token, "/api/v1/sources/" + source).andExpect(jsonPath("$.lastStatus").value("OK"));
@@ -128,6 +180,7 @@ class SourceCollectorTest extends ApiTestSupport {
         when(greenhouse.fetch("acme")).thenReturn(BOARD);
         String token = newUser();
         UUID source = UUID.fromString(setup(token));
+        onlyThisSourceDue(source);
         Instant now = Instant.now();
 
         // Simula uma coleta em andamento (ex.: o agendador pegou a fonte).

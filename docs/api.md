@@ -31,20 +31,33 @@ O cookie `jobdragonquest_rt` é `HttpOnly`, `SameSite=Strict`, `Secure` (configu
 | `PUT /profiles/{id}` | Substitui o perfil. Exige `version` (lock otimista, 409 `stale_version`) |
 | `DELETE /profiles/{id}` | 204 |
 
-Campos: `name`, `objective`, `seniority` (INTERN, JUNIOR, MID, SENIOR, LEAD), `minMatchScore` (0–100), `salaryExpectation` + `salaryCurrency`, `availability`, `restrictions`, `preferredLanguage`, `desiredTitles[]`, `locations[]`, `workModes[]` (REMOTE, HYBRID, ONSITE), `skills[] {name, level 1–5, years}`, `languages[] {code ISO 639-1, level A1…C2 | NATIVE}`, `entries[] {kind, title, organization, startDate, endDate, description, url}`.
+Campos principais: `name`, `headline`, `summary`, `objective`, `currentTitle`, `seniority` (APPRENTICE, INTERN, TRAINEE, ENTRY, JUNIOR, MID, SENIOR, SPECIALIST, LEAD, COORDINATOR, MANAGER, DIRECTOR, EXECUTIVE; a compatibilidade compara por degraus equivalentes), `minMatchScore` (0–100), `preferredLanguage`.
+
+Localização e disponibilidade: `city`, `stateRegion`, `country` (ISO 3166-1), `workAuthorization[]` (países), `requiresSponsorship`, `willingToRelocate`, `travelAvailability` (NONE, OCCASIONAL, FREQUENT), `availableFrom`, `noticePeriodDays` (0–365), `availability`, `workModes[]` (REMOTE, HYBRID, ONSITE), `employmentTypes[]` (CLT, PJ, FULL_TIME, PART_TIME, INTERNSHIP, APPRENTICE, TRAINEE, TEMPORARY, FREELANCE, VOLUNTEER).
+
+Remuneração e links: `salaryExpectation`, `currentSalary`, `salaryPeriod` (HOURLY, MONTHLY, YEARLY), `salaryCurrency`, `linkedinUrl`, `githubUrl`, `portfolioUrl`, `websiteUrl` (só http/https).
+
+Busca: `desiredTitles[]`, `locations[]`, `industries[]`, `includeKeywords[]`, `excludeKeywords[]`, `excludedCompanies[]`, `restrictions`.
+
+Competências: `skills[] {name, level 1–5, years, months 0–11, days 0–30}`; a resposta traz também `totalYears`, usado na compatibilidade. Idiomas: `languages[] {name, level}` na edição (nome por extenso em português, inglês, espanhol ou no próprio idioma, inclusive Libras; 400 `unknown_language` se não for reconhecido) e `{code, level}` na resposta (ISO 639). Histórico: `entries[] {kind, title, organization, startDate, endDate, current, description, url, location, employmentType, degree, fieldOfStudy, status, credentialId, expirationDate, hours, skills}`, com `kind` EXPERIENCE, ACADEMIC_EXPERIENCE, EDUCATION, PROJECT, COURSE, CERTIFICATION, VOLUNTEER, AWARD ou PUBLICATION. Carta e respostas: `coverLetter`, `answers[] {question, answer}`. Dado sensível opcional: `disability`, `disabilityDetails`.
 
 ## Vagas e compatibilidade
 
 | Rota | Descrição |
 |---|---|
-| `GET /jobs?page&size` | Paginado (`size` vai até 100) |
+| `GET /jobs?page&size&favorite` | Paginado (`size` vai até 100). `favorite=true` lista só as favoritas |
 | `POST /jobs` | 201 se a vaga é nova. 200 + `X-Duplicate-Of` se ela já existia |
 | `GET/PUT /jobs/{id}` | Ler e atualizar |
 | `PATCH /jobs/{id}/status` | `{status: OPEN \| CLOSED \| UNKNOWN}` |
+| `POST /jobs/from-link` | `{url}`: lê a página pública da vaga e devolve `{job, extractedFrom JSON_LD\|META}` no formato do cadastro, sem gravar. Proteção contra SSRF: só http/https nas portas padrão, todos os endereços do host precisam ser públicos (sem loopback, rede local, link-local, CGNAT, multicast, IPv6 privado), cada redirecionamento é checado de novo (até 3), até 2 MiB e 15 s. Erros: `link_blocked`, `link_unreadable`, `link_too_large`, `link_no_job` |
+| `GET /jobs/{id}/assist/answers?profileId` | Respostas sugeridas para as perguntas comuns de formulário (pretensão, início, local, autorização, visto, mudança, links, tempo com cada tecnologia pedida, idiomas, formação, carta e respostas prontas), só com dados do perfil: `[{category, question, answer, source, missing}]`. `answer` nulo com `missing` quando falta o dado: nunca inventa |
+| `GET /jobs/{id}/assist/review?profileId` | Revisão antes de enviar: `{ready, checks[{code, status OK\|WARN\|BLOCK, message}]}` (vaga encerrada, impedimentos, obrigatórios não atendidos, nota, candidatura repetida, dados de formulário, carta, perfil vazio) |
+| `PUT /jobs/{id}/favorite` | `{favorite}`: marca ou desmarca como favorita. Vaga de outra conta: 404 |
+| `GET /jobs/similar?basis&minScore&limit` | Vagas parecidas com as favoritas (`basis=FAVORITES`) ou com as 10 últimas candidaturas enviadas (`APPLIED`). `minScore` 0 a 100 (padrão 30), `limit` 1 a 100. Resposta `[{job, score, basisJobId, basisTitle, sharedWords[], sharedSkills[]}]`. Nota: índice de Jaccard das palavras do cargo (pelo radical) e das competências, metade cada. Ficam de fora favoritas, vagas com candidatura e encerradas; só vagas da própria conta |
 | `GET /jobs/{id}/matches` | Todos os perfis, do mais para o menos adequado |
 | `GET /jobs/{id}/matches/{profileId}` | Análise de um perfil |
 
-Resultado da análise: `score` (0–100 ou null), `recommendation` (APPLY, REVIEW, SKIP, INSUFFICIENT_DATA), `requirements[] {kind, text, skill, outcome MET|PARTIAL|UNMET|NOT_EVALUATED, reason}`, `blockers[] {code WORK_MODE|LOCATION|LANGUAGE|SENIORITY, message}`, `strengths[]`, `warnings[]`, `titleAffinity`, `summary`.
+Resultado da análise: `score` (0–100 ou null), `recommendation` (APPLY, REVIEW, SKIP, INSUFFICIENT_DATA), `requirements[] {kind, text, skill, outcome MET|PARTIAL|UNMET|NOT_EVALUATED, reason}`, `blockers[] {code WORK_MODE|LOCATION|LANGUAGE|SENIORITY|EXCLUDED_COMPANY|EXCLUDED_KEYWORD|MISSING_KEYWORD|EMPLOYMENT_TYPE|WORK_AUTHORIZATION|SALARY, message}`. Os seis últimos vêm dos filtros do perfil: palavras e empresas comparadas como palavras inteiras, sem acento; tipo de contrato detectado no texto da vaga; país fora da autorização bloqueia vaga presencial ou híbrida e só alerta na remota; salário comparado entre mês e ano (hora só com hora, moeda diferente só alerta). Dado ausente na vaga não bloqueia. Na coleta automática, empresa excluída, palavra excluída ou nenhuma palavra obrigatória tiram a vaga antes de gravar, `strengths[]`, `warnings[]`, `titleAffinity`, `summary`.
 
 ## Candidaturas
 
@@ -57,7 +70,12 @@ Resultado da análise: `score` (0–100 ou null), `recommendation` (APPLY, REVIE
 | `PUT /applications/{id}` | Edita os dados. Exige `version` |
 | `DELETE /applications/{id}` | 204 |
 | `POST /applications/{id}/transitions` | `{toState, source, evidence, confidence?, occurredAt?, nextAction?, nextDueAt?}`. 200 `APPLIED` ou `NOTED`. 202 `SUGGESTED` quando a confiança é baixa. 409 `invalid_transition` |
+| `POST /applications/import` | `{csv}` (até 900 KB, 500 linhas): importa o histórico. Cabeçalho com empresa e cargo (pt, en ou es), separador vírgula ou ponto e vírgula; colunas opcionais link, plataforma, data (AAAA-MM-DD ou DD/MM/AAAA), etapa (nome da etapa ou palavras como enviada, entrevista, reprovada), país e notas. Origem `IMPORT`. Cada linha tem chave de idempotência própria: o mesmo arquivo não duplica. Resposta `{created, duplicates, errors[{line, code}]}` |
+| `POST /applications/batch/transitions` | `{ids (1 a 100), toState, evidence}`. Mudança manual em lote, cada candidatura na sua transação. 200 `{updated, failed[{id, code}]}`: candidatura de outra conta ou inexistente volta como `not_found`; mesma etapa vira anotação e não conta |
 | `POST /applications/{id}/notes` | `{text}`: anotação da pessoa |
+| `GET /applications/{id}/contacts` | Contatos do processo (recrutador, gestor, entrevistador, indicação). Só da conta dona; outra conta recebe 404 |
+| `POST /applications/{id}/contacts` | `{role RECRUITER|HIRING_MANAGER|INTERVIEWER|REFERRAL|OTHER, name, position?, email?, linkedinUrl?, notes?, contacted?}`. Até 20 por candidatura (409 `contact_limit`); e-mail inválido 400 `invalid_email`. Com `contacted: true`, candidatura enviada ou confirmada vai para `RECRUITER_CONTACT` com o contato como evidência; etapa mais adiante não volta |
+| `DELETE /applications/{id}/contacts/{contactId}` | Remove o contato. 204 |
 | `POST /applications/{id}/suggestions/{eventId}/accept` | Aplica a sugestão, conferindo de novo a transição |
 | `POST /applications/{id}/suggestions/{eventId}/dismiss` | 204 |
 
@@ -114,3 +132,44 @@ Cada aviso traz `message` (pronta, em português) e campos estruturados (`type`,
 ## Operação
 
 `GET /actuator/health` é público e não mostra detalhes. `GET /actuator/prometheus` exige o papel `ADMIN`.
+
+### Modo de automação do perfil
+
+`automationMode` no perfil (`OFF`, `REVIEW` padrão, `AUTOMATIC`) decide o que a coleta automática faz com uma vaga compatível (recomendação `APPLY`): `OFF` só guarda a vaga; `REVIEW` cria a candidatura como `RECOMMENDED`, que aparece na fila de revisão do painel (`GET /applications?state=RECOMMENDED`; aprovar e descartar usam `POST /applications/batch/transitions` para `PREPARED` ou `CLOSED`); `AUTOMATIC` cria direto como `PREPARED`. Nenhum modo envia candidatura a site: o envio é sempre da pessoa.
+
+### Currículo, carta e carreira
+
+| Rota | Descrição |
+|---|---|
+| `GET /profiles/{id}/resume?jobId` | Currículo montado do perfil. Com `jobId`, o que a vaga pede vem primeiro e com `highlighted`; nada é acrescentado. O painel imprime em PDF pelo navegador |
+| `GET /profiles/{id}/cover-letter?jobId` | Carta com os dados do perfil, ou a carta salva com `{empresa}` e `{cargo}` trocados. `missing` lista o que falta no perfil |
+| `GET /jobs/{id}/interview?profileId` | Perguntas prováveis com dicas tiradas do perfil (projetos e tempo de cada tecnologia) e as lacunas |
+| `GET /career/skills?profileId&title` | Competências mais pedidas nas vagas da conta (até 300 mais recentes), com `inProfile` |
+| `GET /career/salary?title` | Faixa salarial por moeda e período: `min`, `median`, `max` e número de vagas |
+
+### Documentos e atualização do currículo
+
+Arquivos até 5 MB (o filtro de tamanho libera 6 MB só no multipart destas rotas), tipo identificado pelos primeiros bytes: PDF, Word .docx, texto, PNG ou JPG. Até 50 por perfil, 10 por candidatura e 200 MB por conta. Só a conta dona vê; outra conta recebe 404.
+
+| Rota | Descrição |
+|---|---|
+| `POST /profiles/{id}/documents` | Multipart `file` e `kind` (RESUME, COVER_LETTER, CERTIFICATE, OTHER). Currículo e carta ganham versão (1, 2, 3...) |
+| `GET /profiles/{id}/documents` | Lista sem conteúdo |
+| `POST /applications/{id}/documents` | Multipart `file`: anexo da candidatura |
+| `GET /applications/{id}/documents` | Lista os anexos |
+| `GET /documents/{id}/download` | Sempre como anexo, com `X-Content-Type-Options: nosniff` e `Content-Security-Policy: default-src 'none'; sandbox` |
+| `DELETE /documents/{id}` | Apaga. 204 |
+| `GET /documents/{id}/read` | Texto e proposta de um documento guardado |
+| `POST /documents/read` | Multipart `file`: lê sem guardar e devolve `{type, text, ocrUnavailable, proposal}`. PDF com Apache PDFBox (20 páginas), .docx pelo XML interno (limite contra zip-bomba), imagem com Tesseract se instalado |
+| `POST /documents/read-link` | `{url}`: lê a página do certificado com a proteção contra SSRF |
+| `POST /profiles/{id}/entries` | Acrescenta um item confirmado (curso, certificação, experiência...) sem mexer no resto do perfil |
+
+A `proposal` traz `kind` (COURSE com carga horária, senão CERTIFICATION), `title`, `organization`, `date`, `hours`, `credentialId`, `url` e `skills`, só com o que foi encontrado no texto. Nada entra no perfil sem a confirmação da pessoa.
+
+### Preferências de acessibilidade na conta
+
+| Rota | Descrição |
+|---|---|
+| `GET /me/accessibility` | Preferências salvas na conta; 204 se ainda não há |
+| `PUT /me/accessibility` | Salva. Só as chaves da central de acessibilidade: `theme` (temas da lista), `colorFilter` (filtros da lista), `fontScale` (80 a 140, de 10 em 10) e os 13 recursos de liga e desliga com valor booleano. Qualquer outra chave ou valor: 400 `invalid_accessibility` |
+

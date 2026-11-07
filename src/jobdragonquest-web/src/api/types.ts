@@ -1,14 +1,73 @@
 // Tipos espelhando os DTOs da API REST v1 (docs/api.md). Datas chegam como texto ISO-8601 em UTC.
 
-export type Seniority = "INTERN" | "JUNIOR" | "MID" | "SENIOR" | "LEAD";
+export type Seniority =
+  "APPRENTICE" | "INTERN" | "TRAINEE" | "ENTRY" | "JUNIOR" | "MID" | "SENIOR" | "SPECIALIST" | "LEAD" | "COORDINATOR" | "MANAGER" | "DIRECTOR" | "EXECUTIVE";
 export type WorkMode = "REMOTE" | "HYBRID" | "ONSITE";
 export type LanguageLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "NATIVE";
-export type EntryKind = "EXPERIENCE" | "ACADEMIC_EXPERIENCE" | "EDUCATION" | "PROJECT" | "COURSE" | "CERTIFICATION";
+export type EntryKind = "EXPERIENCE" | "ACADEMIC_EXPERIENCE" | "EDUCATION" | "PROJECT" | "COURSE" | "CERTIFICATION" | "VOLUNTEER" | "AWARD" | "PUBLICATION";
+export type EmploymentType = "CLT" | "PJ" | "FULL_TIME" | "PART_TIME" | "INTERNSHIP" | "APPRENTICE" | "TRAINEE" | "TEMPORARY" | "FREELANCE" | "VOLUNTEER";
+export type TravelAvailability = "NONE" | "OCCASIONAL" | "FREQUENT";
+export type SalaryPeriod = "HOURLY" | "MONTHLY" | "YEARLY";
+export type Degree =
+  "HIGH_SCHOOL" | "TECHNICAL" | "TECHNOLOGIST" | "BACHELOR" | "LICENTIATE" | "POSTGRADUATE" | "MBA" | "MASTER" | "DOCTORATE" | "POSTDOC" | "OTHER";
+export type EntryStatus = "IN_PROGRESS" | "COMPLETED" | "INCOMPLETE" | "PAUSED";
 
-export const SENIORITIES: Seniority[] = ["INTERN", "JUNIOR", "MID", "SENIOR", "LEAD"];
+export const SENIORITIES: Seniority[] = [
+  "APPRENTICE",
+  "INTERN",
+  "TRAINEE",
+  "ENTRY",
+  "JUNIOR",
+  "MID",
+  "SENIOR",
+  "SPECIALIST",
+  "LEAD",
+  "COORDINATOR",
+  "MANAGER",
+  "DIRECTOR",
+  "EXECUTIVE",
+];
 export const WORK_MODES: WorkMode[] = ["REMOTE", "HYBRID", "ONSITE"];
 export const LANGUAGE_LEVELS: LanguageLevel[] = ["A1", "A2", "B1", "B2", "C1", "C2", "NATIVE"];
-export const ENTRY_KINDS: EntryKind[] = ["EXPERIENCE", "ACADEMIC_EXPERIENCE", "EDUCATION", "PROJECT", "COURSE", "CERTIFICATION"];
+export const ENTRY_KINDS: EntryKind[] = [
+  "EXPERIENCE",
+  "ACADEMIC_EXPERIENCE",
+  "EDUCATION",
+  "PROJECT",
+  "COURSE",
+  "CERTIFICATION",
+  "VOLUNTEER",
+  "AWARD",
+  "PUBLICATION",
+];
+export const EMPLOYMENT_TYPES: EmploymentType[] = [
+  "CLT",
+  "PJ",
+  "FULL_TIME",
+  "PART_TIME",
+  "INTERNSHIP",
+  "APPRENTICE",
+  "TRAINEE",
+  "TEMPORARY",
+  "FREELANCE",
+  "VOLUNTEER",
+];
+export const TRAVEL_AVAILABILITIES: TravelAvailability[] = ["NONE", "OCCASIONAL", "FREQUENT"];
+export const SALARY_PERIODS: SalaryPeriod[] = ["HOURLY", "MONTHLY", "YEARLY"];
+export const DEGREES: Degree[] = [
+  "HIGH_SCHOOL",
+  "TECHNICAL",
+  "TECHNOLOGIST",
+  "BACHELOR",
+  "LICENTIATE",
+  "POSTGRADUATE",
+  "MBA",
+  "MASTER",
+  "DOCTORATE",
+  "POSTDOC",
+  "OTHER",
+];
+export const ENTRY_STATUSES: EntryStatus[] = ["IN_PROGRESS", "COMPLETED", "INCOMPLETE", "PAUSED"];
 
 export interface TokenResponse {
   accessToken: string;
@@ -29,6 +88,18 @@ export interface Skill {
   name: string;
   level: number;
   years: number | null;
+  months: number | null;
+  days: number | null;
+}
+
+export interface SkillView extends Skill {
+  totalYears: number | null;
+}
+
+/** Na edição, o idioma vai pelo nome por extenso; a API devolve o código ISO. */
+export interface LanguageInput {
+  name: string;
+  level: LanguageLevel;
 }
 
 export interface Language {
@@ -44,29 +115,81 @@ export interface Entry {
   endDate: string | null;
   description: string | null;
   url: string | null;
+  location: string | null;
+  employmentType: EmploymentType | null;
+  current: boolean | null;
+  degree: Degree | null;
+  fieldOfStudy: string | null;
+  status: EntryStatus | null;
+  credentialId: string | null;
+  expirationDate: string | null;
+  hours: number | null;
+  skills: string | null;
 }
 
-export interface ProfileInput {
+export interface Answer {
+  question: string;
+  answer: string;
+}
+
+/** Campos do perfil que não dependem do formato de idioma (iguais na edição e na resposta). */
+export const AUTOMATION_MODES = ["OFF", "REVIEW", "AUTOMATIC"] as const;
+export type AutomationMode = (typeof AUTOMATION_MODES)[number];
+
+export interface ProfileFields {
   name: string;
   objective: string | null;
   seniority: Seniority;
   minMatchScore: number;
+  automationMode: AutomationMode;
   salaryExpectation: number | null;
   salaryCurrency: string | null;
   availability: string | null;
   restrictions: string | null;
-  preferredLanguage: "pt-BR" | "en";
+  preferredLanguage: string;
   desiredTitles: string[];
   locations: string[];
   workModes: WorkMode[];
-  skills: Skill[];
-  languages: Language[];
   entries: Entry[];
+  headline: string | null;
+  summary: string | null;
+  currentTitle: string | null;
+  city: string | null;
+  stateRegion: string | null;
+  country: string | null;
+  requiresSponsorship: boolean | null;
+  willingToRelocate: boolean | null;
+  travelAvailability: TravelAvailability | null;
+  noticePeriodDays: number | null;
+  availableFrom: string | null;
+  currentSalary: number | null;
+  salaryPeriod: SalaryPeriod | null;
+  linkedinUrl: string | null;
+  githubUrl: string | null;
+  portfolioUrl: string | null;
+  websiteUrl: string | null;
+  coverLetter: string | null;
+  disability: boolean | null;
+  disabilityDetails: string | null;
+  workAuthorization: string[];
+  employmentTypes: EmploymentType[];
+  excludedCompanies: string[];
+  includeKeywords: string[];
+  excludeKeywords: string[];
+  industries: string[];
+  answers: Answer[];
+}
+
+export interface ProfileInput extends ProfileFields {
+  skills: Skill[];
+  languages: LanguageInput[];
   version?: number;
 }
 
-export interface Profile extends ProfileInput {
+export interface Profile extends ProfileFields {
   id: string;
+  skills: SkillView[];
+  languages: Language[];
   createdAt: string;
   updatedAt: string;
   version: number;
@@ -78,6 +201,7 @@ export interface ProfileSummary {
   seniority: Seniority;
   desiredTitles: string[];
   skillCount: number;
+  headline: string | null;
 }
 
 export type JobStatus = "OPEN" | "CLOSED" | "UNKNOWN";
@@ -106,8 +230,131 @@ export interface JobInput {
   workMode: WorkMode | null;
   seniority: Seniority | null;
   description: string | null;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  salaryCurrency?: string | null;
+  salaryPeriod?: string | null;
   requirements: Requirement[];
   languages: JobLanguage[];
+}
+
+export interface SuggestedAnswer {
+  category: string;
+  question: string;
+  answer: string | null;
+  source: string;
+  missing: string | null;
+}
+
+export interface AssistReview {
+  ready: boolean;
+  checks: { code: string; status: "OK" | "WARN" | "BLOCK"; message: string }[];
+}
+
+export interface ResumeSkill {
+  name: string;
+  level: number;
+  time: string | null;
+  highlighted: boolean;
+}
+
+export interface ResumeEntry {
+  kind: string;
+  title: string;
+  organization: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  current: boolean;
+  location: string | null;
+  description: string | null;
+  skills: string[];
+  highlighted: boolean;
+}
+
+export interface Resume {
+  headline: string | null;
+  currentTitle: string | null;
+  location: string | null;
+  summary: string | null;
+  links: string[];
+  skills: ResumeSkill[];
+  experience: ResumeEntry[];
+  education: ResumeEntry[];
+  other: ResumeEntry[];
+  languages: string[];
+  jobTitle: string | null;
+  company: string | null;
+}
+
+export interface CoverLetter {
+  text: string;
+  missing: string[];
+}
+
+export interface InterviewQuestion {
+  category: string;
+  question: string;
+  hint: string;
+}
+
+export interface SalaryStats {
+  jobs: number;
+  currency: string;
+  period: "HOUR" | "MONTH" | "YEAR";
+  min: number;
+  median: number;
+  max: number;
+}
+
+export interface SkillDemand {
+  skill: string;
+  jobs: number;
+  percent: number;
+  inProfile: boolean;
+}
+
+export const DOCUMENT_KINDS = ["RESUME", "COVER_LETTER", "CERTIFICATE", "OTHER"] as const;
+export type DocumentKind = (typeof DOCUMENT_KINDS)[number] | "ATTACHMENT";
+
+export interface StoredDocument {
+  id: string;
+  profileId: string | null;
+  applicationId: string | null;
+  kind: DocumentKind;
+  name: string;
+  contentType: string;
+  sizeBytes: number;
+  version: number;
+  createdAt: string;
+}
+
+export interface EntryProposal {
+  kind: "COURSE" | "CERTIFICATION";
+  title: string | null;
+  organization: string | null;
+  date: string | null;
+  hours: number | null;
+  credentialId: string | null;
+  url: string | null;
+  skills: string[];
+}
+
+export interface DocumentReading {
+  type: string;
+  text: string;
+  ocrUnavailable: boolean;
+  proposal: EntryProposal;
+}
+
+export interface LinkDraft {
+  job: JobInput;
+  extractedFrom: "JSON_LD" | "META";
+}
+
+export interface ImportResult {
+  created: number;
+  duplicates: number;
+  errors: { line: number; code: string }[];
 }
 
 export interface Job extends JobInput {
@@ -133,6 +380,18 @@ export interface JobSummary {
   url: string | null;
   foundAt: string;
   watchedSourceId: string | null;
+  favorite: boolean;
+}
+
+export type SimilarBasis = "FAVORITES" | "APPLIED";
+
+export interface SimilarJob {
+  job: JobSummary;
+  score: number;
+  basisJobId: string;
+  basisTitle: string;
+  sharedWords: string[];
+  sharedSkills: string[];
 }
 
 export type Outcome = "MET" | "PARTIAL" | "UNMET" | "NOT_EVALUATED";
@@ -143,7 +402,13 @@ export interface MatchResult {
   profileName: string;
   score: number | null;
   recommendation: Recommendation;
-  requirements: { kind: RequirementKind; text: string; skill: string | null; outcome: Outcome; reason: string }[];
+  requirements: {
+    kind: RequirementKind;
+    text: string;
+    skill: string | null;
+    outcome: Outcome;
+    reason: string;
+  }[];
   blockers: { code: string; message: string }[];
   strengths: string[];
   warnings: string[];
@@ -240,6 +505,36 @@ export interface CreateApplicationInput {
   profileId?: string | null;
 }
 
+export const CONTACT_ROLES = ["RECRUITER", "HIRING_MANAGER", "INTERVIEWER", "REFERRAL", "OTHER"] as const;
+export type ContactRole = (typeof CONTACT_ROLES)[number];
+
+export interface ContactInput {
+  role: ContactRole;
+  name: string;
+  position?: string | null;
+  email?: string | null;
+  linkedinUrl?: string | null;
+  notes?: string | null;
+  contacted: boolean;
+}
+
+export interface Contact {
+  id: string;
+  role: ContactRole;
+  name: string;
+  position: string | null;
+  email: string | null;
+  linkedinUrl: string | null;
+  notes: string | null;
+  contactedAt: string | null;
+  createdAt: string;
+}
+
+export interface BatchTransitionResult {
+  updated: number;
+  failed: { id: string; code: string }[];
+}
+
 export interface TransitionResult {
   outcome: "APPLIED" | "SUGGESTED" | "NOTED";
   application: Application;
@@ -247,14 +542,7 @@ export interface TransitionResult {
 }
 
 export type PendingType =
-  | "ACTION_REQUIRED"
-  | "TECH_TEST"
-  | "INTERVIEW_SOON"
-  | "DEADLINE_SOON"
-  | "SUGGESTION_TO_REVIEW"
-  | "SOURCE_TO_CHECK"
-  | "SOURCE_FAILING"
-  | "NO_UPDATE";
+  "ACTION_REQUIRED" | "TECH_TEST" | "INTERVIEW_SOON" | "DEADLINE_SOON" | "SUGGESTION_TO_REVIEW" | "SOURCE_TO_CHECK" | "SOURCE_FAILING" | "NO_UPDATE";
 
 export interface PendingItem {
   type: PendingType;

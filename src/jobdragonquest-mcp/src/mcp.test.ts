@@ -16,13 +16,39 @@ const ID = "3f2b7c1e-9d4a-4b8e-8f00-1234567890ab";
 
 describe("configuração", () => {
   it("aceita só a API local por HTTP ou remota por HTTPS com liberação", () => {
-    expect(loadConfig({ JOBDRAGONQUEST_TOKEN: TOKEN })).toEqual({ apiUrl: "http://127.0.0.1:8080", token: TOKEN });
-    expect(loadConfig({ JOBDRAGONQUEST_TOKEN: TOKEN, JOBDRAGONQUEST_API_URL: "http://localhost:9090/" }).apiUrl).toBe("http://localhost:9090");
-    expect(loadConfig({ JOBDRAGONQUEST_TOKEN: TOKEN, JOBDRAGONQUEST_API_URL: "https://jobdragonquest.example.com", JOBDRAGONQUEST_ALLOW_REMOTE: "1" }).apiUrl).toBe(
-      "https://jobdragonquest.example.com",
-    );
-    for (const url of ["http://evil.example.com", "https://evil.example.com", "http://127.0.0.1.evil.com", "http://user:pass@127.0.0.1:8080", "file:///etc/passwd", "http://127.0.0.1:8080/?x=1"]) {
-      expect(() => loadConfig({ JOBDRAGONQUEST_TOKEN: TOKEN, JOBDRAGONQUEST_API_URL: url }), url).toThrow(ConfigError);
+    expect(loadConfig({ JOBDRAGONQUEST_TOKEN: TOKEN })).toEqual({
+      apiUrl: "http://127.0.0.1:8080",
+      token: TOKEN,
+    });
+    expect(
+      loadConfig({
+        JOBDRAGONQUEST_TOKEN: TOKEN,
+        JOBDRAGONQUEST_API_URL: "http://localhost:9090/",
+      }).apiUrl,
+    ).toBe("http://localhost:9090");
+    expect(
+      loadConfig({
+        JOBDRAGONQUEST_TOKEN: TOKEN,
+        JOBDRAGONQUEST_API_URL: "https://jobdragonquest.example.com",
+        JOBDRAGONQUEST_ALLOW_REMOTE: "1",
+      }).apiUrl,
+    ).toBe("https://jobdragonquest.example.com");
+    for (const url of [
+      "http://evil.example.com",
+      "https://evil.example.com",
+      "http://127.0.0.1.evil.com",
+      "http://user:pass@127.0.0.1:8080",
+      "file:///etc/passwd",
+      "http://127.0.0.1:8080/?x=1",
+    ]) {
+      expect(
+        () =>
+          loadConfig({
+            JOBDRAGONQUEST_TOKEN: TOKEN,
+            JOBDRAGONQUEST_API_URL: url,
+          }),
+        url,
+      ).toThrow(ConfigError);
     }
   });
 
@@ -84,9 +110,16 @@ describe("cliente da API", () => {
 
   it("erros não vazam o token e respostas gigantes são recusadas", async () => {
     const client = (response: Response | Error) =>
-      createClient({ apiUrl: "http://127.0.0.1:8080", token: TOKEN }, vi.fn().mockImplementation(() => (response instanceof Error ? Promise.reject(response) : Promise.resolve(response))));
+      createClient(
+        { apiUrl: "http://127.0.0.1:8080", token: TOKEN },
+        vi.fn().mockImplementation(() => (response instanceof Error ? Promise.reject(response) : Promise.resolve(response))),
+      );
     const unauthorized = await failure(
-      client(new Response(JSON.stringify({ code: "invalid_token", detail: TOKEN }), { status: 401 })).request("GET", "/api/v1/profiles"),
+      client(
+        new Response(JSON.stringify({ code: "invalid_token", detail: TOKEN }), {
+          status: 401,
+        }),
+      ).request("GET", "/api/v1/profiles"),
     );
     expect(unauthorized.status).toBe(401);
     expect(unauthorized.message).not.toContain(TOKEN);
@@ -113,20 +146,192 @@ describe("ferramentas", () => {
   it("valida ids, URLs, enums e tamanhos", () => {
     expect(byName.jobdragonquest_ver_vaga!.schema.safeParse({ id: "../tokens" }).success).toBe(false);
     expect(byName.jobdragonquest_ver_vaga!.schema.safeParse({ id: ID }).success).toBe(true);
-    expect(byName.jobdragonquest_cadastrar_vaga!.schema.safeParse({ empresa: "A", cargo: "B", url: "javascript:alert(1)" }).success).toBe(false);
-    expect(byName.jobdragonquest_cadastrar_vaga!.schema.safeParse({ empresa: "A", cargo: "B", descricao: "x".repeat(20_001) }).success).toBe(false);
-    expect(byName.jobdragonquest_atualizar_etapa!.schema.safeParse({ id: ID, etapa: "DELETED", evidencia: "x", confianca: 0.5 }).success).toBe(false);
-    expect(byName.jobdragonquest_atualizar_etapa!.schema.safeParse({ id: ID, etapa: "SCREENING", evidencia: "x", confianca: 2 }).success).toBe(false);
-    expect(byName.jobdragonquest_cadastrar_fontes!.schema.safeParse({ perfilIds: [ID], frequenciaMinutos: 120, fontes: [{ nome: "x", tipo: "GREENHOUSE", identificador: "../etc" }] }).success).toBe(false);
+    expect(
+      byName.jobdragonquest_cadastrar_vaga!.schema.safeParse({
+        empresa: "A",
+        cargo: "B",
+        url: "javascript:alert(1)",
+      }).success,
+    ).toBe(false);
+    expect(
+      byName.jobdragonquest_cadastrar_vaga!.schema.safeParse({
+        empresa: "A",
+        cargo: "B",
+        descricao: "x".repeat(20_001),
+      }).success,
+    ).toBe(false);
+    expect(
+      byName.jobdragonquest_atualizar_etapa!.schema.safeParse({
+        id: ID,
+        etapa: "DELETED",
+        evidencia: "x",
+        confianca: 0.5,
+      }).success,
+    ).toBe(false);
+    expect(
+      byName.jobdragonquest_atualizar_etapa!.schema.safeParse({
+        id: ID,
+        etapa: "SCREENING",
+        evidencia: "x",
+        confianca: 2,
+      }).success,
+    ).toBe(false);
+    expect(
+      byName.jobdragonquest_cadastrar_fontes!.schema.safeParse({
+        perfilIds: [ID],
+        frequenciaMinutos: 120,
+        fontes: [{ nome: "x", tipo: "GREENHOUSE", identificador: "../etc" }],
+      }).success,
+    ).toBe(false);
   });
 
   it("mudança de etapa sempre entra como agente e cadastro usa chave de idempotência", async () => {
     const request = vi.fn().mockResolvedValue({});
     const client: Client = { request };
-    await byName.jobdragonquest_atualizar_etapa!.run(client, { id: ID, etapa: "SCREENING", evidencia: "E-mail", confianca: 0.6 } as never);
-    expect(request).toHaveBeenCalledWith("POST", `/api/v1/applications/${ID}/transitions`, expect.objectContaining({ source: "AGENT", toState: "SCREENING", confidence: 0.6 }));
-    await byName.jobdragonquest_registrar_candidatura!.run(client, { empresa: "Acme", cargo: "Dev" } as never);
-    expect(request.mock.calls[1]![3]).toEqual({ "Idempotency-Key": expect.stringMatching(/^mcp-[0-9a-f-]{36}$/) });
+    await byName.jobdragonquest_atualizar_etapa!.run(client, {
+      id: ID,
+      etapa: "SCREENING",
+      evidencia: "E-mail",
+      confianca: 0.6,
+    } as never);
+    expect(request).toHaveBeenCalledWith(
+      "POST",
+      `/api/v1/applications/${ID}/transitions`,
+      expect.objectContaining({
+        source: "AGENT",
+        toState: "SCREENING",
+        confidence: 0.6,
+      }),
+    );
+    await byName.jobdragonquest_registrar_candidatura!.run(client, {
+      empresa: "Acme",
+      cargo: "Dev",
+    } as never);
+    expect(request.mock.calls[1]![3]).toEqual({
+      "Idempotency-Key": expect.stringMatching(/^mcp-[0-9a-f-]{36}$/),
+    });
+  });
+
+  it("registrar contato nunca muda a etapa e valida e-mail e link (#108)", async () => {
+    const tool = byName.jobdragonquest_registrar_contato!;
+    expect(
+      tool.schema.safeParse({
+        id: ID,
+        papel: "RECRUITER",
+        nome: "Ana",
+        email: "sem-arroba",
+      }).success,
+    ).toBe(false);
+    expect(
+      tool.schema.safeParse({
+        id: ID,
+        papel: "RECRUITER",
+        nome: "Ana",
+        linkedin: "javascript:alert(1)",
+      }).success,
+    ).toBe(false);
+    expect(tool.schema.safeParse({ id: ID, papel: "CEO", nome: "Ana" }).success).toBe(false);
+    const request = vi.fn().mockResolvedValue({});
+    await tool.run({ request }, {
+      id: ID,
+      papel: "RECRUITER",
+      nome: "Ana",
+      email: "ana@empresa.test",
+    } as never);
+    expect(request).toHaveBeenCalledWith(
+      "POST",
+      `/api/v1/applications/${ID}/contacts`,
+      expect.objectContaining({
+        contacted: false,
+        role: "RECRUITER",
+        name: "Ana",
+      }),
+    );
+  });
+
+  it("vagas parecidas limita a faixa e favoritar usa PUT na vaga (#110)", async () => {
+    expect(
+      byName.jobdragonquest_vagas_parecidas!.schema.safeParse({
+        semelhancaMinima: 101,
+      }).success,
+    ).toBe(false);
+    expect(byName.jobdragonquest_vagas_parecidas!.schema.safeParse({ base: "TODAS" }).success).toBe(false);
+    expect(
+      byName.jobdragonquest_favoritar_vaga!.schema.safeParse({
+        id: "../x",
+        favorita: true,
+      }).success,
+    ).toBe(false);
+    const request = vi.fn().mockResolvedValue({});
+    await byName.jobdragonquest_vagas_parecidas!.run({ request }, {
+      base: "APPLIED",
+      semelhancaMinima: 40,
+      limite: 5,
+    } as never);
+    expect(request).toHaveBeenCalledWith("GET", "/api/v1/jobs/similar?basis=APPLIED&minScore=40&limit=5");
+    await byName.jobdragonquest_favoritar_vaga!.run({ request }, {
+      id: ID,
+      favorita: true,
+    } as never);
+    expect(request).toHaveBeenLastCalledWith("PUT", `/api/v1/jobs/${ID}/favorite`, { favorite: true });
+  });
+
+  it("ler vaga do link só aceita http(s) e não grava (#114)", async () => {
+    const tool = byName.jobdragonquest_ler_vaga_do_link!;
+    expect(tool.readOnly).toBe(true);
+    expect(tool.schema.safeParse({ url: "file:///etc/passwd" }).success).toBe(false);
+    const request = vi.fn().mockResolvedValue({});
+    await tool.run({ request }, { url: "https://empresa.test/vagas/1" } as never);
+    expect(request).toHaveBeenCalledWith("POST", "/api/v1/jobs/from-link", { url: "https://empresa.test/vagas/1" });
+  });
+
+  it("respostas e revisão só leem, com ids validados (#115)", async () => {
+    expect(byName.jobdragonquest_respostas_para_vaga!.readOnly).toBe(true);
+    expect(byName.jobdragonquest_revisar_candidatura!.schema.safeParse({ vagaId: "../x", perfilId: ID }).success).toBe(false);
+    const request = vi.fn().mockResolvedValue({});
+    await byName.jobdragonquest_revisar_candidatura!.run({ request }, { vagaId: ID, perfilId: ID } as never);
+    expect(request).toHaveBeenCalledWith("GET", `/api/v1/jobs/${ID}/assist/review?profileId=${ID}`);
+  });
+
+  it("ferramentas de currículo e carreira só leem (#118)", async () => {
+    for (const name of ["jobdragonquest_curriculo", "jobdragonquest_carta", "jobdragonquest_preparar_entrevista", "jobdragonquest_mercado"]) {
+      expect(byName[name]!.readOnly).toBe(true);
+    }
+    expect(byName.jobdragonquest_curriculo!.schema.safeParse({ perfilId: "../tokens" }).success).toBe(false);
+    const request = vi.fn().mockResolvedValue([]);
+    await byName.jobdragonquest_curriculo!.run({ request }, { perfilId: ID, vagaId: ID } as never);
+    expect(request).toHaveBeenCalledWith("GET", `/api/v1/profiles/${ID}/resume?jobId=${ID}`);
+    await byName.jobdragonquest_mercado!.run({ request }, { cargo: "java" } as never);
+    expect(request).toHaveBeenCalledWith("GET", "/api/v1/career/salary?title=java");
+  });
+
+  it("ler documento recebe conteúdo, nunca caminho, e envia multipart (#124)", async () => {
+    const tool = byName.jobdragonquest_ler_documento!;
+    expect(tool.readOnly).toBe(true);
+    expect(tool.schema.safeParse({ nomeArquivo: "x.pdf", conteudoBase64: "/home/x/.ssh/id_rsa; rm -rf" }).success).toBe(false);
+    const request = vi.fn().mockResolvedValue({});
+    await tool.run({ request }, { nomeArquivo: "cert.pdf", conteudoBase64: Buffer.from("%PDF-1.7 teste").toString("base64") } as never);
+    const [method, path, body] = request.mock.calls[0]!;
+    expect([method, path]).toEqual(["POST", "/api/v1/documents/read"]);
+    expect(body).toBeInstanceOf(FormData);
+    await expect(tool.run({ request }, { nomeArquivo: "vazio.pdf", conteudoBase64: "" } as never)).rejects.toThrow("5 MB");
+
+    const add = byName.jobdragonquest_adicionar_item_perfil!;
+    expect(add.schema.safeParse({ perfilId: ID, tipo: "HACK", titulo: "x" }).success).toBe(false);
+    expect(add.schema.safeParse({ perfilId: ID, tipo: "COURSE", titulo: "Git", fim: "15/10/2026" }).success).toBe(false);
+    await add.run({ request }, { perfilId: ID, tipo: "COURSE", titulo: "Git", cargaHoraria: 8 } as never);
+    expect(request).toHaveBeenLastCalledWith("POST", `/api/v1/profiles/${ID}/entries`, expect.objectContaining({ kind: "COURSE", title: "Git", hours: 8 }));
+  });
+
+  it("envia FormData sem Content-Type JSON", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
+    const client = createClient({ apiUrl: "http://127.0.0.1:8080", token: "jdq_" + "a".repeat(43) } as never, fetchImpl as never);
+    const form = new FormData();
+    form.append("file", new Blob(["x"]), "a.txt");
+    await client.request("POST", "/api/v1/documents/read", form);
+    const init = fetchImpl.mock.calls[0]![1] as RequestInit;
+    expect(init.body).toBe(form);
+    expect((init.headers as Record<string, string>)["Content-Type"]).toBeUndefined();
   });
 
   it("marca os dados como não confiáveis e corta respostas longas", () => {
@@ -150,16 +355,25 @@ describe("servidor MCP de ponta a ponta (em memória)", () => {
     expect(tools.map((t) => t.name)).toContain("jobdragonquest_resumo");
     expect(tools.find((t) => t.name === "jobdragonquest_resumo")!.annotations?.readOnlyHint).toBe(true);
 
-    const result = await client.callTool({ name: "jobdragonquest_resumo", arguments: {} });
+    const result = await client.callTool({
+      name: "jobdragonquest_resumo",
+      arguments: {},
+    });
     expect(JSON.stringify(result.content)).toContain("jobsFound");
     expect(request).toHaveBeenCalledWith("GET", "/api/v1/dashboard/summary");
 
-    const invalid = await client.callTool({ name: "jobdragonquest_ver_vaga", arguments: { id: "../tokens" } });
+    const invalid = await client.callTool({
+      name: "jobdragonquest_ver_vaga",
+      arguments: { id: "../tokens" },
+    });
     expect(invalid.isError).toBe(true);
     expect(request).toHaveBeenCalledTimes(1);
 
     request.mockRejectedValueOnce(new ApiError(404, "not_found", "Vaga não encontrado"));
-    const missing = await client.callTool({ name: "jobdragonquest_ver_vaga", arguments: { id: ID } });
+    const missing = await client.callTool({
+      name: "jobdragonquest_ver_vaga",
+      arguments: { id: ID },
+    });
     expect(missing.isError).toBe(true);
     expect(JSON.stringify(missing.content)).toContain("not_found");
     await client.close();

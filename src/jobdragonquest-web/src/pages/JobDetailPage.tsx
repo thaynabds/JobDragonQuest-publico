@@ -8,6 +8,7 @@ import { Badge, Button, Card, Empty, ExternalLink, Loading, Notice } from "../co
 import { useI18n } from "../i18n/I18nContext";
 import { newIdempotencyKey } from "../utils/safe";
 import { useAsync } from "../utils/useAsync";
+import { AssistCard } from "./AssistCard";
 
 const OUTCOME_TONE: Record<Outcome, "good" | "warn" | "bad" | "neutral"> = {
   MET: "good",
@@ -33,10 +34,7 @@ export function JobDetailPage() {
   const apply = async (match: MatchResult) => {
     setError(null);
     try {
-      const { data } = await api.createApplication(
-        { origin: "MANUAL", jobId: id, profileId: match.profileId, state: "SUBMITTED" },
-        newIdempotencyKey("job"),
-      );
+      const { data } = await api.createApplication({ origin: "MANUAL", jobId: id, profileId: match.profileId, state: "SUBMITTED" }, newIdempotencyKey("job"));
       navigate(`/candidaturas/${data.id}`);
     } catch (err) {
       setError(err instanceof ApiError ? errorMessage(err) : t("error.generic"));
@@ -112,6 +110,8 @@ export function JobDetailPage() {
           </article>
         ))}
       </Card>
+
+      <AssistCard jobId={id} profiles={(matches.data ?? []).map((m) => ({ id: m.profileId, name: m.profileName }))} />
 
       {data.description && (
         <Card title={t("jobs.description")}>

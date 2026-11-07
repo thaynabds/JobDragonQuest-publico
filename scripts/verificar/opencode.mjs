@@ -19,7 +19,7 @@ check("OpenCode não pode rodar comandos", config?.permission?.bash === "deny");
 check("OpenCode não pode buscar na web", config?.permission?.webfetch === "deny");
 check("OpenCode não lê .env, data/ nem a auditoria pessoal",
   config?.permission?.read?.[".env"] === "deny" && config?.permission?.read?.["data/**"] === "deny"
-    && config?.permission?.read?.["docs/referencias-jobcopilot/**"] === "deny");
+    && config?.permission?.read?.["privado/**"] === "deny");
 check("instruções do projeto carregadas", Array.isArray(config?.instructions) && config.instructions.includes("AGENTS.md"));
 
 const agents = existsSync(join(ROOT, "AGENTS.md")) ? readFileSync(join(ROOT, "AGENTS.md"), "utf8") : "";

@@ -12,6 +12,7 @@ import dev.jobdragonquest.applications.ApplicationEnums.Origin;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -67,6 +68,40 @@ public final class ApplicationDtos {
     }
 
     public record NoteRequest(@NotBlank @Size(max = 4000) String text) {
+    }
+
+    /** Mudança manual de etapa em várias candidaturas de uma vez (até 100). */
+    public record BatchTransitionRequest(
+            @NotEmpty @Size(max = 100) List<@NotNull UUID> ids,
+            @NotNull ApplicationState toState,
+            @NotBlank @Size(max = 4000) String evidence) {
+    }
+
+    /** {@code updated}: quantas mudaram; {@code failed}: as que não mudaram, com o código do motivo. */
+    public record BatchTransitionResult(int updated, List<BatchFailure> failed) {
+    }
+
+    public record BatchFailure(UUID id, String code) {
+    }
+
+    /** Contato de recrutador, gestor, entrevistador ou indicação. {@code contacted}: já houve conversa com a pessoa. */
+    public record ContactRequest(
+            @NotNull ApplicationContact.Role role,
+            @NotBlank @Size(max = 120) String name,
+            @Size(max = 120) String position,
+            @Size(max = 254) String email,
+            @Size(max = 500) String linkedinUrl,
+            @Size(max = 2000) String notes,
+            Boolean contacted) {
+    }
+
+    public record ContactResponse(UUID id, ApplicationContact.Role role, String name, String position, String email,
+            String linkedinUrl, String notes, Instant contactedAt, Instant createdAt) {
+
+        static ContactResponse of(ApplicationContact c) {
+            return new ContactResponse(c.getId(), c.getRole(), c.getName(), c.getPosition(), c.getEmail(), c.getLinkedinUrl(),
+                    c.getNotes(), c.getContactedAt(), c.getCreatedAt());
+        }
     }
 
     public record ApplicationResponse(

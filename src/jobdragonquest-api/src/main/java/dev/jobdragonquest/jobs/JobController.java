@@ -19,6 +19,7 @@ import dev.jobdragonquest.common.web.PageResponse;
 import dev.jobdragonquest.jobs.JobDtos.JobCreated;
 import dev.jobdragonquest.jobs.JobDtos.JobRequest;
 import dev.jobdragonquest.jobs.JobDtos.JobResponse;
+import dev.jobdragonquest.jobs.JobDtos.FavoriteRequest;
 import dev.jobdragonquest.jobs.JobDtos.JobSummary;
 import dev.jobdragonquest.jobs.JobDtos.StatusRequest;
 import jakarta.validation.Valid;
@@ -37,8 +38,14 @@ class JobController {
 
     @GetMapping
     PageResponse<JobSummary> list(@RequestParam(required = false) UUID sourceId,
+            @RequestParam(defaultValue = "false") boolean favorite,
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        return PageResponse.of(jobs.list(currentUser.id(), sourceId, page, size));
+        return PageResponse.of(jobs.list(currentUser.id(), sourceId, favorite, page, size));
+    }
+
+    @PutMapping("/{id}/favorite")
+    JobSummary favorite(@PathVariable UUID id, @RequestBody FavoriteRequest request) {
+        return jobs.setFavorite(currentUser.id(), id, request.favorite());
     }
 
     @GetMapping("/{id}")

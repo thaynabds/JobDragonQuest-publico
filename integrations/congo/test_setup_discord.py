@@ -45,6 +45,9 @@ class SetupTest(unittest.TestCase):
             group = asyncio.run(run())
             self.assertIsNotNone(group)
             self.assertEqual(sorted(command.name for command in group.commands), ["avisos", "pendencias", "resumo"])
+            self.assertFalse(group.allowed_contexts.guild, "não pode aparecer nos servidores")
+            self.assertTrue(group.allowed_contexts.dm_channel, "funciona na conversa privada com o bot")
+            self.assertFalse(group.allowed_contexts.private_channel)
 
 
 if __name__ == "__main__":

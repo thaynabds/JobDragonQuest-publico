@@ -1,7 +1,7 @@
 """Plugin do JobDragonQuest para o bot de Discord do Congo Grey Parrot.
 
 Entrega os avisos do JobDragonQuest por mensagem direta (mesmo com o painel fechado) e responde a /jobdragonquest resumo,
-/jobdragonquest avisos e /jobdragonquest pendencias, só para a dona configurada e de forma privada.
+/jobdragonquest avisos e /jobdragonquest pendencias só na conversa privada com o bot e só para a dona configurada.
 
 Instalação: scripts/conectar-congo.sh no repositório do JobDragonQuest. Depois, no Discord: /funcoes ativar jobdragonquest.
 Configuração em ~/.config/jobdragonquest/congo.env (permissão 600), nunca no código:
@@ -21,6 +21,7 @@ import stat
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable, NamedTuple
 
@@ -169,43 +170,79 @@ def list_text(title: str, items: list, line: Callable[[dict], str], empty: str) 
 
 
 class SentLog:
-    """Ids de avisos já enviados por DM, para não repetir (fica num arquivo 600 ao lado da configuração)."""
+    """Avisos já enviados por DM e a hora em que o plugin começou (arquivo 600 ao lado da configuração).
+
+    A hora de início evita despejar avisos antigos na primeira vez em que o plugin roda.
+    """
 
     def __init__(self, path: Path = SENT_PATH):
         self._path = path
+        self.since: datetime | None = None
+        self._ids: list[str] = []
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return
+        if isinstance(data, list):  # formato antigo: só a lista de ids
             self._ids = [str(value) for value in data if isinstance(value, str)][-MAX_REMEMBERED:]
-        except (OSError, ValueError, TypeError):
-            self._ids = []
+        elif isinstance(data, dict):
+            self._ids = [str(value) for value in data.get("ids", []) if isinstance(value, str)][-MAX_REMEMBERED:]
+            self.since = parse_instant(data.get("since"))
 
     def __contains__(self, item_id: str) -> bool:
         return item_id in self._ids
 
+    def start(self, now: datetime) -> None:
+        self.since = now
+        self._save()
+
     def add(self, item_id: str) -> None:
         self._ids = (self._ids + [item_id])[-MAX_REMEMBERED:]
+        self._save()
+
+    def _save(self) -> None:
         try:
             self._path.parent.mkdir(parents=True, exist_ok=True)
             fd = os.open(self._path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                json.dump(self._ids, handle)
+                json.dump({"since": self.since.isoformat() if self.since else None, "ids": self._ids}, handle)
         except OSError:
             pass
 
 
-def pending_dms(api: JobDragonQuestApi, sent: SentLog) -> list[tuple[str, str]]:
-    """Avisos a mandar por DM: os que pedem notificação fora do painel (canal "sistema"), ainda não enviados.
+def parse_instant(value: object) -> datetime | None:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
 
-    Não marca como entregue no JobDragonQuest, para o painel também mostrar o pop-up quando estiver aberto.
+
+def pending_dms(api: JobDragonQuestApi, sent: SentLog, now: datetime | None = None) -> list[tuple[str, str]]:
+    """Avisos a mandar por DM: canal "sistema" ligado, ainda não lidos, não adiados e não enviados.
+
+    Lê os avisos recentes da conta (não só a fila de entrega): com o painel aberto, o aviso vira "entregue" em
+    segundos, mas a pessoa ainda deve recebê-lo no Discord. Na primeira execução só marca a hora de início.
     """
-    due = api.request("GET", "/api/v1/notifications/due") or []
+    now = now or datetime.now(timezone.utc)
+    if sent.since is None:
+        sent.start(now)
+        return []
+    data = api.request("GET", "/api/v1/notifications?size=30") or {}
+    items = data.get("items", []) if isinstance(data, dict) else []
     view = api.request("GET", "/api/v1/notifications/preferences") or {}
     hide = bool((view.get("settings") or {}).get("hideDetails")) if isinstance(view, dict) else True
     out: list[tuple[str, str]] = []
-    for item in due if isinstance(due, list) else []:
+    for item in reversed(items):  # do mais antigo para o mais novo
         item_id = str(item.get("id", ""))
-        if item_id and item.get("system") and item_id not in sent:
-            out.append((item_id, notification_text(item, hide)))
+        created = parse_instant(item.get("createdAt"))
+        snoozed = parse_instant(item.get("snoozedUntil"))
+        if (not item_id or not item.get("system") or item.get("readAt") or item_id in sent
+                or created is None or created < sent.since or (snoozed is not None and snoozed > now)):
+            continue
+        out.append((item_id, notification_text(item, hide)))
     return out
 
 
@@ -223,7 +260,12 @@ def setup(bot) -> None:  # pragma: no cover - depende do discord.py e de um bot 
         log.warning("Plugin JobDragonQuest sem configuração: %s", exc)
         config = None
 
-    group = app_commands.Group(name="jobdragonquest", description="Seu JobDragonQuest: resumo, avisos e pendências (privado)")
+    # Só na conversa privada com o bot: o comando não aparece nos servidores nem em grupos.
+    group = app_commands.Group(
+        name="jobdragonquest",
+        description="Seu JobDragonQuest: resumo, avisos e pendências (privado)",
+        allowed_contexts=app_commands.AppCommandContext(guild=False, dm_channel=True, private_channel=False),
+    )
     none = discord.AllowedMentions.none()
 
     async def answer(interaction: discord.Interaction, build: Callable[[JobDragonQuestApi], str]) -> None:

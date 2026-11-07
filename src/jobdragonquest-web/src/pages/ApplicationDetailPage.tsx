@@ -6,6 +6,8 @@ import { APPLICATION_STATES, type ApplicationState } from "../api/types";
 import { Badge, Button, Card, ExternalLink, Field, Loading, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { useAsync } from "../utils/useAsync";
+import { AttachmentsSection } from "./AttachmentsSection";
+import { ContactsSection } from "./ContactsSection";
 
 export function ApplicationDetailPage() {
   const { id = "" } = useParams();
@@ -16,7 +18,10 @@ export function ApplicationDetailPage() {
   const [evidence, setEvidence] = useState("");
   const [nextAction, setNextAction] = useState("");
   const [note, setNote] = useState("");
-  const [notice, setNotice] = useState<{ tone: "error" | "success"; text: string } | null>(null);
+  const [notice, setNotice] = useState<{
+    tone: "error" | "success";
+    text: string;
+  } | null>(null);
 
   const act = async (action: () => Promise<string>) => {
     setNotice(null);
@@ -31,7 +36,12 @@ export function ApplicationDetailPage() {
   const transition = (event: FormEvent) => {
     event.preventDefault();
     void act(async () => {
-      const { data } = await api.transition(id, { toState, source: "MANUAL", evidence: evidence.trim(), nextAction: nextAction.trim() || null });
+      const { data } = await api.transition(id, {
+        toState,
+        source: "MANUAL",
+        evidence: evidence.trim(),
+        nextAction: nextAction.trim() || null,
+      });
       setEvidence("");
       setNextAction("");
       return data.outcome === "APPLIED" ? t("application.applied") : data.outcome === "SUGGESTED" ? t("application.suggested") : t("application.noted");
@@ -76,7 +86,10 @@ export function ApplicationDetailPage() {
             variant="danger"
             onClick={() => {
               if (window.confirm(t("common.confirmDelete"))) {
-                void api.deleteApplication(id).then(() => navigate("/candidaturas", { replace: true }), (err: unknown) => setNotice({ tone: "error", text: errorMessage(err) }));
+                void api.deleteApplication(id).then(
+                  () => navigate("/candidaturas", { replace: true }),
+                  (err: unknown) => setNotice({ tone: "error", text: errorMessage(err) }),
+                );
               }
             }}
           >
@@ -156,13 +169,20 @@ export function ApplicationDetailPage() {
         </Card>
       </div>
 
+      <ContactsSection applicationId={id} onChanged={detail.reload} />
+      <AttachmentsSection applicationId={id} />
+
       <Card title={t("application.history")}>
         <ol className="timeline">
           {[...events].reverse().map((event) => (
             <li key={event.id} className={`timeline-${event.kind.toLowerCase()}`}>
               <div className="timeline-head">
                 <Badge tone={event.kind === "SUGGESTION" ? "warn" : event.kind === "NOTE" ? "neutral" : "info"}>
-                  {event.kind === "STATE_CHANGE" ? label("state", event.toState) : event.kind === "SUGGESTION" ? t("application.suggestion") : t("application.note")}
+                  {event.kind === "STATE_CHANGE"
+                    ? label("state", event.toState)
+                    : event.kind === "SUGGESTION"
+                      ? t("application.suggestion")
+                      : t("application.note")}
                 </Badge>
                 <span className="muted small">
                   {formatDate(event.occurredAt, true)} · {t("application.source")}: {label("eventSource", event.source)} · {t("application.confidence")}{" "}

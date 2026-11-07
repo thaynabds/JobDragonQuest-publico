@@ -6,12 +6,17 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -324,6 +329,43 @@ public class ApplicationService {
         }
         return applications.findRecentSameRole(userId, details.companyNorm(), details.titleNorm(),
                 now.minus(properties.duplicateWindow())).stream().findFirst();
+    }
+
+    /** Confere que a candidatura é da conta (404 se não for). */
+    @Transactional(readOnly = true)
+    public void requireOwned(UUID userId, UUID applicationId) {
+        load(userId, applicationId);
+    }
+
+    /** Candidatura já registrada para a vaga (pela vaga ou pela mesma empresa e cargo na janela de duplicidade). */
+    @Transactional(readOnly = true)
+    public Optional<UUID> existingFor(UUID userId, UUID jobId, String company, String title) {
+        Optional<UUID> byJob = applications.findByUserId(userId).stream()
+                .filter(a -> jobId.equals(a.getJobId())).map(JobApplication::getId).findFirst();
+        if (byJob.isPresent() || company == null || title == null) {
+            return byJob;
+        }
+        return applications.findRecentSameRole(userId, TextNormalizer.normalizeCompany(company), TextNormalizer.normalize(title),
+                clock.instant().minus(properties.duplicateWindow())).stream().map(JobApplication::getId).findFirst();
+    }
+
+    /** Vagas das candidaturas enviadas mais recentes (para a busca por vagas parecidas). */
+    @Transactional(readOnly = true)
+    public Set<UUID> recentSubmittedJobIds(UUID userId, int limit) {
+        return applications.findByUserId(userId).stream()
+                .filter(a -> a.getJobId() != null && a.getState().phase() != ApplicationState.Phase.PREPARATION)
+                .sorted(Comparator.comparing((JobApplication a) -> a.getAppliedAt() != null ? a.getAppliedAt() : a.getCreatedAt())
+                        .reversed())
+                .limit(limit)
+                .map(JobApplication::getJobId)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    /** Vagas que já têm candidatura, em qualquer etapa. */
+    @Transactional(readOnly = true)
+    public Set<UUID> jobIdsWithApplication(UUID userId) {
+        return applications.findByUserId(userId).stream().map(JobApplication::getJobId).filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     private JobApplication load(UUID userId, UUID applicationId) {

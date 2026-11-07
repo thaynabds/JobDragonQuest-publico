@@ -1,8 +1,10 @@
 package dev.jobdragonquest.common.text;
 
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Compara cargos palavra a palavra, tolerando flexão de gênero e número do português ("Desenvolvedora" casa com
@@ -26,6 +28,16 @@ public final class TitleMatcher {
         }
         List<String> available = words(text);
         return wanted.stream().allMatch(word -> available.stream().anyMatch(candidate -> sameWord(word, candidate)));
+    }
+
+    /**
+     * Palavras significativas do texto já reduzidas ao radical ("Desenvolvedora" e "Desenvolvedores" viram
+     * "desenvolvedor"), para comparar conjuntos de palavras.
+     */
+    public static Set<String> keyWords(String text) {
+        return words(text).stream()
+                .map(word -> word.length() < MIN_STEM_LENGTH ? word : stem(word))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     static List<String> words(String text) {

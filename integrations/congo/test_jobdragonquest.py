@@ -8,6 +8,7 @@ import os
 import tempfile
 import unittest
 import urllib.error
+from datetime import datetime, timezone
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -28,18 +29,22 @@ def write_config(folder: Path, body: str, mode: int = 0o600) -> Path:
 
 
 class FakeApi:
-    def __init__(self, due: list, hide: bool = False):
-        self.due = due
+    def __init__(self, items: list, hide: bool = False):
+        self.items = items
         self.hide = hide
         self.calls: list[tuple[str, str]] = []
 
     def request(self, method: str, path: str, body: object | None = None) -> object:
         self.calls.append((method, path))
-        if path.endswith("/due"):
-            return self.due
+        if path.startswith("/api/v1/notifications?"):
+            return {"items": list(reversed(self.items))}  # a API devolve do mais novo para o mais antigo
         if path.endswith("/preferences"):
             return {"settings": {"hideDetails": self.hide}}
         raise AssertionError(path)
+
+
+START = datetime(2026, 11, 7, 5, 0, tzinfo=timezone.utc)
+LATER = "2026-11-07T05:10:00Z"
 
 
 class ConfigTest(unittest.TestCase):
@@ -94,33 +99,55 @@ class MessagesTest(unittest.TestCase):
 
 
 class DeliveryTest(unittest.TestCase):
-    def test_sends_only_system_items_once_without_marking_delivered(self):
+    def log(self, tmp: str) -> "plugin.SentLog":
+        log = plugin.SentLog(Path(tmp) / "enviados.json")
+        log.start(START)
+        return log
+
+    def test_first_run_only_marks_the_start(self):
         with tempfile.TemporaryDirectory() as tmp:
-            sent = plugin.SentLog(Path(tmp) / "enviados.json")
-            api = FakeApi([
-                {"id": "a", "system": True, "priority": "HIGH", "message": "Proposta recebida"},
-                {"id": "b", "system": False, "priority": "LOW", "message": "Sem atualização"},
-            ])
-            batch = plugin.pending_dms(api, sent)
-            self.assertEqual(batch, [("a", "JobDragonQuest · Importante: Proposta recebida")])
-            sent.add("a")
-            self.assertEqual(plugin.pending_dms(api, plugin.SentLog(Path(tmp) / "enviados.json")), [])
-            self.assertFalse(any(path.endswith("/delivered") for _, path in api.calls))
+            log = plugin.SentLog(Path(tmp) / "enviados.json")
+            api = FakeApi([{"id": "velho", "system": True, "createdAt": "2026-11-01T10:00:00Z", "message": "antigo"}])
+            self.assertEqual(plugin.pending_dms(api, log, START), [])
+            self.assertEqual(api.calls, [], "na primeira vez não consulta nem manda nada")
+            self.assertEqual(plugin.SentLog(Path(tmp) / "enviados.json").since, START)
             self.assertEqual(os.stat(Path(tmp) / "enviados.json").st_mode & 0o777, 0o600)
+
+    def test_sends_system_items_even_after_the_panel_delivered_them(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            log = self.log(tmp)
+            api = FakeApi([
+                {"id": "a", "system": True, "priority": "HIGH", "createdAt": LATER, "deliveredAt": LATER, "message": "Proposta recebida"},
+                {"id": "b", "system": False, "createdAt": LATER, "message": "Sem atualização"},
+                {"id": "c", "system": True, "createdAt": LATER, "readAt": LATER, "message": "Já lido no painel"},
+                {"id": "d", "system": True, "createdAt": LATER, "snoozedUntil": "2026-11-07T08:00:00Z", "message": "Adiado"},
+                {"id": "e", "system": True, "createdAt": "2026-11-07T04:59:00Z", "message": "Antes do início"},
+            ])
+            now = datetime(2026, 11, 7, 5, 15, tzinfo=timezone.utc)
+            batch = plugin.pending_dms(api, log, now)
+            self.assertEqual(batch, [("a", "JobDragonQuest · Importante: Proposta recebida")])
+            log.add("a")
+            self.assertEqual(plugin.pending_dms(api, plugin.SentLog(Path(tmp) / "enviados.json"), now), [])
+            self.assertFalse(any("/delivered" in path for _, path in api.calls))
 
     def test_respects_hide_details(self):
         with tempfile.TemporaryDirectory() as tmp:
-            batch = plugin.pending_dms(FakeApi([{"id": "a", "system": True, "message": "Acme (Dev)"}], hide=True), plugin.SentLog(Path(tmp) / "s.json"))
+            api = FakeApi([{"id": "a", "system": True, "createdAt": LATER, "message": "Acme (Dev)"}], hide=True)
+            batch = plugin.pending_dms(api, self.log(tmp), datetime(2026, 11, 7, 6, 0, tzinfo=timezone.utc))
         self.assertNotIn("Acme", batch[0][1])
 
-    def test_sent_log_survives_corrupt_file_and_caps_size(self):
+    def test_sent_log_survives_corrupt_or_old_file_and_caps_size(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "s.json"
             path.write_text("{não é json", encoding="utf-8")
-            log = plugin.SentLog(path)
+            self.assertIsNone(plugin.SentLog(path).since)
+            path.write_text(json.dumps(["x", "y"]), encoding="utf-8")
+            old = plugin.SentLog(path)
+            self.assertIn("x", old)
+            old.start(START)
             for index in range(plugin.MAX_REMEMBERED + 10):
-                log.add(str(index))
-            self.assertEqual(len(json.loads(path.read_text(encoding="utf-8"))), plugin.MAX_REMEMBERED)
+                old.add(str(index))
+            self.assertEqual(len(json.loads(path.read_text(encoding="utf-8"))["ids"]), plugin.MAX_REMEMBERED)
 
 
 class ApiTest(unittest.TestCase):
