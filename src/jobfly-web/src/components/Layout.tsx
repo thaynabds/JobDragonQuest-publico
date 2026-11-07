@@ -21,6 +21,9 @@ export function Layout() {
   const { user, logout } = useAuth();
   return (
     <NotificationsProvider>
+    <a className="skip-link" href="#conteudo">
+      {t("a11y.skip")}
+    </a>
     <div className="shell">
       <aside className="sidebar">
         <div className="brand">
@@ -46,7 +49,7 @@ export function Layout() {
           </button>
         </div>
       </aside>
-      <main className="content">
+      <main className="content" id="conteudo" tabIndex={-1}>
         <Outlet />
       </main>
     </div>

@@ -38,6 +38,7 @@ Requisitos numerados e rastreáveis. Cada requisito aparece nas issues, nos caso
 | [RF25] | O sistema deve importar histórico de candidaturas em CSV, com relatório de duplicatas | ⬜ | Roadmap |
 | [RF26] | O sistema deve avisar a pessoa de forma perceptível (pop-up, notificação do sistema e som) sobre etapas, pendências, prazos e vagas novas, com configuração por etapa, tipo e fonte, horário de silêncio e adiamento | ✅ | `NotificationIntegrationTest`, `notifications.test.tsx`, `SettingsPage.test.tsx` |
 | [RF27] | O sistema deve oferecer tokens de acesso pessoal revogáveis para integrações, sem expor a senha | ✅ | `PersonalTokenIntegrationTest`, `TokensSection.test.tsx` |
+| [RF28] | O sistema deve ter uma central de acessibilidade com os temas e filtros de cor do Congo Grey Parrot e os recursos do a11y-widget, sem carregar script externo | ✅ | `a11y.test.tsx` |
 
 ## Requisitos não funcionais (RNF)
 
