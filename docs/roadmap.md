@@ -16,6 +16,7 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 | v0.2.0 | 06/11/2026 | Fontes vigiadas em lote para vários perfis, coleta de ATS públicos com agendador, lembretes de fontes assistidas, painel web completo pt/en, documentação obrigatória, Git Flow, CI e correções achadas na navegação real e na revisão com o OpenCode (#31, #32, #36, #38) |
 | v0.2.1 | 06/11/2026 | Correção da regra de crédito do AGENTS.md (#50) |
 | v0.3.0 | 07/11/2026 | Avisos configuráveis com pop-up, notificação do sistema, som e sino (#55, #56); tokens de acesso pessoal (#57); servidor MCP com 17 ferramentas (#58); instalação em um comando e conexão do MCP (#59); README com prompt pronto para IA e deploy opcional gratuito (#54); nova logo (#61); painel em português, inglês e espanhol com idiomas automatizados (#63); central de acessibilidade com os temas do Congo e os recursos do a11y-widget (#64); plugin do Congo Grey Parrot para o Discord (#65) |
+| v0.3.2 | 07/11/2026 | Correção da conexão do MCP com o Claude Code (registro por `claude mcp add-json`), token colado aceito mesmo com marcadores de colagem e mensagem de sucesso só quando conecta (#119) |
 
 Medição da v0.2.0:
 - API: 108 testes, cobertura geral de 94,3%.
