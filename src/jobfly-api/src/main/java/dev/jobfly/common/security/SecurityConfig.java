@@ -10,6 +10,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationManagerResolver;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -38,6 +45,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 
+import dev.jobfly.identity.PersonalTokenService;
+import jakarta.servlet.http.HttpServletRequest;
+
 /**
  * API sem estado: cada requisição traz um JWT no cabeçalho Authorization.
  * O CSRF fica desligado porque o token de acesso não vai em cookie. O único cookie (refresh token) é
@@ -49,7 +59,8 @@ public class SecurityConfig {
     static final String ROLES_CLAIM = "roles";
 
     @Bean
-    SecurityFilterChain api(HttpSecurity http, SecurityProperties properties) throws Exception {
+    SecurityFilterChain api(HttpSecurity http, SecurityProperties properties, JwtDecoder jwtDecoder,
+            PersonalTokenService personalTokens) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsSource(properties)))
@@ -68,8 +79,30 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/**").authenticated()
                         .anyRequest().denyAll())
-                .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(authenticationConverter())));
+                .oauth2ResourceServer(oauth -> oauth.authenticationManagerResolver(managerResolver(jwtDecoder, personalTokens)));
         return http.build();
+    }
+
+    /**
+     * Dois tipos de Bearer: o JWT do painel e o token pessoal ("jfp_…") das integrações. O prefixo só escolhe o
+     * validador; cada um confere o token por completo e qualquer falha vira 401 sem detalhe.
+     */
+    static AuthenticationManagerResolver<HttpServletRequest> managerResolver(JwtDecoder jwtDecoder,
+            PersonalTokenService personalTokens) {
+        JwtAuthenticationProvider jwtProvider = new JwtAuthenticationProvider(jwtDecoder);
+        jwtProvider.setJwtAuthenticationConverter(authenticationConverter());
+        AuthenticationManager jwtManager = new ProviderManager(jwtProvider);
+        AuthenticationManager tokenManager = authentication -> {
+            String value = authentication instanceof BearerTokenAuthenticationToken bearer ? bearer.getToken() : null;
+            return personalTokens.authenticate(value)
+                    .orElseThrow(() -> new InvalidBearerTokenException("Token inválido"));
+        };
+        return request -> {
+            String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+            boolean personal = header != null && header.regionMatches(true, 0, "Bearer " + PersonalTokenService.PREFIX, 0,
+                    7 + PersonalTokenService.PREFIX.length());
+            return personal ? tokenManager : jwtManager;
+        };
     }
 
     @Bean

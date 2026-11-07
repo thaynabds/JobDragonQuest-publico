@@ -87,6 +87,16 @@ Campos da fonte: `collectionMode`, `openUrl` (página para conferir), `nextRunAt
 | `GET /dashboard/summary` | Contadores: vagas, candidaturas, enviadas, em andamento, entrevistas, testes, propostas, aprovações, reprovações, sem atualização, pendências, fontes vigiadas, fontes a conferir e total por etapa |
 | `GET /dashboard/pending` | Pendências ordenadas por prioridade e prazo: ACTION_REQUIRED, TECH_TEST, INTERVIEW_SOON, DEADLINE_SOON, SUGGESTION_TO_REVIEW, SOURCE_TO_CHECK, SOURCE_FAILING, NO_UPDATE. Cada item traz `message` (em português) e campos estruturados (`suggestedState`, `confidence`, `detail`, `sourceId`, `url`) para o cliente montar a frase no idioma dele |
 
+## Tokens de acesso pessoal
+
+| Rota | Descrição |
+|---|---|
+| `GET /tokens` | Tokens da conta, sem o valor: `name`, `prefix` (início do token), `createdAt`, `expiresAt`, `lastUsedAt`, `revokedAt` e `active` |
+| `POST /tokens` | `{name, days?}` (nome de 1 a 80 caracteres; validade de 1 a 365 dias, padrão 90). Resposta 201 `{token, value}`: é a única vez em que o valor aparece. 409 `too_many_tokens` com 10 ativos |
+| `DELETE /tokens/{id}` | Revoga na hora. 404 se o token não for da conta |
+
+O token tem o formato `jfp_` seguido de 43 caracteres e vai no cabeçalho `Authorization: Bearer jfp_…`, como o JWT. O banco guarda só o hash SHA-256. Token revogado, vencido, desconhecido ou malformado recebe 401, sem dizer o motivo. As rotas de `/tokens` exigem login no painel: com um token elas respondem 403 `session_required`, então quem obtiver um token não consegue criar outros para continuar na conta depois da revogação.
+
 ## Avisos
 
 | Rota | Descrição |

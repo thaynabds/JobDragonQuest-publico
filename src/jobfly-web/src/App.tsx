@@ -13,6 +13,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ProfileEditorPage } from "./pages/ProfileEditorPage";
 import { ProfilesPage } from "./pages/ProfilesPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { SourcesPage } from "./pages/SourcesPage";
 
 function Routed() {
@@ -34,6 +35,7 @@ function Routed() {
         <Route path="fontes" element={<SourcesPage />} />
         <Route path="perfis" element={<ProfilesPage />} />
         <Route path="perfis/:id" element={<ProfileEditorPage />} />
+        <Route path="configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

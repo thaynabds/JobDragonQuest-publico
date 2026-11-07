@@ -744,3 +744,26 @@ a:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+/* Formulário em linha (tokens e configurações). */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin: 0.75rem 0;
+}
+
+.form-row .field {
+  flex: 1 1 14rem;
+}
+
+.token-value {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  background: var(--surface-2);
+  user-select: all;
+}
