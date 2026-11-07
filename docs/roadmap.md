@@ -19,6 +19,7 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 | v0.3.1 | 07/11/2026 | Espelho público com histórico limpo e script que audita antes de publicar (#89); PostgreSQL local resistente a mover a pasta (#87) |
 | v0.3.2 | 07/11/2026 | Correção da conexão do MCP com o Claude Code (registro por `claude mcp add-json`), token colado aceito mesmo com marcadores de colagem e mensagem de sucesso só quando conecta (#119) |
 | v0.4.0 | 07/11/2026 | Perfil completo (13 senioridades, competências em anos, meses e dias, idiomas por nome); filtros do perfil na coleta e na compatibilidade; ações em lote; contatos do processo; favoritas e vagas parecidas; modo de automação com fila de revisão; vaga pelo link e importação por CSV; perguntas e revisão antes de enviar; extensão do navegador; currículo e carta por vaga, entrevista, salário e competências; documentos e atualização do currículo por PDF, Word, link e foto; acessibilidade salva na conta; MCP com 30 ferramentas (#96 a #127) |
+| v0.4.1 | 07/11/2026 | Pendências da avaliação técnica Week_01: licença, changelog, guia de contribuição, política de segurança, templates, Dependabot, labels, histórico de issues e PRs no espelho, rastreabilidade RF → issue → teste (#130); relatórios de teste e OSV-Scanner no CI, checagem de commits, ESLint, formato de erro único e correção de privacidade nas notificações do sistema (#131) |
 
 Medição da v0.2.0:
 - API: 108 testes, cobertura geral de 94,3%.

@@ -6,6 +6,8 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.4.1] - 2026-11-07
+
 ### Adicionado
 - `LICENSE`, `CHANGELOG.md`, `CONTRIBUTING.md` e `SECURITY.md` (#130).
 - Templates de issue (bug, funcionalidade, documentação) e de PR com checklist de testes e segurança (#130).
@@ -101,7 +103,8 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 - Núcleo da API: contas, perfis, vagas, compatibilidade, candidaturas de qualquer origem, Kanban, pendências e auditoria,
   rodando no PostgreSQL local.
 
-[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.0...develop
+[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.1...develop
+[0.4.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.3.0...v0.3.1
