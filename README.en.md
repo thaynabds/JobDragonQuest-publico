@@ -43,7 +43,7 @@ node scripts/conectar-mcp.mjs --cliente claude-desktop   # or claude-code, curso
 scripts/conectar-congo.sh                                # optional: notifications by Discord direct message
 ```
 
-Both ask for a token created in **Settings → Integrations and access tokens** and read it without showing it on screen.
+Both ask for a token created in **Settings → Integrations and access tokens** and read it without showing it on screen. Paste the token only when the script asks for it, never as a terminal command (it would stay in the shell history). The script checks the token against the API before saving and only prints `MCP_CONECTADO_OK` when the connection worked.
 
 Checks:
 
