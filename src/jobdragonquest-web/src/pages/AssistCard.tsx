@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router";
 
 import { api } from "../api/endpoints";
-import type { AssistReview, SuggestedAnswer } from "../api/types";
+import type { AssistReview, InterviewQuestion, SuggestedAnswer } from "../api/types";
 import { Badge, Button, Card, Field, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 
@@ -16,6 +17,7 @@ export function AssistCard({ jobId, profiles }: { jobId: string; profiles: { id:
   const [profileId, setProfileId] = useState(profiles[0]?.id ?? "");
   const [answers, setAnswers] = useState<SuggestedAnswer[] | null>(null);
   const [review, setReview] = useState<AssistReview | null>(null);
+  const [interview, setInterview] = useState<InterviewQuestion[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<number | null>(null);
 
@@ -47,6 +49,10 @@ export function AssistCard({ jobId, profiles }: { jobId: string; profiles: { id:
         <Button variant="primary" onClick={() => void run(async () => setReview((await api.assistReview(jobId, profileId)).data))}>
           {t("assist.review")}
         </Button>
+        <Button onClick={() => void run(async () => setInterview((await api.interview(jobId, profileId)).data))}>{t("assist.interview")}</Button>
+        <Link className="btn btn-secondary" to={`/perfis/${encodeURIComponent(profileId)}/curriculo?vaga=${encodeURIComponent(jobId)}`}>
+          {t("assist.resume")}
+        </Link>
       </div>
       {error && <Notice tone="error">{error}</Notice>}
 
@@ -59,6 +65,19 @@ export function AssistCard({ jobId, profiles }: { jobId: string; profiles: { id:
                 <span>
                   <Badge tone={TONE[check.status]}>{label("checkStatus", check.status)}</Badge> {check.message}
                 </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {interview && (
+        <section aria-label={t("assist.interview")}>
+          <ul className="contact-list">
+            {interview.map((item, index) => (
+              <li key={`${item.category}-${index}`}>
+                <strong>{item.question}</strong>
+                <span className="small">{item.hint}</span>
               </li>
             ))}
           </ul>

@@ -18,6 +18,8 @@ import { ProfilesPage } from "./pages/ProfilesPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SourcesPage } from "./pages/SourcesPage";
 import { ReviewQueuePage } from "./pages/ReviewQueuePage";
+import { CareerPage } from "./pages/CareerPage";
+import { ResumePage } from "./pages/ResumePage";
 
 function Routed() {
   const { user, ready } = useAuth();
@@ -39,6 +41,8 @@ function Routed() {
         <Route path="fontes" element={<SourcesPage />} />
         <Route path="perfis" element={<ProfilesPage />} />
         <Route path="perfis/:id" element={<ProfileEditorPage />} />
+        <Route path="perfis/:id/curriculo" element={<ResumePage />} />
+        <Route path="carreira" element={<CareerPage />} />
         <Route path="configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

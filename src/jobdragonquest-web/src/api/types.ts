@@ -251,6 +251,68 @@ export interface AssistReview {
   checks: { code: string; status: "OK" | "WARN" | "BLOCK"; message: string }[];
 }
 
+export interface ResumeSkill {
+  name: string;
+  level: number;
+  time: string | null;
+  highlighted: boolean;
+}
+
+export interface ResumeEntry {
+  kind: string;
+  title: string;
+  organization: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  current: boolean;
+  location: string | null;
+  description: string | null;
+  skills: string[];
+  highlighted: boolean;
+}
+
+export interface Resume {
+  headline: string | null;
+  currentTitle: string | null;
+  location: string | null;
+  summary: string | null;
+  links: string[];
+  skills: ResumeSkill[];
+  experience: ResumeEntry[];
+  education: ResumeEntry[];
+  other: ResumeEntry[];
+  languages: string[];
+  jobTitle: string | null;
+  company: string | null;
+}
+
+export interface CoverLetter {
+  text: string;
+  missing: string[];
+}
+
+export interface InterviewQuestion {
+  category: string;
+  question: string;
+  hint: string;
+}
+
+export interface SalaryStats {
+  jobs: number;
+  currency: string;
+  period: "HOUR" | "MONTH" | "YEAR";
+  min: number;
+  median: number;
+  max: number;
+}
+
+export interface SkillDemand {
+  skill: string;
+  jobs: number;
+  percent: number;
+  inProfile: boolean;
+}
+
 export interface LinkDraft {
   job: JobInput;
   extractedFrom: "JSON_LD" | "META";

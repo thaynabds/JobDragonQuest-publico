@@ -30,6 +30,7 @@ export function ProfilesPage() {
             </p>
             {profile.headline && <p>{profile.headline}</p>}
             {profile.desiredTitles.length > 0 && <p className="muted">{profile.desiredTitles.join(" · ")}</p>}
+            <Link to={`/perfis/${profile.id}/curriculo`}>{t("resume.open")}</Link>
           </Card>
         ))}
       </div>

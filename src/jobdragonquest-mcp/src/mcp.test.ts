@@ -293,6 +293,18 @@ describe("ferramentas", () => {
     expect(request).toHaveBeenCalledWith("GET", `/api/v1/jobs/${ID}/assist/review?profileId=${ID}`);
   });
 
+  it("ferramentas de currículo e carreira só leem (#118)", async () => {
+    for (const name of ["jobdragonquest_curriculo", "jobdragonquest_carta", "jobdragonquest_preparar_entrevista", "jobdragonquest_mercado"]) {
+      expect(byName[name]!.readOnly).toBe(true);
+    }
+    expect(byName.jobdragonquest_curriculo!.schema.safeParse({ perfilId: "../tokens" }).success).toBe(false);
+    const request = vi.fn().mockResolvedValue([]);
+    await byName.jobdragonquest_curriculo!.run({ request }, { perfilId: ID, vagaId: ID } as never);
+    expect(request).toHaveBeenCalledWith("GET", `/api/v1/profiles/${ID}/resume?jobId=${ID}`);
+    await byName.jobdragonquest_mercado!.run({ request }, { cargo: "java" } as never);
+    expect(request).toHaveBeenCalledWith("GET", "/api/v1/career/salary?title=java");
+  });
+
   it("marca os dados como não confiáveis e corta respostas longas", () => {
     expect(formatResult({ a: 1 })).toContain(UNTRUSTED_NOTE);
     const long = formatResult({ texto: "x".repeat(MAX_OUTPUT_CHARS * 2) });

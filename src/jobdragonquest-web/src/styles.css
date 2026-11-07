@@ -1005,3 +1005,72 @@ a:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
+
+.resume {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+.resume h1 {
+  margin: 0;
+}
+
+.resume-headline {
+  font-size: 1.1rem;
+  margin: 0.25rem 0;
+}
+
+.resume-section h2 {
+  font-size: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.2rem;
+  margin-top: 1.2rem;
+}
+
+.resume-entry h3 {
+  font-size: 0.95rem;
+  margin: 0.6rem 0 0.1rem;
+}
+
+.resume-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.resume .highlighted {
+  font-weight: 600;
+}
+
+@media print {
+  .sidebar,
+  .skip-link,
+  .no-print,
+  .a11y-button,
+  .a11y-panel,
+  .toast {
+    display: none !important;
+  }
+  body,
+  .resume {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .resume {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+  .page {
+    max-width: none;
+    padding: 0;
+  }
+  .shell {
+    display: block;
+  }
+}

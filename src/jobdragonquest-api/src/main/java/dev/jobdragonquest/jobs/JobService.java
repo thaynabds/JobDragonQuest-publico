@@ -121,6 +121,13 @@ public class JobService {
         return result.map(JobSummary::of);
     }
 
+    /** As vagas mais recentes da conta, para estatísticas de carreira (salário e competências pedidas). */
+    @Transactional(readOnly = true)
+    public List<JobSnapshot> recentSnapshots(UUID userId, int limit) {
+        return repository.findByUserIdOrderByFoundAtDesc(userId, PageRequest.of(0, Math.clamp(limit, 1, SIMILAR_POOL)))
+                .map(JobSnapshot::of).getContent();
+    }
+
     @Transactional
     public JobSummary setFavorite(UUID userId, UUID jobId, boolean favorite) {
         JobPosting job = load(userId, jobId);
