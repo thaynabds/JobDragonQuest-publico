@@ -4,7 +4,7 @@
 |---|---|
 | Projeto | JobDragonQuest: plataforma de gestão de carreira e automação de candidaturas |
 | Responsável | Thayná Batista da Silva |
-| Repositório | https://github.com/thaynabds/JobDragonQuest (privado) |
+| Repositório | https://github.com/thaynabds/JobDragonQuest-publico (privado) |
 | Data de abertura | 05/11/2026 |
 | Versão deste documento | 1.1 (06/11/2026, entrega v0.2.0) |
 

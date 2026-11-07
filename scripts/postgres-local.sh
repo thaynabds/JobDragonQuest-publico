@@ -44,7 +44,8 @@ case "${1:-status}" in
     if pg_ctl_run status >/dev/null 2>&1; then
       echo "PostgreSQL local já está rodando em 127.0.0.1:$port."
     else
-      pg_ctl_run -l "$data/servidor.log" -w start >/dev/null
+      # O socket segue a pasta atual: mover ou renomear o projeto não impede o banco de subir.
+      pg_ctl_run -l "$data/servidor.log" -o "-k '$data'" -w start >/dev/null
       echo "PostgreSQL local iniciado em 127.0.0.1:$port."
     fi
     ;;
