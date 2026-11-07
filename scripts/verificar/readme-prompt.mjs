@@ -18,8 +18,8 @@ for (const [file, rules] of Object.entries(languages)) {
   const readme = readFileSync(join(ROOT, file), "utf8");
   const block = /```text\n([\s\S]*?)```/.exec(readme)?.[1] ?? "";
   check(`${file}: tem o bloco de prompt`, block.length > 500);
-  check(`${file}: prompt traz o link do repositório`, block.includes("https://github.com/thaynabds/JobDragonQuest"));
-  check(`${file}: prompt manda clonar e instalar`, block.includes("git clone https://github.com/thaynabds/JobDragonQuest.git") && block.includes("scripts/instalar.sh"));
+  check(`${file}: prompt traz o link do repositório`, block.includes("https://github.com/thaynabds/JobDragonQuest-publico"));
+  check(`${file}: prompt manda clonar e instalar`, block.includes("git clone https://github.com/thaynabds/JobDragonQuest-publico.git") && block.includes("scripts/instalar.sh"));
   check(`${file}: prompt liga o MCP`, block.includes("scripts/conectar-mcp.mjs") && block.includes('"jobdragonquest"'));
   check(`${file}: prompt pergunta sobre deploy opcional`, rules.question.test(block) && block.includes("docs/deploy.md"));
   check(`${file}: prompt protege senha e token`, rules.never.test(block));
