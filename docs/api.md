@@ -166,3 +166,10 @@ Arquivos até 5 MB (o filtro de tamanho libera 6 MB só no multipart destas rota
 
 A `proposal` traz `kind` (COURSE com carga horária, senão CERTIFICATION), `title`, `organization`, `date`, `hours`, `credentialId`, `url` e `skills`, só com o que foi encontrado no texto. Nada entra no perfil sem a confirmação da pessoa.
 
+### Preferências de acessibilidade na conta
+
+| Rota | Descrição |
+|---|---|
+| `GET /me/accessibility` | Preferências salvas na conta; 204 se ainda não há |
+| `PUT /me/accessibility` | Salva. Só as chaves da central de acessibilidade: `theme` (temas da lista), `colorFilter` (filtros da lista), `fontScale` (80 a 140, de 10 em 10) e os 13 recursos de liga e desliga com valor booleano. Qualquer outra chave ou valor: 400 `invalid_accessibility` |
+

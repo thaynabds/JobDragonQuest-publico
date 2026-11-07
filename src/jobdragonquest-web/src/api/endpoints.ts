@@ -1,3 +1,4 @@
+import type { A11yPrefs } from "../a11y/prefs";
 import { fetchBlob, request, sendFile } from "./client";
 import type {
   Application,
@@ -153,6 +154,8 @@ export const api = {
   readLinkDocument: (url: string) => request<DocumentReading>("/api/v1/documents/read-link", { method: "POST", body: { url } }),
   appendEntry: (profileId: string, entry: Partial<Entry> & { kind: string; title: string }) =>
     request<Profile>(`/api/v1/profiles/${id(profileId)}/entries`, { method: "POST", body: entry }),
+  accessibility: () => request<A11yPrefs | null>("/api/v1/me/accessibility"),
+  saveAccessibility: (prefs: A11yPrefs) => request<A11yPrefs>("/api/v1/me/accessibility", { method: "PUT", body: prefs }),
   jobFromLink: (url: string) => request<LinkDraft>("/api/v1/jobs/from-link", { method: "POST", body: { url } }),
   importApplications: (csv: string) => request<ImportResult>("/api/v1/applications/import", { method: "POST", body: { csv } }),
   matches: (jobId: string) => request<MatchResult[]>(`/api/v1/jobs/${id(jobId)}/matches`),
