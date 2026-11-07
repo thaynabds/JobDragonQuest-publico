@@ -1,7 +1,7 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { ApiError } from "../api/client";
-import { format, LOCALES, type Locale, type MessageKey } from "./messages";
+import { detectLocale, format, isLocale, LOCALES, type Locale, type MessageKey } from "./messages";
 
 interface I18n {
   locale: Locale;
@@ -20,21 +20,25 @@ const I18nContext = createContext<I18n | null>(null);
 function initialLocale(): Locale {
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (saved === "pt-BR" || saved === "en") {
+    if (isLocale(saved)) {
       return saved;
     }
   } catch {
     // Armazenamento bloqueado: usa o idioma do navegador.
   }
-  return navigator.language.toLowerCase().startsWith("pt") ? "pt-BR" : "en";
+  // Primeiro acesso: segue a ordem de idiomas do navegador (navigator.languages).
+  return detectLocale(navigator.languages?.length ? navigator.languages : [navigator.language]);
 }
 
 export function I18nProvider({ children, initial }: { children: ReactNode; initial?: Locale }) {
   const [locale, setLocaleState] = useState<Locale>(initial ?? initialLocale);
 
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);
-    document.documentElement.lang = next;
     try {
       window.localStorage.setItem(STORAGE_KEY, next);
     } catch {

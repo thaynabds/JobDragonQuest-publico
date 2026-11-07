@@ -2,7 +2,7 @@ import { NavLink, Outlet } from "react-router";
 
 import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n/I18nContext";
-import type { Locale } from "../i18n/messages";
+import { LanguageSelect } from "./LanguageSelect";
 
 const NAV = [
   { to: "/", key: "nav.dashboard" },
@@ -13,7 +13,7 @@ const NAV = [
 ] as const;
 
 export function Layout() {
-  const { t, locale, setLocale } = useI18n();
+  const { t } = useI18n();
   const { user, logout } = useAuth();
   return (
     <div className="shell">
@@ -33,13 +33,7 @@ export function Layout() {
           ))}
         </nav>
         <div className="sidebar-footer">
-          <label className="lang">
-            <span>{t("lang.label")}</span>
-            <select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>
-              <option value="pt-BR">Português</option>
-              <option value="en">English</option>
-            </select>
-          </label>
+          <LanguageSelect />
           {user && <span className="user">{user.displayName}</span>}
           <button type="button" className="btn btn-ghost" onClick={() => void logout()}>
             {t("nav.logout")}

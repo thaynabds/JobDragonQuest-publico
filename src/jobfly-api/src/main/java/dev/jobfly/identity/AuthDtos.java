@@ -17,7 +17,7 @@ public final class AuthDtos {
             // Mínimo de 12 caracteres (NIST SP 800-63B). O máximo evita abuso do custo do Argon2.
             @NotBlank @Size(min = 12, max = 128) String password,
             @NotBlank @Size(max = 120) String displayName,
-            @Pattern(regexp = "pt-BR|en") String locale,
+            @Pattern(regexp = "[a-z]{2,3}(-[A-Z]{2})?") String locale,
             @Size(max = 64) String timeZone) {
     }
 

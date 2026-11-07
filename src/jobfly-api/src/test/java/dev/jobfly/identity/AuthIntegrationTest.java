@@ -93,6 +93,20 @@ class AuthIntegrationTest extends ApiTestSupport {
     }
 
     @Test
+    void acceptsAnyValidLanguageCodeAndRejectsTheRest() throws Exception {
+        for (String locale : new String[] {"es", "fr", "pt-PT", "zh-CN"}) {
+            mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON).content("""
+                            {"email":"%s","password":"%s","displayName":"X","locale":"%s"}""".formatted(email(), PASSWORD, locale)))
+                    .andExpect(status().isCreated());
+        }
+        for (String locale : new String[] {"../etc", "ES", "es_ES", "<script>", "english"}) {
+            mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON).content("""
+                            {"email":"%s","password":"%s","displayName":"X","locale":"%s"}""".formatted(email(), PASSWORD, locale)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Test
     void loginErrorsDoNotRevealWhetherAccountExists() throws Exception {
         String email = email();
         register(email);

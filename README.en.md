@@ -41,7 +41,7 @@ JobFly brings it all into one explainable hub:
 | Match | 0–100 score with the reason for each requirement. Eliminatory blockers (work mode, city, language, seniority) kept apart from the score. APPLY only when every mandatory requirement is met. Automatic choice of the best profile |
 | Applications | A hub for applications from any origin, with 19 stages. Every change records source, evidence and confidence. Uncertainty becomes a suggestion. Silence never becomes a rejection. No duplicates |
 | Notifications | The API creates notifications for stage changes made by email, agent or system, required actions, technical tests, interview and deadline reminders with configurable lead time, suggestions, failing or due sources, stale applications and new jobs per source (with a minimum score). Settings per stage, type and source (on, pop-up, system, sound), quiet hours in the account time zone, snooze and mark as read, never repeating a notification |
-| Web dashboard | Overview, to-do center with direct actions, filtered Kanban, detail with history, profiles, sources and jobs, in Portuguese and English |
+| Web dashboard | Overview, to-do center with direct actions, filtered Kanban, detail with history, profiles, sources and jobs, in Portuguese, English and Spanish, with the browser language detected on first visit. New languages are created automatically by `scripts/novo-idioma.mjs` |
 | Operations | One command starts database, API and dashboard, on 127.0.0.1 only. Smoke and real collection tests. CI on GitHub Actions |
 
 ### Planned
@@ -97,6 +97,16 @@ python3 scripts/testar-coleta.py          # real collection from a public Greenh
 ```
 
 Environment variables are listed in [.env.example](.env.example). To use the system PostgreSQL (port 5432): `scripts/configurar-local.sh --sistema`.
+
+## Languages
+
+The dashboard comes in Portuguese, English and Spanish. On the first visit, the language follows the order set in the browser, and the choice is saved. To create another language automatically:
+
+```bash
+node scripts/novo-idioma.mjs fr --nome "Français" --tradutor http://127.0.0.1:5000
+```
+
+The translator is any LibreTranslate-compatible service. The default is LibreTranslate running on your own computer, so the texts never leave the machine. A remote address is accepted only over HTTPS. `{x}` placeholders are protected: if a translation breaks one, the sentence stays in Portuguese and shows up in the review list. Without a translator, `--sem-traduzir` copies the Portuguese text for human review.
 
 ## Architecture and structure
 
