@@ -59,6 +59,9 @@ jobfly:
     duplicate-window-days: 60
     # Abaixo desta confiança, uma mudança vinda de agente ou e-mail vira sugestão (RN-03).
     min-automatic-confidence: 0.70
+  registration:
+    # Num servidor público, só estes e-mails podem criar conta (separados por vírgula). Vazio: qualquer um (uso local).
+    allowed-emails: ${JOBFLY_ALLOWED_EMAILS:}
   notifications:
     # Intervalo mínimo entre duas verificações de pendências da mesma pessoa.
     refresh-interval: PT30S
