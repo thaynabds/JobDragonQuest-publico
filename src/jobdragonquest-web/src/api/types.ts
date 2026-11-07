@@ -26,21 +26,106 @@ export type EntryKind =
   | "VOLUNTEER"
   | "AWARD"
   | "PUBLICATION";
-export type EmploymentType = "CLT" | "PJ" | "FULL_TIME" | "PART_TIME" | "INTERNSHIP" | "APPRENTICE" | "TRAINEE" | "TEMPORARY" | "FREELANCE" | "VOLUNTEER";
+export type EmploymentType =
+  | "CLT"
+  | "PJ"
+  | "FULL_TIME"
+  | "PART_TIME"
+  | "INTERNSHIP"
+  | "APPRENTICE"
+  | "TRAINEE"
+  | "TEMPORARY"
+  | "FREELANCE"
+  | "VOLUNTEER";
 export type TravelAvailability = "NONE" | "OCCASIONAL" | "FREQUENT";
 export type SalaryPeriod = "HOURLY" | "MONTHLY" | "YEARLY";
-export type Degree = "HIGH_SCHOOL" | "TECHNICAL" | "TECHNOLOGIST" | "BACHELOR" | "LICENTIATE" | "POSTGRADUATE" | "MBA" | "MASTER" | "DOCTORATE" | "POSTDOC" | "OTHER";
+export type Degree =
+  | "HIGH_SCHOOL"
+  | "TECHNICAL"
+  | "TECHNOLOGIST"
+  | "BACHELOR"
+  | "LICENTIATE"
+  | "POSTGRADUATE"
+  | "MBA"
+  | "MASTER"
+  | "DOCTORATE"
+  | "POSTDOC"
+  | "OTHER";
 export type EntryStatus = "IN_PROGRESS" | "COMPLETED" | "INCOMPLETE" | "PAUSED";
 
-export const SENIORITIES: Seniority[] = ["APPRENTICE", "INTERN", "TRAINEE", "ENTRY", "JUNIOR", "MID", "SENIOR", "SPECIALIST", "LEAD", "COORDINATOR", "MANAGER", "DIRECTOR", "EXECUTIVE"];
+export const SENIORITIES: Seniority[] = [
+  "APPRENTICE",
+  "INTERN",
+  "TRAINEE",
+  "ENTRY",
+  "JUNIOR",
+  "MID",
+  "SENIOR",
+  "SPECIALIST",
+  "LEAD",
+  "COORDINATOR",
+  "MANAGER",
+  "DIRECTOR",
+  "EXECUTIVE",
+];
 export const WORK_MODES: WorkMode[] = ["REMOTE", "HYBRID", "ONSITE"];
-export const LANGUAGE_LEVELS: LanguageLevel[] = ["A1", "A2", "B1", "B2", "C1", "C2", "NATIVE"];
-export const ENTRY_KINDS: EntryKind[] = ["EXPERIENCE", "ACADEMIC_EXPERIENCE", "EDUCATION", "PROJECT", "COURSE", "CERTIFICATION", "VOLUNTEER", "AWARD", "PUBLICATION"];
-export const EMPLOYMENT_TYPES: EmploymentType[] = ["CLT", "PJ", "FULL_TIME", "PART_TIME", "INTERNSHIP", "APPRENTICE", "TRAINEE", "TEMPORARY", "FREELANCE", "VOLUNTEER"];
-export const TRAVEL_AVAILABILITIES: TravelAvailability[] = ["NONE", "OCCASIONAL", "FREQUENT"];
+export const LANGUAGE_LEVELS: LanguageLevel[] = [
+  "A1",
+  "A2",
+  "B1",
+  "B2",
+  "C1",
+  "C2",
+  "NATIVE",
+];
+export const ENTRY_KINDS: EntryKind[] = [
+  "EXPERIENCE",
+  "ACADEMIC_EXPERIENCE",
+  "EDUCATION",
+  "PROJECT",
+  "COURSE",
+  "CERTIFICATION",
+  "VOLUNTEER",
+  "AWARD",
+  "PUBLICATION",
+];
+export const EMPLOYMENT_TYPES: EmploymentType[] = [
+  "CLT",
+  "PJ",
+  "FULL_TIME",
+  "PART_TIME",
+  "INTERNSHIP",
+  "APPRENTICE",
+  "TRAINEE",
+  "TEMPORARY",
+  "FREELANCE",
+  "VOLUNTEER",
+];
+export const TRAVEL_AVAILABILITIES: TravelAvailability[] = [
+  "NONE",
+  "OCCASIONAL",
+  "FREQUENT",
+];
 export const SALARY_PERIODS: SalaryPeriod[] = ["HOURLY", "MONTHLY", "YEARLY"];
-export const DEGREES: Degree[] = ["HIGH_SCHOOL", "TECHNICAL", "TECHNOLOGIST", "BACHELOR", "LICENTIATE", "POSTGRADUATE", "MBA", "MASTER", "DOCTORATE", "POSTDOC", "OTHER"];
-export const ENTRY_STATUSES: EntryStatus[] = ["IN_PROGRESS", "COMPLETED", "INCOMPLETE", "PAUSED"];
+export const DEGREES: Degree[] = [
+  "HIGH_SCHOOL",
+  "TECHNICAL",
+  "TECHNOLOGIST",
+  "BACHELOR",
+  "LICENTIATE",
+  "POSTGRADUATE",
+  "MBA",
+  "MASTER",
+  "DOCTORATE",
+  "POSTDOC",
+  "OTHER",
+];
+export const ENTRY_STATUSES: EntryStatus[] = [
+  "IN_PROGRESS",
+  "COMPLETED",
+  "INCOMPLETE",
+  "PAUSED",
+];
 
 export interface TokenResponse {
   accessToken: string;
@@ -236,7 +321,13 @@ export interface MatchResult {
   profileName: string;
   score: number | null;
   recommendation: Recommendation;
-  requirements: { kind: RequirementKind; text: string; skill: string | null; outcome: Outcome; reason: string }[];
+  requirements: {
+    kind: RequirementKind;
+    text: string;
+    skill: string | null;
+    outcome: Outcome;
+    reason: string;
+  }[];
   blockers: { code: string; message: string }[];
   strengths: string[];
   warnings: string[];
@@ -267,9 +358,19 @@ export const APPLICATION_STATES = [
 ] as const;
 export type ApplicationState = (typeof APPLICATION_STATES)[number];
 
-export const ORIGINS = ["MANUAL", "LINK", "EMAIL", "BROWSER_EXTENSION", "IMPORT", "SOCIAL", "REFERRAL", "AUTOMATION"] as const;
+export const ORIGINS = [
+  "MANUAL",
+  "LINK",
+  "EMAIL",
+  "BROWSER_EXTENSION",
+  "IMPORT",
+  "SOCIAL",
+  "REFERRAL",
+  "AUTOMATION",
+] as const;
 export type Origin = (typeof ORIGINS)[number];
-export type EventSource = "MANUAL" | "EMAIL" | "PORTAL" | "AGENT" | "SYSTEM" | "EXTENSION";
+export type EventSource =
+  "MANUAL" | "EMAIL" | "PORTAL" | "AGENT" | "SYSTEM" | "EXTENSION";
 
 export interface Application {
   id: string;
@@ -331,6 +432,37 @@ export interface CreateApplicationInput {
   notes?: string | null;
   jobId?: string | null;
   profileId?: string | null;
+}
+
+export const CONTACT_ROLES = [
+  "RECRUITER",
+  "HIRING_MANAGER",
+  "INTERVIEWER",
+  "REFERRAL",
+  "OTHER",
+] as const;
+export type ContactRole = (typeof CONTACT_ROLES)[number];
+
+export interface ContactInput {
+  role: ContactRole;
+  name: string;
+  position?: string | null;
+  email?: string | null;
+  linkedinUrl?: string | null;
+  notes?: string | null;
+  contacted: boolean;
+}
+
+export interface Contact {
+  id: string;
+  role: ContactRole;
+  name: string;
+  position: string | null;
+  email: string | null;
+  linkedinUrl: string | null;
+  notes: string | null;
+  contactedAt: string | null;
+  createdAt: string;
 }
 
 export interface BatchTransitionResult {

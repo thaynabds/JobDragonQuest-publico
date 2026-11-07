@@ -949,3 +949,25 @@ a:focus-visible {
 .settings-table td input:not([type="checkbox"]) {
   max-width: 9rem;
 }
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.contact-list > li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.contact-list > li > button {
+  align-self: flex-start;
+}

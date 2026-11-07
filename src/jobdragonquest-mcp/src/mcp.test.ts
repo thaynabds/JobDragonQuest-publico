@@ -129,6 +129,16 @@ describe("ferramentas", () => {
     expect(request.mock.calls[1]![3]).toEqual({ "Idempotency-Key": expect.stringMatching(/^mcp-[0-9a-f-]{36}$/) });
   });
 
+  it("registrar contato nunca muda a etapa e valida e-mail e link (#108)", async () => {
+    const tool = byName.jobdragonquest_registrar_contato!;
+    expect(tool.schema.safeParse({ id: ID, papel: "RECRUITER", nome: "Ana", email: "sem-arroba" }).success).toBe(false);
+    expect(tool.schema.safeParse({ id: ID, papel: "RECRUITER", nome: "Ana", linkedin: "javascript:alert(1)" }).success).toBe(false);
+    expect(tool.schema.safeParse({ id: ID, papel: "CEO", nome: "Ana" }).success).toBe(false);
+    const request = vi.fn().mockResolvedValue({});
+    await tool.run({ request }, { id: ID, papel: "RECRUITER", nome: "Ana", email: "ana@empresa.test" } as never);
+    expect(request).toHaveBeenCalledWith("POST", `/api/v1/applications/${ID}/contacts`, expect.objectContaining({ contacted: false, role: "RECRUITER", name: "Ana" }));
+  });
+
   it("marca os dados como não confiáveis e corta respostas longas", () => {
     expect(formatResult({ a: 1 })).toContain(UNTRUSTED_NOTE);
     const long = formatResult({ texto: "x".repeat(MAX_OUTPUT_CHARS * 2) });

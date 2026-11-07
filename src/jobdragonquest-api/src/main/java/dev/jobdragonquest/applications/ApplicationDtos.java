@@ -84,6 +84,26 @@ public final class ApplicationDtos {
     public record BatchFailure(UUID id, String code) {
     }
 
+    /** Contato de recrutador, gestor, entrevistador ou indicação. {@code contacted}: já houve conversa com a pessoa. */
+    public record ContactRequest(
+            @NotNull ApplicationContact.Role role,
+            @NotBlank @Size(max = 120) String name,
+            @Size(max = 120) String position,
+            @Size(max = 254) String email,
+            @Size(max = 500) String linkedinUrl,
+            @Size(max = 2000) String notes,
+            Boolean contacted) {
+    }
+
+    public record ContactResponse(UUID id, ApplicationContact.Role role, String name, String position, String email,
+            String linkedinUrl, String notes, Instant contactedAt, Instant createdAt) {
+
+        static ContactResponse of(ApplicationContact c) {
+            return new ContactResponse(c.getId(), c.getRole(), c.getName(), c.getPosition(), c.getEmail(), c.getLinkedinUrl(),
+                    c.getNotes(), c.getContactedAt(), c.getCreatedAt());
+        }
+    }
+
     public record ApplicationResponse(
             UUID id, UUID jobId, UUID profileId, Origin origin, String platform, String company, String title,
             String url, String country, Instant appliedAt, ApplicationState state, Instant stateChangedAt,
