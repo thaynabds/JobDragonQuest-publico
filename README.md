@@ -119,7 +119,7 @@ node scripts/conectar-mcp.mjs --cliente claude-desktop   # ou claude-code, curso
 scripts/conectar-congo.sh                                # opcional: avisos por mensagem direta no Discord
 ```
 
-Os dois pedem um token criado em **Configurações → Integrações e tokens de acesso** e o leem sem mostrar na tela.
+Os dois pedem um token criado em **Configurações → Integrações e tokens de acesso** e o leem sem mostrar na tela. Cole o token só quando o script pedir, nunca como um comando no terminal (ele ficaria no histórico). O script confere o token na API antes de salvar e só mostra `MCP_CONECTADO_OK` quando a conexão deu certo.
 
 Verificações:
 

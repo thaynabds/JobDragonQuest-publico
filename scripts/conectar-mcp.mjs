@@ -7,6 +7,7 @@
 //   node scripts/conectar-mcp.mjs --cliente cursor
 //   node scripts/conectar-mcp.mjs --cliente json          (só mostra o bloco para colar em outro cliente)
 // Opções: --api http://127.0.0.1:8080  --nome jobdragonquest  --token-arquivo <caminho>  --config <arquivo do cliente>
+//         --sem-testar-token   (não confere o token na API antes de salvar; usado nos testes automáticos)
 import { spawnSync } from "node:child_process";
 import { chmodSync, copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
@@ -24,7 +25,7 @@ function fail(message) {
 }
 
 export function parseArgs(argv) {
-  const options = { client: null, api: "http://127.0.0.1:8080", name: "jobdragonquest", tokenFile: join(homedir(), ".config", "jobdragonquest", "mcp-token"), config: null };
+  const options = { client: null, api: "http://127.0.0.1:8080", name: "jobdragonquest", tokenFile: join(homedir(), ".config", "jobdragonquest", "mcp-token"), config: null, checkToken: true };
   const rest = [...argv];
   while (rest.length > 0) {
     const arg = rest.shift();
@@ -34,11 +35,62 @@ export function parseArgs(argv) {
     else if (arg === "--nome") options.name = value();
     else if (arg === "--token-arquivo") options.tokenFile = resolve(value());
     else if (arg === "--config") options.config = resolve(value());
+    else if (arg === "--sem-testar-token") options.checkToken = false;
     else fail(`opção desconhecida: ${arg}`);
   }
   if (!CLIENTS.includes(options.client)) fail(`escolha --cliente ${CLIENTS.join(" | ")}`);
   if (!/^[a-z][a-z0-9-]{0,31}$/.test(options.name)) fail("--nome aceita letras minúsculas, números e hífen");
   return options;
+}
+
+/**
+ * Limpa o token colado no terminal: marcadores de colagem (ESC[200~ e ESC[201~), outras sequências de controle,
+ * espaços, aspas e um "Bearer " na frente. Era isso que fazia um token certo ser recusado.
+ */
+export function cleanToken(raw) {
+  return String(raw ?? "")
+    .replace(/\u001b\[[0-9;]*[~A-Za-z]/g, "")
+    .replace(/[\u0000-\u001f\u007f]/g, "")
+    .trim()
+    .replace(/^["'`]+|["'`]+$/g, "")
+    .replace(/^Bearer\s+/i, "")
+    .trim();
+}
+
+/** Explica o que está errado no token sem mostrar o valor. */
+export function tokenProblem(token) {
+  if (!token) return "nenhum token foi colado";
+  if (!token.startsWith("jdq_")) return "o token precisa começar com jdq_ (copie o token inteiro, não o nome dele)";
+  if (token.length !== 47) return `o token tem ${token.length} caracteres e deveria ter 47 (copie de novo, inteiro)`;
+  return "o token tem caracteres que não deveria ter (copie de novo direto do painel)";
+}
+
+/** Confere o token na API local. Devolve "ok", "recusado" ou "sem-api" (API desligada ou fora do ar). */
+export async function checkTokenOnApi(api, token, fetchImpl = fetch) {
+  try {
+    const response = await fetchImpl(`${api}/api/v1/dashboard/summary`, {
+      headers: { Authorization: `Bearer ${token}` },
+      redirect: "error",
+      signal: AbortSignal.timeout(5000),
+    });
+    if (response.status === 401 || response.status === 403) return "recusado";
+    return response.ok ? "ok" : "sem-api";
+  } catch {
+    return "sem-api";
+  }
+}
+
+/**
+ * Comando de registro no Claude Code. Usa "claude mcp add-json" com a configuração inteira num argumento só: o
+ * "claude mcp add -e A=1 -e B=2 nome" quebrava porque o -e aceita vários valores e engolia o nome.
+ */
+export function claudeCodeArgs(name, entry) {
+  return ["mcp", "add-json", "--scope", "user", name, JSON.stringify({ type: "stdio", ...entry })];
+}
+
+/** O mesmo comando pronto para colar no terminal (aspas simples no JSON). */
+export function shellCommand(args) {
+  return ["claude", ...args].map((a) => (/^[A-Za-z0-9_./:=-]+$/.test(a) ? a : `'${a.replace(/'/g, "'\\''")}'`)).join(" ");
 }
 
 /** Mesma regra do servidor MCP: só a própria máquina por HTTP; remoto só por HTTPS. */
@@ -117,8 +169,14 @@ export async function main(argv) {
   if (!validApi(options.api)) fail("--api precisa ser http://127.0.0.1 (ou localhost) ou HTTPS");
   if (!existsSync(SERVER)) fail("servidor MCP não compilado: rode scripts/instalar.sh (ou npm ci && npm run build em src/jobdragonquest-mcp)");
 
-  const token = process.env.JOBDRAGONQUEST_TOKEN?.trim() || (await askHidden("Cole o token do JobDragonQuest (não aparece na tela): "));
-  if (!TOKEN.test(token)) fail("token em formato inválido: crie um em Configurações > Integrações e tokens de acesso");
+  const typed = process.env.JOBDRAGONQUEST_TOKEN || (await askHidden("Cole o token do JobDragonQuest (não aparece na tela) e aperte Enter: "));
+  const token = cleanToken(typed);
+  if (!TOKEN.test(token)) fail(`token em formato inválido: ${tokenProblem(token)}. Crie um em Configurações > Integrações e tokens de acesso. Não cole o token direto no terminal.`);
+  if (options.checkToken) {
+    const status = await checkTokenOnApi(options.api, token);
+    if (status === "recusado") fail("a API recusou o token: ele foi revogado ou é de outra instalação. Crie um token novo no painel.");
+    if (status === "sem-api") console.log(`Aviso: não consegui falar com a API em ${options.api} para conferir o token. Suba o JobDragonQuest com scripts/iniciar.sh.`);
+  }
   writePrivate(options.tokenFile, token + "\n");
 
   const env = { JOBDRAGONQUEST_TOKEN_FILE: options.tokenFile, JOBDRAGONQUEST_API_URL: options.api };
@@ -128,12 +186,14 @@ export async function main(argv) {
   if (options.client === "json") {
     console.log(JSON.stringify({ mcpServers: { [options.name]: entry } }, null, 2));
   } else if (options.client === "claude-code") {
-    const args = ["mcp", "add", "--scope", "user", "-e", `JOBDRAGONQUEST_TOKEN_FILE=${options.tokenFile}`, "-e", `JOBDRAGONQUEST_API_URL=${options.api}`, options.name, "--", process.execPath, SERVER];
+    const args = claudeCodeArgs(options.name, entry);
     spawnSync("claude", ["mcp", "remove", "--scope", "user", options.name], { stdio: "ignore" });
     const result = spawnSync("claude", args, { stdio: "inherit" });
-    if (result.error || result.status !== 0) {
-      console.log("Não consegui rodar o comando claude. Rode você mesma:");
-      console.log(`claude ${args.map((a) => (/\s/.test(a) ? JSON.stringify(a) : a)).join(" ")}`);
+    const confirmed = !result.error && result.status === 0 && spawnSync("claude", ["mcp", "get", options.name], { stdio: "ignore" }).status === 0;
+    if (!confirmed) {
+      console.error("Não consegui registrar no Claude Code. O token já está salvo; rode este comando no terminal:");
+      console.error(shellCommand(args));
+      process.exit(1);
     }
   } else {
     const path = options.config ?? clientConfigPath(options.client);
