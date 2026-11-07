@@ -9,7 +9,7 @@ check("docs/resumo-jobdragonquest.pdf existe", existsSync(pdf));
 const text = run("pdftotext", ["-layout", pdf, "-"]);
 check("PDF legível como texto", text.status === 0, text.stderr || text.error);
 const content = text.stdout;
-check("traz a URL do repositório", content.includes("github.com/thaynabds/JobDragonQuest"));
+check("traz a URL do repositório", content.includes("github.com/thaynabds/JobDragonQuest-publico"));
 check("descreve a stack", ["Java 21", "Spring Boot", "React", "TypeScript", "PostgreSQL"].every((s) => content.includes(s)));
 const plain = run("pdftotext", [pdf, "-"]).stdout;
 const paragraphs = plain.split(/\n\s*\n/).map((p) => p.replace(/\s+/g, " ").trim()).filter((p) => p.split(" ").length >= 25);

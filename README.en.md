@@ -8,9 +8,9 @@
 
 > Language: [Português](README.md) | **English** | [Español](README.es.md)
 
-[![Version](https://img.shields.io/badge/version-0.3.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest/releases/tag/v0.3.0)
+[![Version](https://img.shields.io/badge/version-0.3.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.3.0)
 [![License](https://img.shields.io/badge/license-all%20rights%20reserved-6b7280)](#license)
-[![CI](https://github.com/thaynabds/JobDragonQuest/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest/actions/workflows/ci.yml)
+[![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-191%20passing-16a34a)](#quality-and-security)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobdragonquest-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobdragonquest-api)
@@ -18,7 +18,7 @@
 
 **A career management and job application automation platform for jobs and internships, in Brazil and abroad.**
 
-**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** private · **Version:** 0.2.0
+**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.3.0
 
 ## The problem
 
@@ -81,14 +81,14 @@ The status of each requirement is in [docs/requisitos.md](docs/requisitos.md) an
 
 ## Install with an AI (ready-made prompt)
 
-Copy the text below and paste it into an AI that can run commands on your computer (Claude Code, Claude Desktop with terminal access, Cursor and similar). It installs JobDragonQuest, connects the MCP server and starts using JobDragonQuest for you, with no deployment. While the repository is private, only accounts with access can clone it.
+Copy the text below and paste it into an AI that can run commands on your computer (Claude Code, Claude Desktop with terminal access, Cursor and similar). It installs JobDragonQuest, connects the MCP server and starts using JobDragonQuest for you, with no deployment.
 
 ```text
-I want to use JobDragonQuest, an application hub that runs on my computer: https://github.com/thaynabds/JobDragonQuest
+I want to use JobDragonQuest, an application hub that runs on my computer: https://github.com/thaynabds/JobDragonQuest-publico
 Follow these steps, explaining each one before running it:
 
 1. First ask me: "Do you want to run it only on your computer (recommended, free, no deployment) or also open it from other devices or publish it on the internet?". If I choose only the computer, follow steps 2 to 8. If I want other devices or the internet, do steps 2 to 8 and then follow docs/deploy.md from the repository, using only free options and going through the security checklist with me before publishing anything. Never use a paid service.
-2. Clone the repository (git clone https://github.com/thaynabds/JobDragonQuest.git) and enter the JobDragonQuest folder.
+2. Clone the repository (git clone https://github.com/thaynabds/JobDragonQuest-publico.git) and enter the JobDragonQuest folder.
 3. Run scripts/instalar.sh --verificar. If a requirement is missing, show me the suggested command and only run it after I authorize. If it asks for an administrator password, I will type it myself.
 4. Run scripts/instalar.sh and wait for INSTALACAO_CONCLUIDA.
 5. Ask me to open http://127.0.0.1:5173, create my account and create a token in Settings > Integrations and access tokens. Never ask me for the password or the token in the chat.
@@ -103,7 +103,7 @@ Follow these steps, explaining each one before running it:
 It runs entirely on your computer, with no deployment and nothing paid. Requirements: **Java 21**, **Node 20.19+** and **PostgreSQL 14+** installed (PostgreSQL only needs its programs: no configuration or sudo).
 
 ```bash
-git clone https://github.com/thaynabds/JobDragonQuest.git
+git clone https://github.com/thaynabds/JobDragonQuest-publico.git
 cd JobDragonQuest
 scripts/instalar.sh
 ```
@@ -185,7 +185,7 @@ gitGraph
     merge develop tag: "v0.2.0"
 ```
 
-The full backlog is in the [repository issues](https://github.com/thaynabds/JobDragonQuest/issues).
+The full backlog is in the [repository issues](https://github.com/thaynabds/JobDragonQuest-publico/issues).
 
 ## Quality and security
 
@@ -206,4 +206,4 @@ The full backlog is in the [repository issues](https://github.com/thaynabds/JobD
 
 ## License
 
-All rights reserved. Private repository.
+All rights reserved. The code is public for reference, but there is no license to use, copy or redistribute it without the author's permission.
