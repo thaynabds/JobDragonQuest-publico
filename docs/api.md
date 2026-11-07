@@ -31,7 +31,15 @@ O cookie `jobdragonquest_rt` é `HttpOnly`, `SameSite=Strict`, `Secure` (configu
 | `PUT /profiles/{id}` | Substitui o perfil. Exige `version` (lock otimista, 409 `stale_version`) |
 | `DELETE /profiles/{id}` | 204 |
 
-Campos: `name`, `objective`, `seniority` (INTERN, JUNIOR, MID, SENIOR, LEAD), `minMatchScore` (0–100), `salaryExpectation` + `salaryCurrency`, `availability`, `restrictions`, `preferredLanguage`, `desiredTitles[]`, `locations[]`, `workModes[]` (REMOTE, HYBRID, ONSITE), `skills[] {name, level 1–5, years}`, `languages[] {code ISO 639-1, level A1…C2 | NATIVE}`, `entries[] {kind, title, organization, startDate, endDate, description, url}`.
+Campos principais: `name`, `headline`, `summary`, `objective`, `currentTitle`, `seniority` (APPRENTICE, INTERN, TRAINEE, ENTRY, JUNIOR, MID, SENIOR, SPECIALIST, LEAD, COORDINATOR, MANAGER, DIRECTOR, EXECUTIVE; a compatibilidade compara por degraus equivalentes), `minMatchScore` (0–100), `preferredLanguage`.
+
+Localização e disponibilidade: `city`, `stateRegion`, `country` (ISO 3166-1), `workAuthorization[]` (países), `requiresSponsorship`, `willingToRelocate`, `travelAvailability` (NONE, OCCASIONAL, FREQUENT), `availableFrom`, `noticePeriodDays` (0–365), `availability`, `workModes[]` (REMOTE, HYBRID, ONSITE), `employmentTypes[]` (CLT, PJ, FULL_TIME, PART_TIME, INTERNSHIP, APPRENTICE, TRAINEE, TEMPORARY, FREELANCE, VOLUNTEER).
+
+Remuneração e links: `salaryExpectation`, `currentSalary`, `salaryPeriod` (HOURLY, MONTHLY, YEARLY), `salaryCurrency`, `linkedinUrl`, `githubUrl`, `portfolioUrl`, `websiteUrl` (só http/https).
+
+Busca: `desiredTitles[]`, `locations[]`, `industries[]`, `includeKeywords[]`, `excludeKeywords[]`, `excludedCompanies[]`, `restrictions`.
+
+Competências: `skills[] {name, level 1–5, years, months 0–11, days 0–30}`; a resposta traz também `totalYears`, usado na compatibilidade. Idiomas: `languages[] {name, level}` na edição (nome por extenso em português, inglês, espanhol ou no próprio idioma, inclusive Libras; 400 `unknown_language` se não for reconhecido) e `{code, level}` na resposta (ISO 639). Histórico: `entries[] {kind, title, organization, startDate, endDate, current, description, url, location, employmentType, degree, fieldOfStudy, status, credentialId, expirationDate, hours, skills}`, com `kind` EXPERIENCE, ACADEMIC_EXPERIENCE, EDUCATION, PROJECT, COURSE, CERTIFICATION, VOLUNTEER, AWARD ou PUBLICATION. Carta e respostas: `coverLetter`, `answers[] {question, answer}`. Dado sensível opcional: `disability`, `disabilityDetails`.
 
 ## Vagas e compatibilidade
 

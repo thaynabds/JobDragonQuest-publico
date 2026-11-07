@@ -1,14 +1,46 @@
 // Tipos espelhando os DTOs da API REST v1 (docs/api.md). Datas chegam como texto ISO-8601 em UTC.
 
-export type Seniority = "INTERN" | "JUNIOR" | "MID" | "SENIOR" | "LEAD";
+export type Seniority =
+  | "APPRENTICE"
+  | "INTERN"
+  | "TRAINEE"
+  | "ENTRY"
+  | "JUNIOR"
+  | "MID"
+  | "SENIOR"
+  | "SPECIALIST"
+  | "LEAD"
+  | "COORDINATOR"
+  | "MANAGER"
+  | "DIRECTOR"
+  | "EXECUTIVE";
 export type WorkMode = "REMOTE" | "HYBRID" | "ONSITE";
 export type LanguageLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "NATIVE";
-export type EntryKind = "EXPERIENCE" | "ACADEMIC_EXPERIENCE" | "EDUCATION" | "PROJECT" | "COURSE" | "CERTIFICATION";
+export type EntryKind =
+  | "EXPERIENCE"
+  | "ACADEMIC_EXPERIENCE"
+  | "EDUCATION"
+  | "PROJECT"
+  | "COURSE"
+  | "CERTIFICATION"
+  | "VOLUNTEER"
+  | "AWARD"
+  | "PUBLICATION";
+export type EmploymentType = "CLT" | "PJ" | "FULL_TIME" | "PART_TIME" | "INTERNSHIP" | "APPRENTICE" | "TRAINEE" | "TEMPORARY" | "FREELANCE" | "VOLUNTEER";
+export type TravelAvailability = "NONE" | "OCCASIONAL" | "FREQUENT";
+export type SalaryPeriod = "HOURLY" | "MONTHLY" | "YEARLY";
+export type Degree = "HIGH_SCHOOL" | "TECHNICAL" | "TECHNOLOGIST" | "BACHELOR" | "LICENTIATE" | "POSTGRADUATE" | "MBA" | "MASTER" | "DOCTORATE" | "POSTDOC" | "OTHER";
+export type EntryStatus = "IN_PROGRESS" | "COMPLETED" | "INCOMPLETE" | "PAUSED";
 
-export const SENIORITIES: Seniority[] = ["INTERN", "JUNIOR", "MID", "SENIOR", "LEAD"];
+export const SENIORITIES: Seniority[] = ["APPRENTICE", "INTERN", "TRAINEE", "ENTRY", "JUNIOR", "MID", "SENIOR", "SPECIALIST", "LEAD", "COORDINATOR", "MANAGER", "DIRECTOR", "EXECUTIVE"];
 export const WORK_MODES: WorkMode[] = ["REMOTE", "HYBRID", "ONSITE"];
 export const LANGUAGE_LEVELS: LanguageLevel[] = ["A1", "A2", "B1", "B2", "C1", "C2", "NATIVE"];
-export const ENTRY_KINDS: EntryKind[] = ["EXPERIENCE", "ACADEMIC_EXPERIENCE", "EDUCATION", "PROJECT", "COURSE", "CERTIFICATION"];
+export const ENTRY_KINDS: EntryKind[] = ["EXPERIENCE", "ACADEMIC_EXPERIENCE", "EDUCATION", "PROJECT", "COURSE", "CERTIFICATION", "VOLUNTEER", "AWARD", "PUBLICATION"];
+export const EMPLOYMENT_TYPES: EmploymentType[] = ["CLT", "PJ", "FULL_TIME", "PART_TIME", "INTERNSHIP", "APPRENTICE", "TRAINEE", "TEMPORARY", "FREELANCE", "VOLUNTEER"];
+export const TRAVEL_AVAILABILITIES: TravelAvailability[] = ["NONE", "OCCASIONAL", "FREQUENT"];
+export const SALARY_PERIODS: SalaryPeriod[] = ["HOURLY", "MONTHLY", "YEARLY"];
+export const DEGREES: Degree[] = ["HIGH_SCHOOL", "TECHNICAL", "TECHNOLOGIST", "BACHELOR", "LICENTIATE", "POSTGRADUATE", "MBA", "MASTER", "DOCTORATE", "POSTDOC", "OTHER"];
+export const ENTRY_STATUSES: EntryStatus[] = ["IN_PROGRESS", "COMPLETED", "INCOMPLETE", "PAUSED"];
 
 export interface TokenResponse {
   accessToken: string;
@@ -29,6 +61,18 @@ export interface Skill {
   name: string;
   level: number;
   years: number | null;
+  months: number | null;
+  days: number | null;
+}
+
+export interface SkillView extends Skill {
+  totalYears: number | null;
+}
+
+/** Na edição, o idioma vai pelo nome por extenso; a API devolve o código ISO. */
+export interface LanguageInput {
+  name: string;
+  level: LanguageLevel;
 }
 
 export interface Language {
@@ -44,9 +88,25 @@ export interface Entry {
   endDate: string | null;
   description: string | null;
   url: string | null;
+  location: string | null;
+  employmentType: EmploymentType | null;
+  current: boolean | null;
+  degree: Degree | null;
+  fieldOfStudy: string | null;
+  status: EntryStatus | null;
+  credentialId: string | null;
+  expirationDate: string | null;
+  hours: number | null;
+  skills: string | null;
 }
 
-export interface ProfileInput {
+export interface Answer {
+  question: string;
+  answer: string;
+}
+
+/** Campos do perfil que não dependem do formato de idioma (iguais na edição e na resposta). */
+export interface ProfileFields {
   name: string;
   objective: string | null;
   seniority: Seniority;
@@ -55,18 +115,50 @@ export interface ProfileInput {
   salaryCurrency: string | null;
   availability: string | null;
   restrictions: string | null;
-  preferredLanguage: "pt-BR" | "en";
+  preferredLanguage: string;
   desiredTitles: string[];
   locations: string[];
   workModes: WorkMode[];
-  skills: Skill[];
-  languages: Language[];
   entries: Entry[];
+  headline: string | null;
+  summary: string | null;
+  currentTitle: string | null;
+  city: string | null;
+  stateRegion: string | null;
+  country: string | null;
+  requiresSponsorship: boolean | null;
+  willingToRelocate: boolean | null;
+  travelAvailability: TravelAvailability | null;
+  noticePeriodDays: number | null;
+  availableFrom: string | null;
+  currentSalary: number | null;
+  salaryPeriod: SalaryPeriod | null;
+  linkedinUrl: string | null;
+  githubUrl: string | null;
+  portfolioUrl: string | null;
+  websiteUrl: string | null;
+  coverLetter: string | null;
+  disability: boolean | null;
+  disabilityDetails: string | null;
+  workAuthorization: string[];
+  employmentTypes: EmploymentType[];
+  excludedCompanies: string[];
+  includeKeywords: string[];
+  excludeKeywords: string[];
+  industries: string[];
+  answers: Answer[];
+}
+
+export interface ProfileInput extends ProfileFields {
+  skills: Skill[];
+  languages: LanguageInput[];
   version?: number;
 }
 
-export interface Profile extends ProfileInput {
+export interface Profile extends ProfileFields {
   id: string;
+  skills: SkillView[];
+  languages: Language[];
   createdAt: string;
   updatedAt: string;
   version: number;
@@ -78,6 +170,7 @@ export interface ProfileSummary {
   seniority: Seniority;
   desiredTitles: string[];
   skillCount: number;
+  headline: string | null;
 }
 
 export type JobStatus = "OPEN" | "CLOSED" | "UNKNOWN";

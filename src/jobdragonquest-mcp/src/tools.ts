@@ -151,7 +151,9 @@ export const TOOLS = [
       local: text(200).optional(),
       pais: z.string().regex(/^[A-Z]{2}$/).optional(),
       modalidade: z.enum(["REMOTE", "HYBRID", "ONSITE"]).optional(),
-      senioridade: z.enum(["INTERN", "JUNIOR", "MID", "SENIOR", "LEAD"]).optional(),
+      senioridade: z
+        .enum(["APPRENTICE", "INTERN", "TRAINEE", "ENTRY", "JUNIOR", "MID", "SENIOR", "SPECIALIST", "LEAD", "COORDINATOR", "MANAGER", "DIRECTOR", "EXECUTIVE"])
+        .optional(),
       descricao: text(20_000).optional(),
     }),
     readOnly: false,
