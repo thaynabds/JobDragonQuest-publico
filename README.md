@@ -40,6 +40,7 @@ O JobFly junta tudo numa central única e explicável:
 | Vagas | Cadastro manual ou por coleta, com deduplicação por URL canônica e por empresa, cargo e local. Tecnologias citadas na descrição viram requisitos |
 | Compatibilidade | Nota de 0 a 100 com o motivo de cada requisito. Impedimentos eliminatórios (modalidade, cidade, idioma, senioridade) separados da nota. APPLY só com todos os obrigatórios atendidos. Escolha automática do melhor perfil |
 | Candidaturas | Central de candidaturas de qualquer origem, com 19 etapas. Cada mudança tem origem, evidência e confiança. Dúvida vira sugestão. Silêncio nunca vira reprovação. Sem duplicatas |
+| Avisos | Avisos gerados pela API para mudanças de etapa feitas por e-mail, agente ou sistema, ações exigidas, testes técnicos, lembretes de entrevista e prazo com antecedência configurável, sugestões, fontes com falha ou a conferir, candidaturas sem atualização e vagas novas por fonte (com nota mínima). Configuração por etapa, por tipo e por fonte (ligado, pop-up, sistema, som), horário de silêncio no fuso da conta, adiar e marcar como lido, sem repetir aviso |
 | Painel web | Visão geral, central de pendências com ação direta, Kanban com filtros, detalhe com histórico, perfis, fontes e vagas, em português e inglês |
 | Operação | Um comando sobe banco, API e painel, só em 127.0.0.1. Testes de fumaça e de coleta real. CI no GitHub Actions |
 

@@ -40,6 +40,7 @@ JobFly lo reúne todo en una central única y explicable:
 | Vacantes | Alta manual o por recolección, sin duplicados por URL canónica y por empresa, cargo y ubicación. Las tecnologías citadas en la descripción se vuelven requisitos |
 | Compatibilidad | Puntuación de 0 a 100 con el motivo de cada requisito. Impedimentos eliminatorios (modalidad, ciudad, idioma, seniority) separados de la nota. APPLY solo con todos los obligatorios cumplidos. Elección automática del mejor perfil |
 | Postulaciones | Central de postulaciones de cualquier origen, con 19 etapas. Cada cambio registra origen, evidencia y confianza. La duda se vuelve sugerencia. El silencio nunca se vuelve rechazo. Sin duplicados |
+| Avisos | La API genera avisos para cambios de etapa hechos por correo, agente o sistema, acciones requeridas, pruebas técnicas, recordatorios de entrevista y plazo con antelación configurable, sugerencias, fuentes con falla o por revisar, postulaciones sin actualización y vacantes nuevas por fuente (con nota mínima). Configuración por etapa, tipo y fuente (activado, ventana emergente, sistema, sonido), horario de silencio en la zona horaria de la cuenta, posponer y marcar como leído, sin repetir avisos |
 | Panel web | Resumen, central de pendientes con acción directa, Kanban con filtros, detalle con historial, perfiles, fuentes y vacantes, en portugués e inglés |
 | Operación | Un comando levanta la base, la API y el panel, solo en 127.0.0.1. Pruebas de humo y de recolección real. CI en GitHub Actions |
 

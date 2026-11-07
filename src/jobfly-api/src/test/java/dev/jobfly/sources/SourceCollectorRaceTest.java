@@ -2,8 +2,10 @@ package dev.jobfly.sources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Clock;
@@ -14,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.SimpleTransactionStatus;
@@ -59,14 +62,17 @@ class SourceCollectorRaceTest {
         PlatformTransactionManager tx = mock(PlatformTransactionManager.class);
         when(tx.getTransaction(any())).thenReturn(new SimpleTransactionStatus());
 
+        ApplicationEventPublisher publisher = mock(ApplicationEventPublisher.class);
         SourceCollector collector = new SourceCollector(sources, runs, List.of(client), new SkillCatalog(), jobs,
-                profiles, new MatchingEngine(), mock(ApplicationService.class), Clock.fixed(now, ZoneOffset.UTC), tx);
+                profiles, new MatchingEngine(), mock(ApplicationService.class), Clock.fixed(now, ZoneOffset.UTC), tx, publisher);
 
         var run = collector.collect(source.getId(), SourceRun.Trigger.MANUAL);
 
         assertThat(run.status()).isEqualTo(WatchedSource.RunStatus.OK);
         assertThat(run.found()).isEqualTo(2);
         assertThat(run.created()).as("a vaga que perdeu a corrida não conta como nova").isEqualTo(1);
+        verify(publisher).publishEvent(argThat((Object event) -> event instanceof JobsCollectedEvent collected
+                && collected.scores().size() == 1 && collected.userId().equals(user)));
         assertThat(source.getLastStatus()).isEqualTo(WatchedSource.RunStatus.OK);
     }
 }

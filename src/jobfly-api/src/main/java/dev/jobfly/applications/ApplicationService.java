@@ -17,6 +17,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +60,8 @@ public class ApplicationService {
     /** Tolerância para relógios dessincronizados ao aceitar datas de evento. */
     private static final Duration CLOCK_SKEW = Duration.ofMinutes(5);
 
+    private final ApplicationEventPublisher publisher;
+
     private final ApplicationRepository applications;
     private final ApplicationEventRepository events;
     private final ApplicationStateMachine stateMachine;
@@ -72,7 +75,8 @@ public class ApplicationService {
 
     ApplicationService(ApplicationRepository applications, ApplicationEventRepository events,
             ApplicationStateMachine stateMachine, JobService jobs, ProfileService profiles, MatchingEngine matching,
-            AuditService audit, ApplicationProperties properties, Clock clock, PlatformTransactionManager txManager) {
+            AuditService audit, ApplicationProperties properties, Clock clock, PlatformTransactionManager txManager,
+            ApplicationEventPublisher publisher) {
         this.applications = applications;
         this.events = events;
         this.stateMachine = stateMachine;
@@ -83,6 +87,7 @@ public class ApplicationService {
         this.properties = properties;
         this.clock = clock;
         this.transaction = new TransactionTemplate(txManager);
+        this.publisher = publisher;
     }
 
     /**
@@ -135,9 +140,11 @@ public class ApplicationService {
         // Sem data informada, appliedAt fica vazio: o sistema não inventa quando a pessoa se candidatou.
         JobApplication application = new JobApplication(userId, details, request.origin(), initial, score, key, now);
         applications.saveAndFlush(application);
-        events.save(new ApplicationEvent(application.getId(), EventKind.STATE_CHANGE, null, initial,
+        ApplicationEvent created = events.save(new ApplicationEvent(application.getId(), EventKind.STATE_CHANGE, null, initial,
                 sourceFor(request.origin()), "Cadastro (" + request.origin() + ")", BigDecimal.ONE, EventStatus.APPLIED,
                 now, now));
+        publisher.publishEvent(new StageChangedEvent(userId, application.getId(), created.getId(), null, initial,
+                sourceFor(request.origin()), application.getCompany(), application.getTitle()));
         audit.record(userId, "application.created", "application", application.getId(), request.origin().name());
         return new CreateResult(response(application), false, false);
     }
@@ -292,8 +299,11 @@ public class ApplicationService {
             String evidence, BigDecimal confidence, Instant occurredAt, Instant now) {
         ApplicationState from = application.getState();
         application.moveTo(to, occurredAt, now);
-        return events.save(new ApplicationEvent(application.getId(), EventKind.STATE_CHANGE, from, to, source, evidence,
-                confidence, EventStatus.APPLIED, occurredAt, now));
+        ApplicationEvent event = events.save(new ApplicationEvent(application.getId(), EventKind.STATE_CHANGE, from, to, source,
+                evidence, confidence, EventStatus.APPLIED, occurredAt, now));
+        publisher.publishEvent(new StageChangedEvent(application.getUserId(), application.getId(), event.getId(), from, to,
+                source, application.getCompany(), application.getTitle()));
+        return event;
     }
 
     private ApplicationEvent pendingSuggestion(UUID applicationId, UUID eventId) {
