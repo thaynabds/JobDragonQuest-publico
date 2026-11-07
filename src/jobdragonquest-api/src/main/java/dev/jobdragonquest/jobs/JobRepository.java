@@ -1,5 +1,6 @@
 package dev.jobdragonquest.jobs;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +18,12 @@ interface JobRepository extends JpaRepository<JobPosting, UUID> {
     List<JobPosting> findByUserIdAndCompanyNormAndTitleNorm(UUID userId, String companyNorm, String titleNorm);
 
     Page<JobPosting> findByUserIdOrderByFoundAtDesc(UUID userId, Pageable pageable);
+
+    Page<JobPosting> findByUserIdAndFavoriteTrueOrderByFoundAtDesc(UUID userId, Pageable pageable);
+
+    List<JobPosting> findByUserIdAndFavoriteTrue(UUID userId);
+
+    List<JobPosting> findByUserIdAndIdIn(UUID userId, Collection<UUID> ids);
 
     Page<JobPosting> findByUserIdAndWatchedSourceIdOrderByFoundAtDesc(UUID userId, UUID watchedSourceId, Pageable pageable);
 

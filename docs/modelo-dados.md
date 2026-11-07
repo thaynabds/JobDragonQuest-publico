@@ -33,7 +33,7 @@ app_user 1─┬─* refresh_token          (hash SHA-256, família, revogação
 | `app_user` | Conta, senha Argon2id, bloqueio por tentativas | `email` único (minúsculo) |
 | `refresh_token` | Sessões renováveis; só o hash é guardado | `token_hash` único, índice por `family_id` |
 | `profile` | Perfil profissional independente | `(user_id, name)` único |
-| `job` | Vaga encontrada ou registrada | `(user_id, url_hash)` único; índice `(user_id, company_norm, title_norm)` |
+| `job` | Vaga encontrada ou registrada; `favorite` marca as favoritas (base da busca por vagas parecidas) | `(user_id, url_hash)` único; índice `(user_id, company_norm, title_norm)` |
 | `job_application` | Candidatura de qualquer origem | `(user_id, idempotency_key)` único; índices por estado, URL, empresa/cargo |
 | `application_contact` | Contatos do processo (papel, nome, cargo, e-mail, LinkedIn, notas, quando conversou). Dado de terceiro: some com a candidatura e nunca vai para log; a auditoria guarda só o id | índice `(application_id, created_at)` |
 | `application_event` | Histórico: mudança de etapa, nota ou sugestão, com origem, evidência e confiança | índice `(application_id, created_at)` |

@@ -6,6 +6,7 @@ import { SENIORITIES, WORK_MODES, type JobInput, type Requirement, type Seniorit
 import { Badge, Button, Card, Empty, ExternalLink, Field, Loading, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { useAsync } from "../utils/useAsync";
+import { SimilarJobsCard } from "./SimilarJobsCard";
 
 const blank = (value: string) => (value.trim() === "" ? null : value.trim());
 
@@ -27,14 +28,29 @@ export function JobsPage() {
   const { t, label, formatDate, errorMessage } = useI18n();
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
-  const jobs = useAsync(() => api.jobs({ page, size: 20 }).then((r) => r.data), [page]);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const jobs = useAsync(() => api.jobs({ page, size: 20, favorite: favoritesOnly || undefined }).then((r) => r.data), [page, favoritesOnly]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<JobInput>(EMPTY);
   const [error, setError] = useState<string | null>(null);
 
+  const toggleFavorite = async (jobId: string, favorite: boolean) => {
+    setError(null);
+    try {
+      await api.setFavorite(jobId, favorite);
+      jobs.reload();
+      setRefreshKey((value) => value + 1);
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  };
+
   const patch = (change: Partial<JobInput>) => setForm((current) => ({ ...current, ...change }));
   const setRequirement = (index: number, change: Partial<Requirement>) =>
-    patch({ requirements: form.requirements.map((r, i) => (i === index ? { ...r, ...change } : r)) });
+    patch({
+      requirements: form.requirements.map((r, i) => (i === index ? { ...r, ...change } : r)),
+    });
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -91,7 +107,14 @@ export function JobsPage() {
                 <input value={form.country ?? ""} maxLength={2} onChange={(e) => patch({ country: blank(e.target.value.toUpperCase()) })} />
               </Field>
               <Field label={t("jobs.workMode")}>
-                <select value={form.workMode ?? ""} onChange={(e) => patch({ workMode: (e.target.value || null) as WorkMode | null })}>
+                <select
+                  value={form.workMode ?? ""}
+                  onChange={(e) =>
+                    patch({
+                      workMode: (e.target.value || null) as WorkMode | null,
+                    })
+                  }
+                >
                   <option value="">{t("common.none")}</option>
                   {WORK_MODES.map((mode) => (
                     <option key={mode} value={mode}>
@@ -101,7 +124,14 @@ export function JobsPage() {
                 </select>
               </Field>
               <Field label={t("jobs.seniority")}>
-                <select value={form.seniority ?? ""} onChange={(e) => patch({ seniority: (e.target.value || null) as Seniority | null })}>
+                <select
+                  value={form.seniority ?? ""}
+                  onChange={(e) =>
+                    patch({
+                      seniority: (e.target.value || null) as Seniority | null,
+                    })
+                  }
+                >
                   <option value="">{t("common.none")}</option>
                   {SENIORITIES.map((s) => (
                     <option key={s} value={s}>
@@ -123,7 +153,11 @@ export function JobsPage() {
                       <select
                         aria-label={t("jobs.requirements")}
                         value={requirement.kind}
-                        onChange={(e) => setRequirement(index, { kind: e.target.value as Requirement["kind"] })}
+                        onChange={(e) =>
+                          setRequirement(index, {
+                            kind: e.target.value as Requirement["kind"],
+                          })
+                        }
                       >
                         <option value="MANDATORY">{t("jobs.mandatory")}</option>
                         <option value="DESIRED">{t("jobs.desired")}</option>
@@ -144,7 +178,11 @@ export function JobsPage() {
                         placeholder={t("jobs.skill")}
                         value={requirement.skill ?? ""}
                         maxLength={80}
-                        onChange={(e) => setRequirement(index, { skill: blank(e.target.value) })}
+                        onChange={(e) =>
+                          setRequirement(index, {
+                            skill: blank(e.target.value),
+                          })
+                        }
                       />
                     </td>
                     <td>
@@ -156,11 +194,22 @@ export function JobsPage() {
                         max={30}
                         step="0.5"
                         value={requirement.minYears ?? ""}
-                        onChange={(e) => setRequirement(index, { minYears: e.target.value === "" ? null : Number(e.target.value) })}
+                        onChange={(e) =>
+                          setRequirement(index, {
+                            minYears: e.target.value === "" ? null : Number(e.target.value),
+                          })
+                        }
                       />
                     </td>
                     <td>
-                      <Button variant="ghost" onClick={() => patch({ requirements: form.requirements.filter((_, i) => i !== index) })}>
+                      <Button
+                        variant="ghost"
+                        onClick={() =>
+                          patch({
+                            requirements: form.requirements.filter((_, i) => i !== index),
+                          })
+                        }
+                      >
                         {t("common.remove")}
                       </Button>
                     </td>
@@ -169,7 +218,21 @@ export function JobsPage() {
               </tbody>
             </table>
             <div className="row-actions">
-              <Button onClick={() => patch({ requirements: [...form.requirements, { kind: "MANDATORY", text: "", skill: null, minYears: null }] })}>
+              <Button
+                onClick={() =>
+                  patch({
+                    requirements: [
+                      ...form.requirements,
+                      {
+                        kind: "MANDATORY",
+                        text: "",
+                        skill: null,
+                        minYears: null,
+                      },
+                    ],
+                  })
+                }
+              >
                 {t("common.add")}
               </Button>
               <Button type="submit" variant="primary">
@@ -180,6 +243,20 @@ export function JobsPage() {
         </Card>
       )}
 
+      <SimilarJobsCard refreshKey={refreshKey} />
+
+      <label className="check">
+        <input
+          type="checkbox"
+          checked={favoritesOnly}
+          onChange={(e) => {
+            setFavoritesOnly(e.target.checked);
+            setPage(0);
+          }}
+        />
+        {t("jobs.favoritesOnly")}
+      </label>
+
       {jobs.error ? <Notice tone="error">{errorMessage(jobs.error)}</Notice> : null}
       {jobs.loading && !jobs.data ? <Loading /> : null}
       {jobs.data && jobs.data.content.length === 0 && <Empty />}
@@ -189,6 +266,9 @@ export function JobsPage() {
             <table className="table">
               <thead>
                 <tr>
+                  <th>
+                    <span className="visually-hidden">{t("jobs.favorite")}</span>
+                  </th>
                   <th>{t("application.title")}</th>
                   <th>{t("board.company")}</th>
                   <th>{t("jobs.location")}</th>
@@ -200,8 +280,18 @@ export function JobsPage() {
                 {jobs.data.content.map((job) => (
                   <tr key={job.id}>
                     <td>
-                      <Link to={`/vagas/${job.id}`}>{job.title}</Link>{" "}
-                      {job.status !== "OPEN" && <Badge tone="warn">{job.status}</Badge>}
+                      <button
+                        type="button"
+                        className="star"
+                        aria-pressed={job.favorite}
+                        aria-label={t(job.favorite ? "jobs.unfavorite" : "jobs.favoriteThis", { title: job.title })}
+                        onClick={() => void toggleFavorite(job.id, !job.favorite)}
+                      >
+                        {job.favorite ? "★" : "☆"}
+                      </button>
+                    </td>
+                    <td>
+                      <Link to={`/vagas/${job.id}`}>{job.title}</Link> {job.status !== "OPEN" && <Badge tone="warn">{job.status}</Badge>}
                       {job.watchedSourceId && <Badge tone="info">{t("jobs.fromSource")}</Badge>}
                     </td>
                     <td>{job.company}</td>

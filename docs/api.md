@@ -45,10 +45,12 @@ Competências: `skills[] {name, level 1–5, years, months 0–11, days 0–30}`
 
 | Rota | Descrição |
 |---|---|
-| `GET /jobs?page&size` | Paginado (`size` vai até 100) |
+| `GET /jobs?page&size&favorite` | Paginado (`size` vai até 100). `favorite=true` lista só as favoritas |
 | `POST /jobs` | 201 se a vaga é nova. 200 + `X-Duplicate-Of` se ela já existia |
 | `GET/PUT /jobs/{id}` | Ler e atualizar |
 | `PATCH /jobs/{id}/status` | `{status: OPEN \| CLOSED \| UNKNOWN}` |
+| `PUT /jobs/{id}/favorite` | `{favorite}`: marca ou desmarca como favorita. Vaga de outra conta: 404 |
+| `GET /jobs/similar?basis&minScore&limit` | Vagas parecidas com as favoritas (`basis=FAVORITES`) ou com as 10 últimas candidaturas enviadas (`APPLIED`). `minScore` 0 a 100 (padrão 30), `limit` 1 a 100. Resposta `[{job, score, basisJobId, basisTitle, sharedWords[], sharedSkills[]}]`. Nota: índice de Jaccard das palavras do cargo (pelo radical) e das competências, metade cada. Ficam de fora favoritas, vagas com candidatura e encerradas; só vagas da própria conta |
 | `GET /jobs/{id}/matches` | Todos os perfis, do mais para o menos adequado |
 | `GET /jobs/{id}/matches/{profileId}` | Análise de um perfil |
 

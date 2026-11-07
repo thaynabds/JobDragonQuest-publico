@@ -12,10 +12,12 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import jakarta.validation.ConstraintViolationException;
 
 /**
  * Converte exceções em Problem Details (RFC 9457). Nunca devolve stack trace, SQL ou mensagem interna.
@@ -44,6 +46,12 @@ public class GlobalExceptionHandler {
                 .toList();
         detail.setProperty("errors", errors);
         return detail;
+    }
+
+    /** Parâmetro de consulta fora da faixa (ex.: {@code @Max} num {@code @RequestParam}). */
+    @ExceptionHandler({HandlerMethodValidationException.class, ConstraintViolationException.class})
+    ProblemDetail invalidParameter(Exception ex) {
+        return problem(HttpStatus.BAD_REQUEST, "validation_failed", "Parâmetro inválido");
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})

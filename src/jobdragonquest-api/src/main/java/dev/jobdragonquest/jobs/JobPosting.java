@@ -110,6 +110,10 @@ public class JobPosting extends AssignedIdEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    /** Marcada pela pessoa como favorita: base da busca por vagas parecidas. */
+    @Column(nullable = false)
+    private boolean favorite;
+
     /** Fonte vigiada que encontrou a vaga; null quando ela foi cadastrada à mão. */
     @Column(name = "watched_source_id")
     private UUID watchedSourceId;
@@ -247,6 +251,14 @@ public class JobPosting extends AssignedIdEntity {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    void markFavorite(boolean value) {
+        this.favorite = value;
     }
 
     public UUID getWatchedSourceId() {

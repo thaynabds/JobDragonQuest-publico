@@ -575,6 +575,21 @@ export const ptBR = {
   "contactRole.OTHER": "Outro",
   "error.contact_limit": "Cada candidatura guarda até 20 contatos.",
   "error.invalid_email": "E-mail inválido.",
+  "jobs.favorite": "Favorita",
+  "jobs.favoriteThis": "Favoritar {title}",
+  "jobs.unfavorite": "Tirar {title} dos favoritos",
+  "jobs.favoritesOnly": "Mostrar só as favoritas",
+  "similar.title": "Vagas parecidas",
+  "similar.basis": "Parecidas com",
+  "similar.basis.FAVORITES": "minhas favoritas",
+  "similar.basis.APPLIED": "minhas últimas candidaturas",
+  "similar.minScore": "Semelhança mínima: {value}",
+  "similar.score": "{score}% parecida",
+  "similar.because": "Parecida com: {title}",
+  "similar.words": "palavras em comum",
+  "similar.skills": "competências em comum",
+  "similar.emptyFavorites": "Favorite vagas na lista abaixo (estrela) para ver as parecidas, ou baixe a semelhança mínima.",
+  "similar.emptyApplied": "Nenhuma vaga parecida com as suas últimas candidaturas enviadas. Baixe a semelhança mínima ou cadastre mais vagas.",
 };
 
 export type MessageKey = keyof typeof ptBR;
