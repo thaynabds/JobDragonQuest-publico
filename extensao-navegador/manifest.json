@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "JobDragonQuest: salvar vaga",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Salva a vaga da página aberta no seu JobDragonQuest local. Gratuita, sem servidor de terceiros.",
   "action": {
     "default_popup": "popup.html",

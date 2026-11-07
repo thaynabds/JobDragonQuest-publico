@@ -5,7 +5,7 @@ público tem o mesmo código e as mesmas tags, mas o GitHub não copia issues ne
 a evidência auditável do processo. Só campos de processo são exportados (sem corpo, comentário ou autor).
 Por que existem dois repositórios: [governanca.md](governanca.md).
 
-Resumo: 65 issues (63 fechadas) e 66 PRs (66 com merge).
+Resumo: 65 issues (65 fechadas) e 68 PRs (68 com merge).
 
 ## Issues
 
@@ -74,8 +74,8 @@ Resumo: 65 issues (63 fechadas) e 66 PRs (66 com merge).
 | 119 | fix: conectar-mcp falha com o Claude Code (ordem do -e) e recusa token colado | CLOSED | 2026-11-07 | 2026-11-07 | PR 120 | bug |
 | 124 | feat: documentos do perfil e atualização do currículo por PDF, Word, link e foto | CLOSED | 2026-11-07 | 2026-11-07 | PR 125 | enhancement |
 | 126 | feat: preferências de acessibilidade salvas na conta | CLOSED | 2026-11-07 | 2026-11-07 | PR 127 | enhancement |
-| 130 | docs(governanca): pendências de governança da avaliação técnica Week_01 | OPEN | 2026-11-07 |  |  | documentation |
-| 131 | ci(qualidade): relatório de testes, análise de dependências, commits verificados, lint e formato de erro | OPEN | 2026-11-07 |  |  | test, ci |
+| 130 | docs(governanca): pendências de governança da avaliação técnica Week_01 | CLOSED | 2026-11-07 | 2026-11-07 | PR 132 | documentation, type:docs, priority:high, scope:docs |
+| 131 | ci(qualidade): relatório de testes, análise de dependências, commits verificados, lint e formato de erro | CLOSED | 2026-11-07 | 2026-11-07 | PR 133 | test, ci, type:ci, priority:medium, scope:devops |
 
 ## Pull requests
 
@@ -147,3 +147,5 @@ Resumo: 65 issues (63 fechadas) e 66 PRs (66 com merge).
 | 127 | feat: acessibilidade salva na conta (#126) | MERGED | `feature/issue-126-acessibilidade-conta` → `develop` | 2026-11-07 | 2026-11-07 | #126 |
 | 128 | release: v0.4.0 | MERGED | `release/0.4.0` → `main` | 2026-11-07 | 2026-11-07 |  |
 | 129 | chore: main (v0.4.0) de volta para develop | MERGED | `chore/main-para-develop-0.4.0` → `develop` | 2026-11-07 | 2026-11-07 |  |
+| 132 | docs(governanca): pendências de governança da avaliação técnica Week_01 (#130) | MERGED | `feature/issue-130-governanca` → `develop` | 2026-11-07 | 2026-11-07 | #130 |
+| 133 | ci(qualidade): relatórios de teste, OSV-Scanner, commits verificados, ESLint e formato de erro (#131) | MERGED | `feature/issue-131-qualidade` → `develop` | 2026-11-07 | 2026-11-07 | #131 |
