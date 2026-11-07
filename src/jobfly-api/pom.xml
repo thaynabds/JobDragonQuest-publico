@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.jobfly</groupId>
 	<artifactId>jobfly-api</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>0.3.0</version>
 	<name>jobfly-api</name>
 	<description>API do JobFly: perfis, vagas, compatibilidade e candidaturas.</description>
 

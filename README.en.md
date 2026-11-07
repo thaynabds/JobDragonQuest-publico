@@ -6,10 +6,10 @@
 
 > Language: [Português](README.md) | **English** | [Español](README.es.md)
 
-[![Version](https://img.shields.io/badge/version-0.2.0-7c3aed)](https://github.com/thaynabds/JobFly/releases/tag/v0.2.0)
+[![Version](https://img.shields.io/badge/version-0.3.0-7c3aed)](https://github.com/thaynabds/JobFly/releases/tag/v0.3.0)
 [![License](https://img.shields.io/badge/license-all%20rights%20reserved-6b7280)](#license)
 [![CI](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-128%20passing-16a34a)](#quality-and-security)
+[![Tests](https://img.shields.io/badge/tests-191%20passing-16a34a)](#quality-and-security)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobfly-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobfly-api)
 [![React](https://img.shields.io/badge/React-19-0891b2)](src/jobfly-web)
@@ -30,7 +30,7 @@ JobFly brings it all into one explainable hub:
 
 ## Features
 
-### Implemented (v0.2.0)
+### Implemented (v0.3.0)
 
 | Area | What it does |
 |---|---|
@@ -161,7 +161,7 @@ JobFly/
 
 | Branch | Purpose | Receives from | Rule |
 |---|---|---|---|
-| `main` | Production: only tagged stable versions | `develop`, through a release PR | Never takes direct commits. Each release gets an annotated SemVer tag (`v0.1.0`, `v0.2.0`) |
+| `main` | Production: only tagged stable versions | `develop`, through a release PR | Never takes direct commits. Each release gets an annotated SemVer tag (`v0.1.0`, `v0.2.0`, `v0.3.0`) |
 | `develop` | Integration of finished work | `feature/*` and `fix/*`, through PRs | Every PR references its issue with `Closes #N` |
 | `feature/issue-NN-description` | One feature, documentation or tooling issue | branches off `develop` | Atomic Conventional Commits: `feat(sources): ... (#9)` |
 | `fix/issue-NN-description` | Fix for a defect recorded in an issue | branches off `develop` | `fix(scope): ... (#31)` |
@@ -187,8 +187,8 @@ The full backlog is in the [repository issues](https://github.com/thaynabds/JobF
 
 ## Quality and security
 
-- **128 automated tests**: 108 in the API (unit and full-application integration tests) and 20 in the dashboard, plus 26 smoke-test checks and the real collection test.
-- **Coverage:** the build fails below 80% line coverage in critical modules. Overall coverage is 94.3% today.
+- **191 automated tests**: 127 in the API (unit and full-application integration tests), 43 in the dashboard, 11 in the MCP server and 10 in the Congo plugin. Plus checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobFly through MCP, 23 for installation, and the real collection test.
+- **Coverage:** the build fails below 80% line coverage in critical modules. Overall API coverage is 93.6% today.
 - **Security** ([details](docs/seguranca.md)):
   - per-user isolation (someone else's resource returns 404);
   - Argon2id and rotating refresh tokens with reuse detection;
@@ -197,7 +197,10 @@ The full backlog is in the [repository issues](https://github.com/thaynabds/JobF
   - CSP in the dashboard;
   - services on 127.0.0.1 only;
   - secrets kept out of Git;
-  - 0 known vulnerabilities in the dashboard dependencies (`npm audit`).
+  - personal access tokens stored only as a hash, unable to create other tokens and revocable at once;
+  - MCP server without deletion tools, with validated arguments and responses marked as untrusted data;
+  - automatic leak audit (secrets, personal data, metadata and logs);
+  - 0 known vulnerabilities in the dashboard and MCP dependencies (`npm audit`).
 
 ## License
 

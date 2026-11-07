@@ -6,10 +6,10 @@
 
 > Idioma: [Português](README.md) | [English](README.en.md) | **Español**
 
-[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.2.0-7c3aed)](https://github.com/thaynabds/JobFly/releases/tag/v0.2.0)
+[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.3.0-7c3aed)](https://github.com/thaynabds/JobFly/releases/tag/v0.3.0)
 [![Licencia](https://img.shields.io/badge/licencia-todos%20los%20derechos%20reservados-6b7280)](#licencia)
 [![CI](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml)
-[![Pruebas](https://img.shields.io/badge/pruebas-128%20aprobadas-16a34a)](#calidad-y-seguridad)
+[![Pruebas](https://img.shields.io/badge/pruebas-191%20aprobadas-16a34a)](#calidad-y-seguridad)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobfly-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobfly-api)
 [![React](https://img.shields.io/badge/React-19-0891b2)](src/jobfly-web)
@@ -30,7 +30,7 @@ JobFly lo reúne todo en una central única y explicable:
 
 ## Funcionalidades
 
-### Implementado (v0.2.0)
+### Implementado (v0.3.0)
 
 | Área | Qué hace |
 |---|---|
@@ -161,7 +161,7 @@ JobFly/
 
 | Rama | Para qué | Recibe de | Regla |
 |---|---|---|---|
-| `main` | Producción: solo versiones estables con etiqueta | `develop`, por PR de release | Nunca recibe commits directos. Cada release lleva una etiqueta anotada SemVer (`v0.1.0`, `v0.2.0`) |
+| `main` | Producción: solo versiones estables con etiqueta | `develop`, por PR de release | Nunca recibe commits directos. Cada release lleva una etiqueta anotada SemVer (`v0.1.0`, `v0.2.0`, `v0.3.0`) |
 | `develop` | Integración de lo terminado | `feature/*` y `fix/*`, por PR | Cada PR referencia su issue con `Closes #N` |
 | `feature/issue-NN-descripcion` | Una issue de funcionalidad, documentación o herramienta | sale de `develop` | Commits atómicos en Conventional Commits: `feat(sources): ... (#9)` |
 | `fix/issue-NN-descripcion` | Corrección de un defecto registrado en una issue | sale de `develop` | `fix(alcance): ... (#31)` |
@@ -187,8 +187,8 @@ El backlog completo está en las [issues del repositorio](https://github.com/tha
 
 ## Calidad y seguridad
 
-- **128 pruebas automatizadas**: 108 en la API (unitarias y de integración con la aplicación completa) y 20 en el panel, además de 26 verificaciones de la prueba de humo y la prueba de recolección real.
-- **Cobertura:** el build falla por debajo del 80% de líneas en los módulos críticos. Hoy la cobertura general es del 94,3%.
+- **191 pruebas automatizadas**: 127 en la API (unitarias y de integración con la aplicación completa), 43 en el panel, 11 en el servidor MCP y 10 en el plugin de Congo. Además, verificaciones contra el sistema funcionando de verdad: 26 de la prueba de humo, 24 de los avisos, 15 de una IA usando JobFly por MCP, 23 de la instalación y la recolección real.
+- **Cobertura:** el build falla por debajo del 80% de líneas en los módulos críticos. Hoy la cobertura general de la API es del 93,6%.
 - **Seguridad** ([detalles](docs/seguranca.md)):
   - aislamiento por usuario (un recurso ajeno responde 404);
   - Argon2id y token rotativo con detección de reutilización;
@@ -197,7 +197,10 @@ El backlog completo está en las [issues del repositorio](https://github.com/tha
   - CSP en el panel;
   - servicios solo en 127.0.0.1;
   - secretos fuera de Git;
-  - 0 vulnerabilidades conocidas en las dependencias del panel (`npm audit`).
+  - tokens de acceso personal guardados solo como hash, que no crean otros tokens y se revocan al instante;
+  - servidor MCP sin herramientas de borrado, con argumentos validados y respuestas marcadas como datos no confiables;
+  - auditoría automática de filtraciones (secretos, datos personales, metadatos y logs);
+  - 0 vulnerabilidades conocidas en las dependencias del panel y del MCP (`npm audit`).
 
 ## Licencia
 
