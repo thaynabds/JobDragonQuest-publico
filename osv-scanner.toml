@@ -1,0 +1,8 @@
+# Configuração do OSV-Scanner usado no CI (job "dependencias").
+# Política: o CI falha com qualquer vulnerabilidade conhecida nas dependências. Uma exceção só entra aqui com o motivo
+# (por que o código não é afetado) e uma data de validade curta, para ser revista. Exemplo:
+#
+# [[IgnoredVulns]]
+# id = "GHSA-xxxx-xxxx-xxxx"
+# ignoreUntil = 2026-12-31
+# reason = "A função vulnerável não é chamada: ..."
