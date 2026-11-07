@@ -36,5 +36,8 @@ export default defineConfig({
     setupFiles: ["src/test-setup.ts"],
     restoreMocks: true,
     testTimeout: 30_000,
+    // No GitHub Actions também grava o relatório JUnit que o CI publica e resume (scripts/resumo-testes.mjs).
+    reporters: process.env.GITHUB_ACTIONS === "true" ? ["default", "junit"] : ["default"],
+    outputFile: { junit: "test-results/junit.xml" },
   },
 });

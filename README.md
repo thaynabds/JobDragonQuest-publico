@@ -8,17 +8,17 @@
 
 > Idioma: **Português** | [English](README.en.md) | [Español](README.es.md)
 
-[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.4.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.4.0)
+[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.4.1-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.4.1)
 [![Licença](https://img.shields.io/badge/licen%C3%A7a-todos%20os%20direitos%20reservados-6b7280)](#licença)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
-[![Testes](https://img.shields.io/badge/testes-295%20passando-16a34a)](#qualidade-e-segurança)
+[![Testes](https://img.shields.io/badge/testes-303%20passando-16a34a)](#qualidade-e-segurança)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobdragonquest-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobdragonquest-api)
 [![React](https://img.shields.io/badge/React-19-0891b2)](src/jobdragonquest-web)
 
 **Plataforma de gestão de carreira e automação de candidaturas a vagas de emprego e estágio, no Brasil e no exterior.**
 
-**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositório:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versão:** 0.4.0
+**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositório:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versão:** 0.4.1
 
 ## Instalação rápida
 
@@ -77,7 +77,7 @@ O JobDragonQuest junta tudo numa central única e explicável:
 
 ## Funcionalidades
 
-### Implementado (v0.4.0)
+### Implementado (v0.4.1)
 
 | Área | O que faz |
 |---|---|
@@ -123,6 +123,11 @@ A situação de cada requisito está em [docs/requisitos.md](docs/requisitos.md)
 | [Integrações](docs/integracoes.md) | O que cada plataforma permite e como |
 | [Roadmap](docs/roadmap.md) | Situação e próximas entregas |
 | [Deploy opcional](docs/deploy.md) | Deploy gratuito e opcional, com lista de segurança |
+| [Governança](docs/governanca.md) | Repositório principal × espelho público e como auditar o processo |
+| [Histórico de issues e PRs](docs/historico-issues-prs.md) | Todas as issues e PRs do repositório principal, com a issue que cada PR fecha |
+| [Índice da documentação](docs/README.md) | Todos os documentos e a regra de sincronização documentação × código |
+
+Também: [CHANGELOG](CHANGELOG.md) (mudanças por versão), [CONTRIBUTING](CONTRIBUTING.md) (como contribuir), [SECURITY](SECURITY.md) (como relatar falha) e [LICENSE](LICENSE).
 
 ## Instalar com uma IA (prompt pronto)
 
@@ -195,12 +200,13 @@ gitGraph
     merge develop tag: "v0.2.0"
 ```
 
-O backlog completo está nas [issues do repositório](https://github.com/thaynabds/JobDragonQuest-publico/issues).
+As issues e os PRs ficam no repositório principal, que é privado; o espelho público recebe o mesmo código e as mesmas tags. O histórico completo de issues e PRs está em [docs/historico-issues-prs.md](docs/historico-issues-prs.md) e o motivo dos dois repositórios em [docs/governanca.md](docs/governanca.md). O passo a passo para contribuir está no [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Qualidade e segurança
 
-- **295 testes automatizados**: 195 na API (unitários e de integração com a aplicação completa), 66 no painel, 18 no servidor MCP, 12 no plugin do Congo e 4 na extensão do navegador. Mais verificações contra o sistema rodando de verdade: 26 do teste de fumaça, 24 dos avisos, 15 de uma IA usando o JobDragonQuest pelo MCP, 29 da instalação e a coleta real.
-- **Cobertura:** o build falha abaixo de 80% de linhas nos módulos críticos. Hoje a cobertura geral da API é de 93,6%.
+- **303 testes automatizados**: 203 na API (unitários e de integração com a aplicação completa), 66 no painel, 18 no servidor MCP, 12 no plugin do Congo e 4 na extensão do navegador. Mais verificações contra o sistema rodando de verdade: 26 do teste de fumaça, 24 dos avisos, 15 de uma IA usando o JobDragonQuest pelo MCP, 29 da instalação e a coleta real.
+- **Cobertura:** o build falha abaixo de 80% de linhas nos módulos críticos. Hoje a cobertura geral da API é de 92,2% (linhas).
+- **CI em cada push e PR:** testes das cinco partes, lint do painel, checagem das mensagens de commit e análise de dependências. O total de testes de cada execução aparece no resumo do CI, e os relatórios de teste e cobertura ficam como artefato por 30 dias.
 - **Segurança** ([detalhes](docs/seguranca.md)):
   - isolamento por usuário (recurso alheio responde 404);
   - Argon2id e refresh token rotativo com detecção de reuso;
@@ -212,8 +218,8 @@ O backlog completo está nas [issues do repositório](https://github.com/thaynab
   - tokens de acesso pessoal guardados só como hash, que não criam outros tokens e são revogados na hora;
   - servidor MCP sem ferramenta de exclusão, com argumentos validados e respostas marcadas como dados não confiáveis;
   - auditoria automática de vazamento (segredos, dados pessoais, metadados e logs);
-  - 0 vulnerabilidades conhecidas nas dependências do painel e do MCP (`npm audit`).
+  - 0 vulnerabilidades conhecidas nas dependências da API (com as transitivas), do painel e do MCP (`npm audit` e OSV-Scanner no CI).
 
 ## Licença
 
-Todos os direitos reservados. O código é público para consulta, mas não há licença de uso, cópia ou redistribuição sem autorização da autora.
+Todos os direitos reservados. O código é público para consulta, mas não há licença de uso, cópia ou redistribuição sem autorização da autora. Texto completo em [LICENSE](LICENSE).

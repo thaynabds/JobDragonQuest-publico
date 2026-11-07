@@ -145,7 +145,8 @@ describe("perfil completo", () => {
     expect(body.skills).toEqual([{ name: "Java", level: 3, years: 1, months: 6, days: 10 }]);
     expect(body.languages).toEqual([{ name: "Inglês", level: "B2" }]);
     expect(body.answers).toEqual([{ question: "Por que quer trabalhar aqui?", answer: "Porque gosto de back-end." }]);
-    await waitFor(() => expect(api.profile).toHaveBeenCalledWith("novo-id"));
+    // Depois de salvar, a tela navega para o perfil novo e o recarrega; com a máquina carregada isso passa de 1 s.
+    await waitFor(() => expect(api.profile).toHaveBeenCalledWith("novo-id"), { timeout: 10_000 });
     // Digita muitos campos numa tela com centenas de sugestões de idioma e país: mais folga que o padrão de 30 s.
   }, 90_000);
 

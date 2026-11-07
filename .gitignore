@@ -12,6 +12,7 @@ secrets/
 target/
 node_modules/
 dist/
+test-results/
 coverage/
 
 # IDE e sistema

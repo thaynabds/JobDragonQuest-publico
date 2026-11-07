@@ -9,6 +9,39 @@
 {"status":409,"title":"Conflict","detail":"O perfil mudou desde que foi aberto...","code":"stale_version","instance":"/api/v1/profiles/…"}
 ```
 
+## Formato de erro
+
+Todo erro, venha do controller, da validação, do filtro de tamanho ou da segurança, usa o mesmo esquema Problem Details
+([RFC 9457](https://www.rfc-editor.org/rfc/rfc9457)) com `Content-Type: application/problem+json`. O teste
+`ErrorFormatTest` confere o esquema em cada caso.
+
+| Campo | Sempre presente | Conteúdo |
+|---|---|---|
+| `status` | sim | código HTTP |
+| `title` | sim | frase padrão do código HTTP (`Bad Request`, `Not Found`...) |
+| `detail` | sim | mensagem em português para pessoas; pode mudar entre versões |
+| `code` | sim | código estável em `snake_case` que o painel e as integrações usam para traduzir e decidir |
+| `instance` | sim | caminho da requisição |
+| `errors` | só em `validation_failed` | lista `campo: motivo` |
+| `type` | não | ausente, o que pela RFC equivale a `about:blank` |
+
+| HTTP | `code` | Quando |
+|---|---|---|
+| 400 | `validation_failed` | corpo ou parâmetro fora das regras (com `errors`) |
+| 400 | códigos de regra de negócio | entrada que passa no formato mas viola uma regra, com código próprio de cada caso |
+| 400 | `malformed_request` | JSON inválido ou tipo errado em parâmetro |
+| 401 | `unauthorized` | sem token, token inválido ou vencido; o cabeçalho `WWW-Authenticate: Bearer` acompanha e o motivo não é revelado |
+| 401 | `invalid_credentials`, `invalid_session` | e-mail ou senha errados (sem dizer qual) e refresh token inválido |
+| 403 | `forbidden` | rota de administração para quem não é administrador |
+| 403 | `session_required`, `origin_not_allowed`, `registration_closed` | ação que só o painel faz, origem fora da lista e cadastro fechado no servidor |
+| 404 | `not_found` | recurso inexistente **ou de outra conta** (nunca 403, para não revelar que existe) |
+| 409 | `conflict`, `stale_version`, `concurrent_update` e códigos de regra de negócio | conflito com registro existente ou edição concorrente |
+| 413 | `payload_too_large` | corpo acima de 1 MiB (ou do limite das rotas de upload) |
+| 429 | `rate_limited` | tentativas de login ou cadastro em excesso |
+| 500 | `internal_error` | erro inesperado; o detalhe vai só para o log, sem dado pessoal |
+
+Nenhuma resposta de erro traz stack trace, SQL, nome de classe ou o motivo exato de falha de um token.
+
 ## Autenticação
 
 | Método e rota | Corpo | Resposta |

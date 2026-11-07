@@ -8,17 +8,17 @@
 
 > Language: [Português](README.md) | **English** | [Español](README.es.md)
 
-[![Version](https://img.shields.io/badge/version-0.4.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.4.0)
+[![Version](https://img.shields.io/badge/version-0.4.1-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.4.1)
 [![License](https://img.shields.io/badge/license-all%20rights%20reserved-6b7280)](#license)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-295%20passing-16a34a)](#quality-and-security)
+[![Tests](https://img.shields.io/badge/tests-303%20passing-16a34a)](#quality-and-security)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobdragonquest-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobdragonquest-api)
 [![React](https://img.shields.io/badge/React-19-0891b2)](src/jobdragonquest-web)
 
 **A career management and job application automation platform for jobs and internships, in Brazil and abroad.**
 
-**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.4.0
+**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.4.1
 
 ## Quick install
 
@@ -77,7 +77,7 @@ JobDragonQuest brings it all into one explainable hub:
 
 ## Features
 
-### Implemented (v0.4.0)
+### Implemented (v0.4.1)
 
 | Area | What it does |
 |---|---|
@@ -123,6 +123,11 @@ The status of each requirement is in [docs/requisitos.md](docs/requisitos.md) an
 | [Integrations](docs/integracoes.md) | What each platform allows and how |
 | [Roadmap](docs/roadmap.md) | Status and next deliveries |
 | [Optional deployment](docs/deploy.md) | Free, optional deployment with a security checklist |
+| [Governance](docs/governanca.md) | Main repository × public mirror and how to audit the process |
+| [Issue and PR history](docs/historico-issues-prs.md) | Every issue and PR of the main repository, with the issue each PR closes |
+| [Documentation index](docs/README.md) | All documents and the docs × code sync rule |
+
+Also: [CHANGELOG](CHANGELOG.md) (changes per version), [CONTRIBUTING](CONTRIBUTING.md) (how to contribute), [SECURITY](SECURITY.md) (how to report a vulnerability) and [LICENSE](LICENSE). These documents are in Portuguese.
 
 ## Install with an AI (ready-made prompt)
 
@@ -195,12 +200,13 @@ gitGraph
     merge develop tag: "v0.2.0"
 ```
 
-The full backlog is in the [repository issues](https://github.com/thaynabds/JobDragonQuest-publico/issues).
+Issues and PRs live in the main repository, which is private; the public mirror gets the same code and the same tags. The full issue and PR history is in [docs/historico-issues-prs.md](docs/historico-issues-prs.md) and the reason for two repositories is in [docs/governanca.md](docs/governanca.md). How to contribute: [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Quality and security
 
-- **295 automated tests**: 195 in the API (unit and full-application integration tests), 66 in the dashboard, 18 in the MCP server, 12 in the Congo plugin and 4 in the browser extension. Plus checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobDragonQuest through MCP, 29 for installation, and the real collection test.
-- **Coverage:** the build fails below 80% line coverage in critical modules. Overall API coverage is 93.6% today.
+- **303 automated tests**: 203 in the API (unit and full-application integration tests), 66 in the dashboard, 18 in the MCP server, 12 in the Congo plugin and 4 in the browser extension. Plus checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobDragonQuest through MCP, 29 for installation, and the real collection test.
+- **Coverage:** the build fails below 80% line coverage in critical modules. Overall API coverage is 92.2% (lines) today.
+- **CI on every push and PR:** tests for all five parts, dashboard lint, commit message checks and dependency scanning. Each run shows the test totals in its summary, and the test and coverage reports are kept as artifacts for 30 days.
 - **Security** ([details](docs/seguranca.md)):
   - per-user isolation (someone else's resource returns 404);
   - Argon2id and rotating refresh tokens with reuse detection;
@@ -212,8 +218,8 @@ The full backlog is in the [repository issues](https://github.com/thaynabds/JobD
   - personal access tokens stored only as a hash, unable to create other tokens and revocable at once;
   - MCP server without deletion tools, with validated arguments and responses marked as untrusted data;
   - automatic leak audit (secrets, personal data, metadata and logs);
-  - 0 known vulnerabilities in the dashboard and MCP dependencies (`npm audit`).
+  - 0 known vulnerabilities in the API (including transitive), dashboard and MCP dependencies (`npm audit` and OSV-Scanner in CI).
 
 ## License
 
-All rights reserved. The code is public for reference, but there is no license to use, copy or redistribute it without the author's permission.
+All rights reserved. The code is public for reference, but there is no license to use, copy or redistribute it without the author's permission. Full text in [LICENSE](LICENSE).
