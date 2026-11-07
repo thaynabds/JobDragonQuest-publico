@@ -43,6 +43,7 @@ JobFly brings it all into one explainable hub:
 | Notifications | **Dashboard pop-ups** (high priority stays until closed), **system notifications** and **sound**, a bell with counter and history, and a settings screen. The API creates notifications for stage changes made by email, agent or system, required actions, technical tests, interview and deadline reminders with configurable lead time, suggestions, failing or due sources, stale applications and new jobs per source (with a minimum score). Settings per stage, type and source (on, pop-up, system, sound), quiet hours in the account time zone, snooze and mark as read, never repeating a notification |
 | Access tokens | Personal tokens for integrations (MCP server, Congo plugin): shown only once, stored only as a hash, valid for 1 to 365 days, at most 10 active, revocable at any time. A token cannot create or revoke other tokens |
 | Accessibility | Accessibility center (draggable ♿ button or Alt+A) with the Congo Grey Parrot themes (light, dark, high contrast, Kuro, PinkVoid, RedVoid, YellowVoid), the Congo color filters (invert, smart invert, protanopia, deuteranopia, tritanopia and monochrome, using the Android Daltonizer matrices) and the a11y-widget features: text size from 80% to 140%, a dyslexia-friendly font served by the dashboard itself, line height, spacing, highlighted links and headings, paused animations and videos, big cursor, keyboard focus, reading guide, read aloud, hidden images, contrast and saturation. Skip link and support for the system "reduce motion" setting |
+| MCP server | MCP server (stdio) so an AI (Claude, Cursor and others) can use JobFly: summary, to-dos, notifications, profiles, jobs, match, applications and watched sources, in 17 tools. No data deletion; stage changes come in as an agent and, with low confidence, become suggestions for you to confirm. It only talks to the local API (or explicitly allowed HTTPS), with a personal token that never shows up in responses |
 | Web dashboard | Overview, to-do center with direct actions, filtered Kanban, detail with history, profiles, sources and jobs, in Portuguese, English and Spanish, with the browser language detected on first visit. New languages are created automatically by `scripts/novo-idioma.mjs` |
 | Operations | One command starts database, API and dashboard, on 127.0.0.1 only. Smoke and real collection tests. CI on GitHub Actions |
 
@@ -52,7 +53,7 @@ JobFly brings it all into one explainable hub:
 |---|---|
 | Gmail and Outlook | OAuth with minimal scopes, message classification, linking to the application and authorized replies. It never deletes email |
 | AI agents | Analysis of eliminatory form questions, application review before submission and tailored documents using only real data |
-| MCP and extension | MCP server with controlled permissions and a "Send to JobFly" browser extension |
+| Extension | "Send to JobFly" browser extension |
 | Documents | Versioned résumés, attachments and CSV history import |
 
 The status of each requirement is in [docs/requisitos.md](docs/requisitos.md) and the order of the next deliveries in [docs/roadmap.md](docs/roadmap.md) (in Portuguese).

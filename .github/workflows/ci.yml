@@ -1,4 +1,4 @@
-# Integração contínua do JobFly: compila e testa a API e o painel em cada push e PR para develop e main.
+# Integração contínua do JobFly: compila e testa a API, o painel e o servidor MCP em cada push e PR para develop e main.
 name: CI
 
 on:
@@ -55,5 +55,28 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Auditoria das dependências de produção
         run: npm audit --omit=dev --audit-level=high
+      - name: Tipos, testes e build
+        run: npm run verify
+
+  mcp:
+    name: Servidor MCP (Node 20, npm run verify)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: src/jobfly-mcp
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19"
+          cache: npm
+          cache-dependency-path: src/jobfly-mcp/package-lock.json
+      - name: Dependências exatas do lockfile
+        run: npm ci --no-audit --no-fund
+      - name: Auditoria das dependências
+        run: npm audit --audit-level=high
       - name: Tipos, testes e build
         run: npm run verify
