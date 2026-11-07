@@ -1,0 +1,38 @@
+# Atualizações semanais das dependências. Cada PR do Dependabot passa pelo CI completo antes do merge na develop.
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: /src/jobdragonquest-api
+    target-branch: develop
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels: ["type:chore", "stack:backend"]
+    commit-message:
+      prefix: "chore(deps)"
+  - package-ecosystem: npm
+    directory: /src/jobdragonquest-web
+    target-branch: develop
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels: ["type:chore", "stack:frontend"]
+    commit-message:
+      prefix: "chore(deps)"
+  - package-ecosystem: npm
+    directory: /src/jobdragonquest-mcp
+    target-branch: develop
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels: ["type:chore", "stack:mcp"]
+    commit-message:
+      prefix: "chore(deps)"
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    labels: ["type:chore", "scope:devops"]
+    commit-message:
+      prefix: "chore(ci)"

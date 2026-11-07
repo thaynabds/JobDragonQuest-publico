@@ -123,6 +123,11 @@ El estado de cada requisito está en [docs/requisitos.md](docs/requisitos.md) y 
 | [Integraciones](docs/integracoes.md) | Qué permite cada plataforma y cómo |
 | [Roadmap](docs/roadmap.md) | Estado y próximas entregas |
 | [Deploy opcional](docs/deploy.md) | Deploy gratuito y opcional, con lista de seguridad |
+| [Gobernanza](docs/governanca.md) | Repositorio principal × espejo público y cómo auditar el proceso |
+| [Historial de issues y PRs](docs/historico-issues-prs.md) | Todas las issues y PRs del repositorio principal, con la issue que cierra cada PR |
+| [Índice de la documentación](docs/README.md) | Todos los documentos y la regla de sincronización documentación × código |
+
+También: [CHANGELOG](CHANGELOG.md) (cambios por versión), [CONTRIBUTING](CONTRIBUTING.md) (cómo contribuir), [SECURITY](SECURITY.md) (cómo reportar una falla) y [LICENSE](LICENSE). Estos documentos están en portugués.
 
 ## Instalar con una IA (prompt listo)
 
@@ -195,7 +200,7 @@ gitGraph
     merge develop tag: "v0.2.0"
 ```
 
-El backlog completo está en las [issues del repositorio](https://github.com/thaynabds/JobDragonQuest-publico/issues).
+Las issues y los PRs están en el repositorio principal, que es privado; el espejo público recibe el mismo código y las mismas tags. El historial completo de issues y PRs está en [docs/historico-issues-prs.md](docs/historico-issues-prs.md) y el motivo de los dos repositorios en [docs/governanca.md](docs/governanca.md). Cómo contribuir: [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Calidad y seguridad
 
@@ -216,4 +221,4 @@ El backlog completo está en las [issues del repositorio](https://github.com/tha
 
 ## Licencia
 
-Todos los derechos reservados. El código es público para consulta, pero no hay licencia de uso, copia ni redistribución sin autorización de la autora.
+Todos los derechos reservados. El código es público para consulta, pero no hay licencia de uso, copia ni redistribución sin autorización de la autora. Texto completo en [LICENSE](LICENSE).

@@ -1,0 +1,42 @@
+name: Bug
+description: Algo não funciona como a documentação diz.
+title: "fix: "
+labels: ["type:bug", "status:ready"]
+body:
+  - type: markdown
+    attributes:
+      value: Não cole tokens, senhas, e-mails nem dados de candidaturas reais. Para falha de segurança, veja SECURITY.md.
+  - type: textarea
+    id: comportamento
+    attributes:
+      label: O que acontece
+      description: Comportamento observado, com a mensagem de erro (sem dados pessoais).
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: O que deveria acontecer
+      description: Cite o requisito (RF/RNF) ou o trecho da documentação, se houver.
+    validations:
+      required: true
+  - type: textarea
+    id: passos
+    attributes:
+      label: Como reproduzir
+      placeholder: "1. scripts/iniciar.sh\n2. ...\n3. ..."
+    validations:
+      required: true
+  - type: input
+    id: versao
+    attributes:
+      label: Versão ou commit
+    validations:
+      required: true
+  - type: textarea
+    id: aceite
+    attributes:
+      label: Critério de aceite (Dado / Quando / Então)
+      placeholder: "Dado ...\nQuando ...\nEntão ..."
+    validations:
+      required: true

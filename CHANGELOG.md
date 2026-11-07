@@ -1,0 +1,99 @@
+# Changelog
+
+Todas as mudanças relevantes do JobDragonQuest. O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
+e as versões seguem o [SemVer 2.0.0](https://semver.org/lang/pt-BR/). Os números entre parênteses são as issues do
+repositório principal; a lista completa está em [docs/historico-issues-prs.md](docs/historico-issues-prs.md).
+
+## [Não lançado]
+
+### Adicionado
+- `LICENSE`, `CHANGELOG.md`, `CONTRIBUTING.md` e `SECURITY.md` (#130).
+- Templates de issue (bug, funcionalidade, documentação) e de PR com checklist de testes e segurança (#130).
+- Dependabot semanal para Maven, npm (painel e MCP) e GitHub Actions (#130).
+- `docs/README.md` com o índice dos documentos e a regra de sincronização documentação × código (#130).
+- `docs/governanca.md` explicando o espelho público e `docs/historico-issues-prs.md` com o histórico exportado (#130).
+- Coluna de issue na rastreabilidade de `docs/requisitos.md` (RF → issue → teste) (#130).
+- Conjunto padrão de 23 labels nos dois repositórios (#130).
+
+### Corrigido
+- RF22, RF23 e RF25 constavam como planejados embora entregues na v0.4.0 (#130).
+- Roadmap com critérios e cenários desatualizados depois da v0.4.0 (#130).
+
+## [0.4.0] - 2026-11-07
+
+### Adicionado
+- Perfil completo: 13 senioridades, competências em anos, meses e dias, idiomas por nome (#96).
+- Filtros do perfil valem na coleta e na compatibilidade (#102).
+- Ações em lote no quadro de candidaturas (#106) e contatos de recrutadores e gestores (#108).
+- Vagas favoritas e busca por vagas parecidas (#110).
+- Modo de automação por perfil com fila de revisão (#112).
+- Vaga a partir do link e importação de candidaturas por CSV (#114).
+- Análise de perguntas e revisão da candidatura antes de enviar (#115).
+- Extensão gratuita do navegador para salvar a vaga da página aberta (#116).
+- Currículo e carta ajustados à vaga e ferramentas de carreira (#118).
+- Documentos do perfil e atualização do currículo por PDF, Word, link e foto (#124).
+- Preferências de acessibilidade salvas na conta (#126).
+
+### Corrigido
+- Testes do agendador de coleta dependiam da ordem de execução e falhavam no CI (#98). Era a causa do CI vermelho na
+  `main` do espelho até a v0.3.2, que saiu da `main` antiga sem essa correção.
+
+## [0.3.2] - 2026-11-07
+
+### Corrigido
+- Conexão do MCP com o Claude Code (ordem do `-e` no registro) e token colado com marcadores de colagem (#119).
+
+## [0.3.1] - 2026-11-07
+
+### Adicionado
+- Espelho público com histórico limpo e script que audita antes de publicar (#89).
+
+### Corrigido
+- PostgreSQL local sobe mesmo depois de mover a pasta do projeto (#87).
+
+## [0.3.0] - 2026-11-07
+
+### Adicionado
+- Avisos configuráveis com pop-up, notificação do sistema, som e sino (#55, #56).
+- Tokens de acesso pessoal para integrações (#57).
+- Servidor MCP (#58) e instalação em um comando com conexão do MCP (#59).
+- README com prompt pronto para IA (#54) e nova logo (#61).
+- Painel em português, inglês e espanhol com idiomas automatizados (#63).
+- Central de acessibilidade (#64) e plugin do Congo Grey Parrot para o Discord (#65, #92, #94).
+
+### Alterado
+- O projeto passa a se chamar JobDragonQuest (#83).
+
+## [0.2.1] - 2026-11-06
+
+### Corrigido
+- Regra de crédito do AGENTS.md disparava a própria checagem (#50).
+
+## [0.2.0] - 2026-11-06
+
+### Adicionado
+- Fontes vigiadas em lote para vários perfis (#9), coleta de ATS públicos com agendador (#10) e lembretes de fontes
+  assistidas (#11).
+- Painel web completo em português e inglês (#12 a #17).
+- Documentação de engenharia: charter, requisitos, casos de uso, histórias e diagramas (#1 a #5), estrutura `src/` (#6),
+  README (#7) e CI (#8).
+- unlazy e OpenCode no projeto (#18) e testes de fumaça e de coleta real (#19).
+
+### Corrigido
+- Coleta manual concorrente com o agendador (#31), casos de borda da compatibilidade (#32), parada dos serviços (#36)
+  e acabamento do painel (#38).
+
+## [0.1.0] - 2026-11-05
+
+### Adicionado
+- Núcleo da API: contas, perfis, vagas, compatibilidade, candidaturas de qualquer origem, Kanban, pendências e auditoria,
+  rodando no PostgreSQL local.
+
+[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.0...develop
+[0.4.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.3.2...v0.4.0
+[0.3.2]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.3.1...v0.3.2
+[0.3.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.2.1...v0.3.0
+[0.2.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.1.0

@@ -123,6 +123,11 @@ The status of each requirement is in [docs/requisitos.md](docs/requisitos.md) an
 | [Integrations](docs/integracoes.md) | What each platform allows and how |
 | [Roadmap](docs/roadmap.md) | Status and next deliveries |
 | [Optional deployment](docs/deploy.md) | Free, optional deployment with a security checklist |
+| [Governance](docs/governanca.md) | Main repository × public mirror and how to audit the process |
+| [Issue and PR history](docs/historico-issues-prs.md) | Every issue and PR of the main repository, with the issue each PR closes |
+| [Documentation index](docs/README.md) | All documents and the docs × code sync rule |
+
+Also: [CHANGELOG](CHANGELOG.md) (changes per version), [CONTRIBUTING](CONTRIBUTING.md) (how to contribute), [SECURITY](SECURITY.md) (how to report a vulnerability) and [LICENSE](LICENSE). These documents are in Portuguese.
 
 ## Install with an AI (ready-made prompt)
 
@@ -195,7 +200,7 @@ gitGraph
     merge develop tag: "v0.2.0"
 ```
 
-The full backlog is in the [repository issues](https://github.com/thaynabds/JobDragonQuest-publico/issues).
+Issues and PRs live in the main repository, which is private; the public mirror gets the same code and the same tags. The full issue and PR history is in [docs/historico-issues-prs.md](docs/historico-issues-prs.md) and the reason for two repositories is in [docs/governanca.md](docs/governanca.md). How to contribute: [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Quality and security
 
@@ -216,4 +221,4 @@ The full backlog is in the [repository issues](https://github.com/thaynabds/JobD
 
 ## License
 
-All rights reserved. The code is public for reference, but there is no license to use, copy or redistribute it without the author's permission.
+All rights reserved. The code is public for reference, but there is no license to use, copy or redistribute it without the author's permission. Full text in [LICENSE](LICENSE).
