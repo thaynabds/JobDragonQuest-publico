@@ -1,0 +1,38 @@
+name: Funcionalidade
+description: Comportamento novo ou mudança de requisito.
+title: "feat: "
+labels: ["type:feature", "status:ready"]
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: Problema ou necessidade
+      description: Quem precisa e por quê.
+    validations:
+      required: true
+  - type: textarea
+    id: proposta
+    attributes:
+      label: Proposta
+    validations:
+      required: true
+  - type: input
+    id: requisito
+    attributes:
+      label: Requisito afetado
+      description: RF/RNF existente ou "novo". Se mudar escopo, o PR atualiza docs/requisitos.md.
+    validations:
+      required: true
+  - type: textarea
+    id: aceite
+    attributes:
+      label: Critérios de aceite (Dado / Quando / Então)
+    validations:
+      required: true
+  - type: textarea
+    id: seguranca
+    attributes:
+      label: Segurança e privacidade
+      description: Que dado novo entra, quem pode ver, que entrada externa precisa de validação.
+    validations:
+      required: true

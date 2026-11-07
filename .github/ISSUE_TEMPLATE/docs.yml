@@ -1,0 +1,19 @@
+name: Documentação
+description: Documento faltando, desatualizado ou divergente do código.
+title: "docs: "
+labels: ["type:docs", "status:ready"]
+body:
+  - type: input
+    id: arquivo
+    attributes:
+      label: Arquivo
+      placeholder: docs/requisitos.md
+    validations:
+      required: true
+  - type: textarea
+    id: divergencia
+    attributes:
+      label: O que está errado ou faltando
+      description: Se a documentação diverge do código, diga qual dos dois está certo e como você conferiu.
+    validations:
+      required: true
