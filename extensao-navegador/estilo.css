@@ -1,0 +1,10 @@
+:root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+body { margin: 0; min-width: 320px; background: Canvas; color: CanvasText; }
+main { padding: 1rem; display: grid; gap: 0.75rem; }
+h1 { font-size: 1.1rem; margin: 0; }
+label { display: grid; gap: 0.25rem; font-size: 0.9rem; }
+input { font: inherit; padding: 0.45rem; border: 1px solid GrayText; border-radius: 6px; }
+button { font: inherit; padding: 0.5rem 0.8rem; border-radius: 6px; border: 1px solid #6d28d9; background: #6d28d9; color: #fff; cursor: pointer; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid #a78bfa; outline-offset: 2px; }
+form { display: grid; gap: 0.6rem; }
+.nota { font-size: 0.8rem; opacity: 0.8; }

@@ -2,6 +2,7 @@ package dev.jobdragonquest.common.security;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -153,6 +154,33 @@ public class SecurityConfig {
         config.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", config);
-        return source;
+        CorsConfiguration extension = extensionCors();
+        CorsConfiguration denied = new CorsConfiguration();
+        return request -> {
+            String origin = request.getHeader("Origin");
+            if (origin != null && (origin.startsWith("chrome-extension://") || origin.startsWith("moz-extension://"))) {
+                String path = request.getRequestURI().substring(request.getContextPath().length());
+                return EXTENSION_PATHS.contains(path) ? extension : denied;
+            }
+            return source.getCorsConfiguration(request);
+        };
+    }
+
+    /** Rotas que a extensão do navegador usa: ler a vaga da página e cadastrar. */
+    static final Set<String> EXTENSION_PATHS = Set.of("/api/v1/jobs/from-link", "/api/v1/jobs");
+
+    /**
+     * CORS para a extensão gratuita do JobDragonQuest (issue #116). Sem cookies ({@code allowCredentials = false}): a
+     * extensão manda o token pessoal no cabeçalho, e nenhuma outra extensão consegue usar a sessão do navegador.
+     * Só POST nas duas rotas da extensão; qualquer outra rota recusa origem de extensão.
+     */
+    private static CorsConfiguration extensionCors() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("chrome-extension://*", "moz-extension://*"));
+        config.setAllowedMethods(List.of("POST"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowCredentials(false);
+        config.setMaxAge(600L);
+        return config;
     }
 }

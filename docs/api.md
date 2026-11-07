@@ -49,6 +49,9 @@ Competências: `skills[] {name, level 1–5, years, months 0–11, days 0–30}`
 | `POST /jobs` | 201 se a vaga é nova. 200 + `X-Duplicate-Of` se ela já existia |
 | `GET/PUT /jobs/{id}` | Ler e atualizar |
 | `PATCH /jobs/{id}/status` | `{status: OPEN \| CLOSED \| UNKNOWN}` |
+| `POST /jobs/from-link` | `{url}`: lê a página pública da vaga e devolve `{job, extractedFrom JSON_LD\|META}` no formato do cadastro, sem gravar. Proteção contra SSRF: só http/https nas portas padrão, todos os endereços do host precisam ser públicos (sem loopback, rede local, link-local, CGNAT, multicast, IPv6 privado), cada redirecionamento é checado de novo (até 3), até 2 MiB e 15 s. Erros: `link_blocked`, `link_unreadable`, `link_too_large`, `link_no_job` |
+| `GET /jobs/{id}/assist/answers?profileId` | Respostas sugeridas para as perguntas comuns de formulário (pretensão, início, local, autorização, visto, mudança, links, tempo com cada tecnologia pedida, idiomas, formação, carta e respostas prontas), só com dados do perfil: `[{category, question, answer, source, missing}]`. `answer` nulo com `missing` quando falta o dado: nunca inventa |
+| `GET /jobs/{id}/assist/review?profileId` | Revisão antes de enviar: `{ready, checks[{code, status OK\|WARN\|BLOCK, message}]}` (vaga encerrada, impedimentos, obrigatórios não atendidos, nota, candidatura repetida, dados de formulário, carta, perfil vazio) |
 | `PUT /jobs/{id}/favorite` | `{favorite}`: marca ou desmarca como favorita. Vaga de outra conta: 404 |
 | `GET /jobs/similar?basis&minScore&limit` | Vagas parecidas com as favoritas (`basis=FAVORITES`) ou com as 10 últimas candidaturas enviadas (`APPLIED`). `minScore` 0 a 100 (padrão 30), `limit` 1 a 100. Resposta `[{job, score, basisJobId, basisTitle, sharedWords[], sharedSkills[]}]`. Nota: índice de Jaccard das palavras do cargo (pelo radical) e das competências, metade cada. Ficam de fora favoritas, vagas com candidatura e encerradas; só vagas da própria conta |
 | `GET /jobs/{id}/matches` | Todos os perfis, do mais para o menos adequado |
@@ -67,6 +70,7 @@ Resultado da análise: `score` (0–100 ou null), `recommendation` (APPLY, REVIE
 | `PUT /applications/{id}` | Edita os dados. Exige `version` |
 | `DELETE /applications/{id}` | 204 |
 | `POST /applications/{id}/transitions` | `{toState, source, evidence, confidence?, occurredAt?, nextAction?, nextDueAt?}`. 200 `APPLIED` ou `NOTED`. 202 `SUGGESTED` quando a confiança é baixa. 409 `invalid_transition` |
+| `POST /applications/import` | `{csv}` (até 900 KB, 500 linhas): importa o histórico. Cabeçalho com empresa e cargo (pt, en ou es), separador vírgula ou ponto e vírgula; colunas opcionais link, plataforma, data (AAAA-MM-DD ou DD/MM/AAAA), etapa (nome da etapa ou palavras como enviada, entrevista, reprovada), país e notas. Origem `IMPORT`. Cada linha tem chave de idempotência própria: o mesmo arquivo não duplica. Resposta `{created, duplicates, errors[{line, code}]}` |
 | `POST /applications/batch/transitions` | `{ids (1 a 100), toState, evidence}`. Mudança manual em lote, cada candidatura na sua transação. 200 `{updated, failed[{id, code}]}`: candidatura de outra conta ou inexistente volta como `not_found`; mesma etapa vira anotação e não conta |
 | `POST /applications/{id}/notes` | `{text}`: anotação da pessoa |
 | `GET /applications/{id}/contacts` | Contatos do processo (recrutador, gestor, entrevistador, indicação). Só da conta dona; outra conta recebe 404 |
