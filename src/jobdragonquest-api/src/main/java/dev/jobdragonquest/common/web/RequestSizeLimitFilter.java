@@ -1,6 +1,8 @@
 package dev.jobdragonquest.common.web;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -23,6 +25,10 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RequestSizeLimitFilter extends OncePerRequestFilter {
 
     static final long MAX_BODY_BYTES = 1024L * 1024L;
+    /** Envio de documentos (multipart): até 6 MiB, só nestas rotas. */
+    static final long MAX_UPLOAD_BYTES = 6L * 1024L * 1024L;
+    static final Pattern UPLOAD_PATHS = Pattern.compile(
+            "/api/v1/(profiles/[0-9a-fA-F-]{36}/documents|applications/[0-9a-fA-F-]{36}/documents|documents/read)");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -33,10 +39,13 @@ public class RequestSizeLimitFilter extends OncePerRequestFilter {
         };
         long length = request.getContentLengthLong();
         boolean chunked = "chunked".equalsIgnoreCase(request.getHeader("Transfer-Encoding"));
-        if (hasBody && (length > MAX_BODY_BYTES || (length < 0 && chunked))) {
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        String type = request.getContentType() == null ? "" : request.getContentType().toLowerCase(Locale.ROOT);
+        long limit = type.startsWith("multipart/form-data") && UPLOAD_PATHS.matcher(path).matches() ? MAX_UPLOAD_BYTES : MAX_BODY_BYTES;
+        if (hasBody && (length > limit || (length < 0 && chunked))) {
             response.setStatus(HttpStatus.CONTENT_TOO_LARGE.value());
             response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-            response.getWriter().write("{\"status\":413,\"code\":\"payload_too_large\",\"detail\":\"Corpo acima de 1 MiB\"}");
+            response.getWriter().write("{\"status\":413,\"code\":\"payload_too_large\",\"detail\":\"Corpo acima do limite\"}");
             return;
         }
         chain.doFilter(request, response);

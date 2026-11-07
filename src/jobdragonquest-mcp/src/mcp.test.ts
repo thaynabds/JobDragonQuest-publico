@@ -305,6 +305,35 @@ describe("ferramentas", () => {
     expect(request).toHaveBeenCalledWith("GET", "/api/v1/career/salary?title=java");
   });
 
+  it("ler documento recebe conteúdo, nunca caminho, e envia multipart (#124)", async () => {
+    const tool = byName.jobdragonquest_ler_documento!;
+    expect(tool.readOnly).toBe(true);
+    expect(tool.schema.safeParse({ nomeArquivo: "x.pdf", conteudoBase64: "/home/x/.ssh/id_rsa; rm -rf" }).success).toBe(false);
+    const request = vi.fn().mockResolvedValue({});
+    await tool.run({ request }, { nomeArquivo: "cert.pdf", conteudoBase64: Buffer.from("%PDF-1.7 teste").toString("base64") } as never);
+    const [method, path, body] = request.mock.calls[0]!;
+    expect([method, path]).toEqual(["POST", "/api/v1/documents/read"]);
+    expect(body).toBeInstanceOf(FormData);
+    await expect(tool.run({ request }, { nomeArquivo: "vazio.pdf", conteudoBase64: "" } as never)).rejects.toThrow("5 MB");
+
+    const add = byName.jobdragonquest_adicionar_item_perfil!;
+    expect(add.schema.safeParse({ perfilId: ID, tipo: "HACK", titulo: "x" }).success).toBe(false);
+    expect(add.schema.safeParse({ perfilId: ID, tipo: "COURSE", titulo: "Git", fim: "15/10/2026" }).success).toBe(false);
+    await add.run({ request }, { perfilId: ID, tipo: "COURSE", titulo: "Git", cargaHoraria: 8 } as never);
+    expect(request).toHaveBeenLastCalledWith("POST", `/api/v1/profiles/${ID}/entries`, expect.objectContaining({ kind: "COURSE", title: "Git", hours: 8 }));
+  });
+
+  it("envia FormData sem Content-Type JSON", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
+    const client = createClient({ apiUrl: "http://127.0.0.1:8080", token: "jdq_" + "a".repeat(43) } as never, fetchImpl as never);
+    const form = new FormData();
+    form.append("file", new Blob(["x"]), "a.txt");
+    await client.request("POST", "/api/v1/documents/read", form);
+    const init = fetchImpl.mock.calls[0]![1] as RequestInit;
+    expect(init.body).toBe(form);
+    expect((init.headers as Record<string, string>)["Content-Type"]).toBeUndefined();
+  });
+
   it("marca os dados como não confiáveis e corta respostas longas", () => {
     expect(formatResult({ a: 1 })).toContain(UNTRUSTED_NOTE);
     const long = formatResult({ texto: "x".repeat(MAX_OUTPUT_CHARS * 2) });

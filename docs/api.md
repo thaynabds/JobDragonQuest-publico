@@ -147,3 +147,22 @@ Cada aviso traz `message` (pronta, em português) e campos estruturados (`type`,
 | `GET /career/skills?profileId&title` | Competências mais pedidas nas vagas da conta (até 300 mais recentes), com `inProfile` |
 | `GET /career/salary?title` | Faixa salarial por moeda e período: `min`, `median`, `max` e número de vagas |
 
+### Documentos e atualização do currículo
+
+Arquivos até 5 MB (o filtro de tamanho libera 6 MB só no multipart destas rotas), tipo identificado pelos primeiros bytes: PDF, Word .docx, texto, PNG ou JPG. Até 50 por perfil, 10 por candidatura e 200 MB por conta. Só a conta dona vê; outra conta recebe 404.
+
+| Rota | Descrição |
+|---|---|
+| `POST /profiles/{id}/documents` | Multipart `file` e `kind` (RESUME, COVER_LETTER, CERTIFICATE, OTHER). Currículo e carta ganham versão (1, 2, 3...) |
+| `GET /profiles/{id}/documents` | Lista sem conteúdo |
+| `POST /applications/{id}/documents` | Multipart `file`: anexo da candidatura |
+| `GET /applications/{id}/documents` | Lista os anexos |
+| `GET /documents/{id}/download` | Sempre como anexo, com `X-Content-Type-Options: nosniff` e `Content-Security-Policy: default-src 'none'; sandbox` |
+| `DELETE /documents/{id}` | Apaga. 204 |
+| `GET /documents/{id}/read` | Texto e proposta de um documento guardado |
+| `POST /documents/read` | Multipart `file`: lê sem guardar e devolve `{type, text, ocrUnavailable, proposal}`. PDF com Apache PDFBox (20 páginas), .docx pelo XML interno (limite contra zip-bomba), imagem com Tesseract se instalado |
+| `POST /documents/read-link` | `{url}`: lê a página do certificado com a proteção contra SSRF |
+| `POST /profiles/{id}/entries` | Acrescenta um item confirmado (curso, certificação, experiência...) sem mexer no resto do perfil |
+
+A `proposal` traz `kind` (COURSE com carga horária, senão CERTIFICATION), `title`, `organization`, `date`, `hours`, `credentialId`, `url` e `skills`, só com o que foi encontrado no texto. Nada entra no perfil sem a confirmação da pessoa.
+

@@ -61,6 +61,12 @@
 			<artifactId>bcprov-jdk18on</artifactId>
 			<version>${bouncycastle.version}</version>
 		</dependency>
+		<!-- Leitura de PDF (currículos e certificados), no computador da pessoa. Apache 2.0, gratuito. -->
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>3.0.3</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.postgresql</groupId>

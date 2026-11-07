@@ -93,6 +93,24 @@ public class ProfileService {
         return ProfileResponse.of(profile);
     }
 
+    static final int MAX_ENTRIES = 150;
+
+    /**
+     * Acrescenta um item ao perfil (issue #124): é o passo de confirmação depois de ler um certificado ou documento.
+     * Não mexe no resto do perfil.
+     */
+    @Transactional
+    public ProfileResponse appendEntry(UUID userId, UUID profileId, EntryDto dto) {
+        Profile profile = load(userId, profileId);
+        if (profile.entryCount() >= MAX_ENTRIES) {
+            throw DomainException.badRequest("profile_limit", "O perfil já tem " + MAX_ENTRIES + " itens.");
+        }
+        profile.addEntry(toEntry(dto), clock.instant());
+        repository.flush();
+        audit.record(userId, "profile.entry_added", "profile", profileId, dto.kind().name());
+        return ProfileResponse.of(profile);
+    }
+
     @Transactional
     public ProfileResponse update(UUID userId, UUID profileId, ProfileRequest request) {
         Profile profile = load(userId, profileId);

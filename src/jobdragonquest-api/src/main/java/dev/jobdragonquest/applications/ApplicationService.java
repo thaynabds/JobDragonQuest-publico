@@ -331,6 +331,12 @@ public class ApplicationService {
                 now.minus(properties.duplicateWindow())).stream().findFirst();
     }
 
+    /** Confere que a candidatura é da conta (404 se não for). */
+    @Transactional(readOnly = true)
+    public void requireOwned(UUID userId, UUID applicationId) {
+        load(userId, applicationId);
+    }
+
     /** Candidatura já registrada para a vaga (pela vaga ou pela mesma empresa e cargo na janela de duplicidade). */
     @Transactional(readOnly = true)
     public Optional<UUID> existingFor(UUID userId, UUID jobId, String company, String title) {

@@ -313,6 +313,39 @@ export interface SkillDemand {
   inProfile: boolean;
 }
 
+export const DOCUMENT_KINDS = ["RESUME", "COVER_LETTER", "CERTIFICATE", "OTHER"] as const;
+export type DocumentKind = (typeof DOCUMENT_KINDS)[number] | "ATTACHMENT";
+
+export interface StoredDocument {
+  id: string;
+  profileId: string | null;
+  applicationId: string | null;
+  kind: DocumentKind;
+  name: string;
+  contentType: string;
+  sizeBytes: number;
+  version: number;
+  createdAt: string;
+}
+
+export interface EntryProposal {
+  kind: "COURSE" | "CERTIFICATION";
+  title: string | null;
+  organization: string | null;
+  date: string | null;
+  hours: number | null;
+  credentialId: string | null;
+  url: string | null;
+  skills: string[];
+}
+
+export interface DocumentReading {
+  type: string;
+  text: string;
+  ocrUnavailable: boolean;
+  proposal: EntryProposal;
+}
+
 export interface LinkDraft {
   job: JobInput;
   extractedFrom: "JSON_LD" | "META";

@@ -311,6 +311,16 @@ public class Profile extends AssignedIdEntity {
             List<String> excludeKeywords, List<String> industries, List<ProfileAnswer> answers) {
     }
 
+    /** Acrescenta um item confirmado pela pessoa (vindo de um certificado ou documento). */
+    void addEntry(ProfileEntry entry, Instant now) {
+        entries.add(entry);
+        this.updatedAt = now;
+    }
+
+    int entryCount() {
+        return entries.size();
+    }
+
     ProfileDetails getDetails() {
         return new ProfileDetails(headline, summary, currentTitle, city, stateRegion, country, requiresSponsorship,
                 willingToRelocate, travelAvailability, noticePeriodDays, availableFrom, currentSalary, salaryPeriod,

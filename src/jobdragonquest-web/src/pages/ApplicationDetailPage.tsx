@@ -6,6 +6,7 @@ import { APPLICATION_STATES, type ApplicationState } from "../api/types";
 import { Badge, Button, Card, ExternalLink, Field, Loading, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { useAsync } from "../utils/useAsync";
+import { AttachmentsSection } from "./AttachmentsSection";
 import { ContactsSection } from "./ContactsSection";
 
 export function ApplicationDetailPage() {
@@ -169,6 +170,7 @@ export function ApplicationDetailPage() {
       </div>
 
       <ContactsSection applicationId={id} onChanged={detail.reload} />
+      <AttachmentsSection applicationId={id} />
 
       <Card title={t("application.history")}>
         <ol className="timeline">

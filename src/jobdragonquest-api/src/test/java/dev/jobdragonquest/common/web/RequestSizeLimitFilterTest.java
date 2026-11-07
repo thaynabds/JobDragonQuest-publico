@@ -49,4 +49,31 @@ class RequestSizeLimitFilterTest {
         get.addHeader("Transfer-Encoding", "chunked");
         assertThat(run(get, new MockFilterChain()).getStatus()).isEqualTo(200);
     }
+
+    /** Issue #124: até 6 MiB só em multipart nas rotas de documentos; JSON grande nelas continua recusado. */
+    @Test
+    void uploadRoutesAcceptLargerMultipartOnly() throws Exception {
+        String profileDocs = "/api/v1/profiles/123e4567-e89b-12d3-a456-426614174000/documents";
+        MockHttpServletRequest upload = new MockHttpServletRequest("POST", profileDocs);
+        upload.setContentType("multipart/form-data; boundary=x");
+        upload.setContent(new byte[5 * 1024 * 1024]);
+        MockFilterChain chain = new MockFilterChain();
+        assertThat(run(upload, chain).getStatus()).isEqualTo(200);
+        assertThat(chain.getRequest()).isNotNull();
+
+        MockHttpServletRequest tooBig = new MockHttpServletRequest("POST", profileDocs);
+        tooBig.setContentType("multipart/form-data; boundary=x");
+        tooBig.setContent(new byte[(int) RequestSizeLimitFilter.MAX_UPLOAD_BYTES + 1]);
+        assertThat(run(tooBig, new MockFilterChain()).getStatus()).isEqualTo(413);
+
+        MockHttpServletRequest jsonOnUpload = new MockHttpServletRequest("POST", profileDocs);
+        jsonOnUpload.setContentType("application/json");
+        jsonOnUpload.setContent(new byte[(int) RequestSizeLimitFilter.MAX_BODY_BYTES + 1]);
+        assertThat(run(jsonOnUpload, new MockFilterChain()).getStatus()).isEqualTo(413);
+
+        MockHttpServletRequest multipartElsewhere = new MockHttpServletRequest("POST", "/api/v1/jobs");
+        multipartElsewhere.setContentType("multipart/form-data; boundary=x");
+        multipartElsewhere.setContent(new byte[(int) RequestSizeLimitFilter.MAX_BODY_BYTES + 1]);
+        assertThat(run(multipartElsewhere, new MockFilterChain()).getStatus()).isEqualTo(413);
+    }
 }

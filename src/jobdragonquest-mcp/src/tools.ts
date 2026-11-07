@@ -245,6 +245,70 @@ export const TOOLS = [
     }),
   }),
   tool({
+    name: "jobdragonquest_ler_documento",
+    title: "Ler documento (PDF, Word, texto ou imagem)",
+    description:
+      "Lê um certificado, currículo ou outro documento enviado pela pessoa e devolve o texto e uma proposta de item para o perfil. Recebe o conteúdo em base64 (até 5 MB), nunca um caminho de arquivo. Não grava nada. Em imagem sem texto lido (ocrUnavailable), leia você mesmo a imagem e use jobdragonquest_adicionar_item_perfil depois de confirmar com a pessoa.",
+    schema: z.object({
+      nomeArquivo: text(200),
+      conteudoBase64: z
+        .string()
+        .max(7_200_000)
+        .regex(/^[A-Za-z0-9+/=\s]+$/, "base64 inválido"),
+    }),
+    readOnly: true,
+    run: async (client, args) => {
+      const bytes = Buffer.from(args.conteudoBase64.replace(/\s/g, ""), "base64");
+      if (bytes.length === 0 || bytes.length > 5 * 1024 * 1024) {
+        throw new Error("O arquivo precisa ter até 5 MB");
+      }
+      const form = new FormData();
+      form.append("file", new Blob([bytes]), args.nomeArquivo);
+      return client.request("POST", apiPath(["documents", "read"]), form);
+    },
+  }),
+  tool({
+    name: "jobdragonquest_ler_link_documento",
+    title: "Ler link de certificado ou curso",
+    description: "Lê a página pública de um certificado, credencial ou curso (só http/https públicos) e devolve texto e proposta de item. Não grava nada.",
+    schema: z.object({ url: httpUrl }),
+    readOnly: true,
+    run: (client, args) => client.request("POST", apiPath(["documents", "read-link"]), { url: args.url }),
+  }),
+  tool({
+    name: "jobdragonquest_adicionar_item_perfil",
+    title: "Adicionar item ao perfil",
+    description:
+      "Acrescenta um curso, certificação, experiência, formação, projeto, voluntariado, prêmio ou publicação ao perfil. Use SÓ dados reais vindos de um documento da pessoa ou ditos por ela, e SÓ depois de mostrar o item e ela confirmar. Nunca invente datas, cargas horárias ou emissores.",
+    schema: z.object({
+      perfilId: id,
+      tipo: z.enum(["EXPERIENCE", "ACADEMIC_EXPERIENCE", "EDUCATION", "PROJECT", "COURSE", "CERTIFICATION", "VOLUNTEER", "AWARD", "PUBLICATION"]),
+      titulo: text(200),
+      organizacao: text(200).optional(),
+      inicio: z.iso.date().optional(),
+      fim: z.iso.date().optional(),
+      descricao: text(4000).optional(),
+      url: httpUrl.optional(),
+      cargaHoraria: z.number().int().min(0).max(5000).optional(),
+      credencial: text(120).optional(),
+      competencias: text(500).optional(),
+    }),
+    readOnly: false,
+    run: (client, args) =>
+      client.request("POST", apiPath(["profiles", args.perfilId, "entries"]), {
+        kind: args.tipo,
+        title: args.titulo,
+        organization: args.organizacao ?? null,
+        startDate: args.inicio ?? null,
+        endDate: args.fim ?? null,
+        description: args.descricao ?? null,
+        url: args.url ?? null,
+        hours: args.cargaHoraria ?? null,
+        credentialId: args.credencial ?? null,
+        skills: args.competencias ?? null,
+      }),
+  }),
+  tool({
     name: "jobdragonquest_compatibilidade",
     title: "Compatibilidade da vaga",
     description: "Nota de 0 a 100 da vaga para cada perfil, com o motivo de cada requisito e os impedimentos eliminatórios.",
