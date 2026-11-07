@@ -41,7 +41,7 @@ JobFly lo reúne todo en una central única y explicable:
 | Compatibilidad | Puntuación de 0 a 100 con el motivo de cada requisito. Impedimentos eliminatorios (modalidad, ciudad, idioma, seniority) separados de la nota. APPLY solo con todos los obligatorios cumplidos. Elección automática del mejor perfil |
 | Postulaciones | Central de postulaciones de cualquier origen, con 19 etapas. Cada cambio registra origen, evidencia y confianza. La duda se vuelve sugerencia. El silencio nunca se vuelve rechazo. Sin duplicados |
 | Avisos | La API genera avisos para cambios de etapa hechos por correo, agente o sistema, acciones requeridas, pruebas técnicas, recordatorios de entrevista y plazo con antelación configurable, sugerencias, fuentes con falla o por revisar, postulaciones sin actualización y vacantes nuevas por fuente (con nota mínima). Configuración por etapa, tipo y fuente (activado, ventana emergente, sistema, sonido), horario de silencio en la zona horaria de la cuenta, posponer y marcar como leído, sin repetir avisos |
-| Panel web | Resumen, central de pendientes con acción directa, Kanban con filtros, detalle con historial, perfiles, fuentes y vacantes, en portugués e inglés |
+| Panel web | Resumen, central de pendientes con acción directa, Kanban con filtros, detalle con historial, perfiles, fuentes y vacantes, en portugués, inglés y español, con el idioma del navegador detectado en el primer acceso. Los idiomas nuevos se crean automáticamente con `scripts/novo-idioma.mjs` |
 | Operación | Un comando levanta la base, la API y el panel, solo en 127.0.0.1. Pruebas de humo y de recolección real. CI en GitHub Actions |
 
 ### Planificado
@@ -97,6 +97,16 @@ python3 scripts/testar-coleta.py          # recolección real de un board públi
 ```
 
 Las variables de entorno están en [.env.example](.env.example). Para usar el PostgreSQL del sistema (puerto 5432): `scripts/configurar-local.sh --sistema`.
+
+## Idiomas
+
+El panel viene en portugués, inglés y español. En el primer acceso, el idioma sigue el orden configurado en el navegador, y la elección queda guardada. Para crear otro idioma automáticamente:
+
+```bash
+node scripts/novo-idioma.mjs fr --nome "Français" --tradutor http://127.0.0.1:5000
+```
+
+El traductor es cualquier servicio compatible con LibreTranslate. El predeterminado es un LibreTranslate en tu propia computadora, así que los textos no salen de la máquina. Una dirección remota solo se acepta con HTTPS. Los marcadores `{x}` quedan protegidos: si una traducción rompe alguno, la frase queda en portugués y aparece en la lista de revisión. Sin traductor, `--sem-traduzir` copia el portugués para revisión humana.
 
 ## Arquitectura y estructura
 

@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from "react";
 
 import { useAuth } from "../auth/AuthContext";
+import { LanguageSelect } from "../components/LanguageSelect";
 import { Button, Field, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 
 export function LoginPage() {
-  const { t, locale, setLocale, errorMessage } = useI18n();
+  const { t, locale, errorMessage } = useI18n();
   const { login, register } = useAuth();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [displayName, setDisplayName] = useState("");
@@ -68,13 +69,7 @@ export function LoginPage() {
         <button type="button" className="link-button" onClick={() => setMode(mode === "login" ? "register" : "login")}>
           {mode === "login" ? t("auth.toRegister") : t("auth.toLogin")}
         </button>
-        <label className="lang lang-inline">
-          <span>{t("lang.label")}</span>
-          <select value={locale} onChange={(event) => setLocale(event.target.value === "en" ? "en" : "pt-BR")}>
-            <option value="pt-BR">Português</option>
-            <option value="en">English</option>
-          </select>
-        </label>
+        <LanguageSelect className="lang lang-inline" />
       </form>
     </div>
   );

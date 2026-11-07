@@ -30,7 +30,7 @@ Requisitos numerados e rastreáveis. Cada requisito aparece nas issues, nos caso
 | [RF17] | O sistema deve mostrar uma visão geral com contadores e uma central de pendências priorizadas | ✅ | UC08, US11 |
 | [RF18] | O sistema deve mostrar as candidaturas em Kanban por etapa, com filtros por perfil, empresa, plataforma e país | ✅ | US12 |
 | [RF19] | O sistema deve mostrar o histórico completo de cada candidatura, com evidências, notas e sugestões | ✅ | US06 |
-| [RF20] | O sistema deve oferecer a interface em português e inglês | ✅ | US13, `messages.test.ts` |
+| [RF20] | O sistema deve oferecer a interface em português, inglês e espanhol, detectar o idioma do navegador e permitir criar idiomas novos automaticamente | ✅ | US13, `messages.test.ts`, `scripts/verificar/idiomas.mjs` |
 | [RF21] | O sistema deve conectar Gmail e Outlook por OAuth com escopos mínimos, classificar mensagens e relacioná-las às candidaturas, nunca apagando e-mails | ⬜ | v0.3.0 |
 | [RF22] | O sistema deve analisar perguntas de formulário potencialmente eliminatórias e sugerir respostas verdadeiras | ⬜ | Agentes de IA |
 | [RF23] | O sistema deve revisar a candidatura inteira antes do envio | ⬜ | Agentes de IA |
