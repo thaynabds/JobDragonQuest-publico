@@ -43,6 +43,7 @@ O JobFly junta tudo numa central única e explicável:
 | Avisos | **Pop-up no painel** (prioridade alta fica até fechar), **notificação do sistema** e **som**, sino com contador e histórico, e tela de configuração. Avisos gerados pela API para mudanças de etapa feitas por e-mail, agente ou sistema, ações exigidas, testes técnicos, lembretes de entrevista e prazo com antecedência configurável, sugestões, fontes com falha ou a conferir, candidaturas sem atualização e vagas novas por fonte (com nota mínima). Configuração por etapa, por tipo e por fonte (ligado, pop-up, sistema, som), horário de silêncio no fuso da conta, adiar e marcar como lido, sem repetir aviso |
 | Tokens de acesso | Tokens pessoais para integrações (servidor MCP, plugin do Congo): mostrados uma única vez, guardados só como hash, com validade de 1 a 365 dias, no máximo 10 ativos e revogação na hora. Um token não cria nem revoga outros tokens |
 | Acessibilidade | Central de acessibilidade (botão ♿ arrastável ou Alt+A) com os temas do Congo Grey Parrot (claro, escuro, alto contraste, Kuro, PinkVoid, RedVoid, YellowVoid), os filtros de cor do Congo (inverter, inversão inteligente, protanopia, deuteranopia, tritanopia e monocromia, com as matrizes do Daltonizer do Android) e os recursos do a11y-widget: tamanho do texto de 80% a 140%, fonte para dislexia hospedada no próprio painel, altura de linha, espaçamento, destacar links e títulos, pausar animações e vídeos, cursor grande, foco de teclado, guia de leitura, leitura em voz alta, ocultar imagens, contraste e saturação. Link para pular a navegação e respeito a "reduzir movimento" do sistema |
+| Servidor MCP | Servidor MCP (stdio) para uma IA (Claude, Cursor e outros) usar o JobFly: resumo, pendências, avisos, perfis, vagas, compatibilidade, candidaturas e fontes vigiadas, em 17 ferramentas. Sem exclusão de dados; mudanças de etapa entram como agente e, com confiança baixa, viram sugestão para você confirmar. Só fala com a API local (ou HTTPS liberado), com token pessoal que nunca aparece nas respostas |
 | Painel web | Visão geral, central de pendências com ação direta, Kanban com filtros, detalhe com histórico, perfis, fontes e vagas, em português, inglês e espanhol, com o idioma do navegador detectado no primeiro acesso. Idiomas novos são criados automaticamente por `scripts/novo-idioma.mjs` |
 | Operação | Um comando sobe banco, API e painel, só em 127.0.0.1. Testes de fumaça e de coleta real. CI no GitHub Actions |
 
@@ -52,7 +53,7 @@ O JobFly junta tudo numa central única e explicável:
 |---|---|
 | Gmail e Outlook | OAuth com escopos mínimos, classificação de mensagens, vínculo com a candidatura e respostas autorizadas. Nunca apaga e-mails |
 | Agentes de IA | Análise de perguntas eliminatórias, revisão da candidatura antes do envio e documentos personalizados só com dados reais |
-| MCP e extensão | Servidor MCP com permissões controladas e extensão de navegador "Enviar ao JobFly" |
+| Extensão | Extensão de navegador "Enviar ao JobFly" |
 | Documentos | Currículos versionados, anexos e importação de histórico em CSV |
 
 A situação de cada requisito está em [docs/requisitos.md](docs/requisitos.md) e a ordem das próximas entregas em [docs/roadmap.md](docs/roadmap.md).

@@ -1,0 +1,29 @@
+{
+  "name": "jobfly-mcp",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Servidor MCP (stdio) para uma IA usar o JobFly local com um token de acesso pessoal.",
+  "type": "module",
+  "bin": {
+    "jobfly-mcp": "dist/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "verify": "npm run typecheck && npm run test && npm run build",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "typescript": "5.9.3",
+    "vitest": "4.1.12"
+  }
+}
