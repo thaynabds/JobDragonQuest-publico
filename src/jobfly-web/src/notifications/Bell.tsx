@@ -41,6 +41,14 @@ export function Bell() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
+  // Com o sino aberto, a lista acompanha leituras e adiamentos feitos pelo pop-up (o contador muda).
+  useEffect(() => {
+    if (open) {
+      load();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unread]);
+
   const act = (promise: Promise<unknown>) =>
     promise
       .then(() => {
