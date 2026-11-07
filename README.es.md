@@ -78,26 +78,35 @@ El estado de cada requisito está en [docs/requisitos.md](docs/requisitos.md) y 
 
 ## Cómo ejecutarlo
 
-Requisitos: **Java 21**, **Node 20.19+** y **PostgreSQL 14+** instalados. PostgreSQL solo necesita los programas: sin configuración y sin sudo.
+Funciona entero en tu computadora, sin deploy y sin nada pago. Requisitos: **Java 21**, **Node 20.19+** y **PostgreSQL 14+** instalados (PostgreSQL solo necesita sus programas: sin configuración ni sudo).
 
 ```bash
-# 1. Una vez: crea un PostgreSQL propio en data/postgres (127.0.0.1:5433)
-#    y escribe .env con contraseñas y secreto JWT aleatorios (permiso 600)
-scripts/configurar-local.sh
-
-# 2. Levanta la base, la API y el panel
-scripts/iniciar.sh
+git clone https://github.com/thaynabds/JobFly.git
+cd JobFly
+scripts/instalar.sh
 ```
 
-Abre **http://127.0.0.1:5173**, crea tu cuenta y empieza por los perfiles y las fuentes vigiladas. Para detener todo: `scripts/iniciar.sh parar`.
+El instalador revisa los requisitos (y muestra el comando para instalar lo que falte), crea un PostgreSQL solo tuyo en `data/postgres` (127.0.0.1:5433), guarda `.env` con contraseñas y secreto JWT aleatorios (permiso 600), instala el panel, compila la API y el servidor MCP y levanta todo. Puedes ejecutarlo de nuevo cuando quieras.
+
+Abre **http://127.0.0.1:5173**, crea tu cuenta y empieza por los perfiles y las fuentes vigiladas. Para detener: `scripts/iniciar.sh parar`. Para levantar de nuevo: `scripts/iniciar.sh`.
+
+Conectar tu IA a JobFly (MCP) y Discord (Congo Grey Parrot):
+
+```bash
+node scripts/conectar-mcp.mjs --cliente claude-desktop   # o claude-code, cursor, json
+scripts/conectar-congo.sh                                # opcional: avisos por mensaje directo en Discord
+```
+
+Ambos piden un token creado en **Configuración → Integraciones y tokens de acceso** y lo leen sin mostrarlo en pantalla.
 
 Verificaciones:
 
 ```bash
-cd src/jobfly-api && ./mvnw verify        # pruebas de la API y cobertura mínima del 80%
+cd src/jobfly-api && ./mvnw verify        # pruebas de la API y cobertura mínima de 80%
 cd src/jobfly-web && npm run verify       # tipos, pruebas y build del panel
+cd src/jobfly-mcp && npm run verify       # tipos, pruebas y build del servidor MCP
 python3 scripts/testar-api.py             # flujo completo contra la API en ejecución
-python3 scripts/testar-coleta.py          # recolección real de un board público de Greenhouse
+node scripts/verificar/mcp-real.mjs       # una IA usando el JobFly real por MCP
 ```
 
 Las variables de entorno están en [.env.example](.env.example). Para usar el PostgreSQL del sistema (puerto 5432): `scripts/configurar-local.sh --sistema`.
