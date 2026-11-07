@@ -16,9 +16,14 @@ import type {
   JobSummary,
   MatchResult,
   Me,
+  NotificationItem,
+  NotificationList,
+  NotificationPreference,
+  NotificationSettings,
   Page,
   PendingItem,
   PersonalToken,
+  PreferencesView,
   Profile,
   ProfileInput,
   ProfileSummary,
@@ -101,4 +106,19 @@ export const api = {
   tokens: () => request<PersonalToken[]>("/api/v1/tokens"),
   createToken: (body: { name: string; days: number }) => request<CreatedToken>("/api/v1/tokens", { method: "POST", body }),
   revokeToken: (tokenId: string) => request<void>(`/api/v1/tokens/${id(tokenId)}`, { method: "DELETE" }),
+
+  notifications: (params: { unreadOnly?: boolean; page?: number; size?: number }) =>
+    request<NotificationList>(`/api/v1/notifications${query(params)}`),
+  notificationsDue: () => request<NotificationItem[]>("/api/v1/notifications/due"),
+  markDelivered: (ids: string[]) =>
+    request<{ count: number }>("/api/v1/notifications/delivered", { method: "POST", body: { ids } }),
+  markRead: (notificationId: string) =>
+    request<NotificationItem>(`/api/v1/notifications/${id(notificationId)}/read`, { method: "POST" }),
+  markAllRead: () => request<{ count: number }>("/api/v1/notifications/read-all", { method: "POST" }),
+  snooze: (notificationId: string, minutes: number) =>
+    request<NotificationItem>(`/api/v1/notifications/${id(notificationId)}/snooze`, { method: "POST", body: { minutes } }),
+  testNotification: () => request<NotificationItem>("/api/v1/notifications/test", { method: "POST" }),
+  notificationPreferences: () => request<PreferencesView>("/api/v1/notifications/preferences"),
+  updateNotificationPreferences: (body: { settings?: NotificationSettings; preferences: NotificationPreference[] }) =>
+    request<PreferencesView>("/api/v1/notifications/preferences", { method: "PUT", body }),
 };

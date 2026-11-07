@@ -767,3 +767,156 @@ a:focus-visible {
   background: var(--surface-2);
   user-select: all;
 }
+
+/* Sino de avisos. */
+.bell {
+  position: relative;
+  margin-left: auto;
+}
+
+.bell-button {
+  position: relative;
+  font-size: 1.2rem;
+  padding: 0.3rem 0.5rem;
+}
+
+.bell-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 1.3rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--bad);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.3rem;
+  text-align: center;
+}
+
+.bell-panel {
+  position: absolute;
+  z-index: 50;
+  left: 0;
+  top: 2.6rem;
+  width: min(380px, calc(100vw - 32px));
+  max-height: 70vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+}
+
+.bell-header,
+.bell-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bell-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bell-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background: var(--primary-soft);
+}
+
+.bell-item.read {
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.bell-item > div:first-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.bell-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* Pop-ups (canto inferior esquerdo; o direito é do botão de acessibilidade). */
+.toasts {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.5rem;
+  width: min(420px, calc(100vw - 96px));
+}
+
+.toast {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  border-left: 6px solid var(--info);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
+}
+
+.toast-high {
+  border-left-color: var(--bad);
+}
+
+.toast-medium {
+  border-left-color: var(--warn);
+}
+
+.toast-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.toast-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* Configurações de avisos. */
+.settings-group {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.settings-table caption {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.75rem 0 0.35rem;
+}
+
+.settings-table td input:not([type="checkbox"]) {
+  max-width: 9rem;
+}
