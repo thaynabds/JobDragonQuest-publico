@@ -1,4 +1,4 @@
-import { request } from "./client";
+import { fetchBlob, request, sendFile } from "./client";
 import type {
   Application,
   ApplicationDetail,
@@ -9,6 +9,10 @@ import type {
   Contact,
   ContactInput,
   CreatedToken,
+  DocumentKind,
+  DocumentReading,
+  Entry,
+  StoredDocument,
   BoardColumn,
   CoverLetter,
   BulkCreateResult,
@@ -125,6 +129,30 @@ export const api = {
   interview: (jobId: string, profileId: string) => request<InterviewQuestion[]>(`/api/v1/jobs/${id(jobId)}/interview${query({ profileId })}`),
   careerSalary: (params: { title?: string }) => request<SalaryStats[]>(`/api/v1/career/salary${query(params)}`),
   careerSkills: (params: { profileId?: string; title?: string }) => request<SkillDemand[]>(`/api/v1/career/skills${query(params)}`),
+  profileDocuments: (profileId: string) => request<StoredDocument[]>(`/api/v1/profiles/${id(profileId)}/documents`),
+  saveProfileDocument: (profileId: string, kind: DocumentKind, file: File) => {
+    const form = new FormData();
+    form.append("kind", kind);
+    form.append("file", file);
+    return sendFile<StoredDocument>(`/api/v1/profiles/${id(profileId)}/documents`, form);
+  },
+  applicationDocuments: (applicationId: string) => request<StoredDocument[]>(`/api/v1/applications/${id(applicationId)}/documents`),
+  saveApplicationDocument: (applicationId: string, file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return sendFile<StoredDocument>(`/api/v1/applications/${id(applicationId)}/documents`, form);
+  },
+  downloadDocument: (documentId: string) => fetchBlob(`/api/v1/documents/${id(documentId)}/download`),
+  deleteDocument: (documentId: string) => request<void>(`/api/v1/documents/${id(documentId)}`, { method: "DELETE" }),
+  readStoredDocument: (documentId: string) => request<DocumentReading>(`/api/v1/documents/${id(documentId)}/read`),
+  readDocument: (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return sendFile<DocumentReading>("/api/v1/documents/read", form);
+  },
+  readLinkDocument: (url: string) => request<DocumentReading>("/api/v1/documents/read-link", { method: "POST", body: { url } }),
+  appendEntry: (profileId: string, entry: Partial<Entry> & { kind: string; title: string }) =>
+    request<Profile>(`/api/v1/profiles/${id(profileId)}/entries`, { method: "POST", body: entry }),
   jobFromLink: (url: string) => request<LinkDraft>("/api/v1/jobs/from-link", { method: "POST", body: { url } }),
   importApplications: (csv: string) => request<ImportResult>("/api/v1/applications/import", { method: "POST", body: { csv } }),
   matches: (jobId: string) => request<MatchResult[]>(`/api/v1/jobs/${id(jobId)}/matches`),

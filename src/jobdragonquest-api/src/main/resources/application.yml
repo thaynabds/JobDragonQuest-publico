@@ -17,6 +17,11 @@ spring:
   threads:
     virtual:
       enabled: true
+  # Documentos (issue #124): até 5 MB por arquivo; o filtro de tamanho libera 6 MB só nas rotas de upload.
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
 
 server:
   port: ${JOBDRAGONQUEST_PORT:8080}

@@ -28,6 +28,7 @@ import { useI18n } from "../i18n/I18nContext";
 import { isLocale, LOCALE_NAMES, LOCALES, type Locale, type MessageKey } from "../i18n/messages";
 import { countryCode, countryName, countryOptions, languageName, languageOptions } from "../utils/places";
 import { splitList } from "../utils/safe";
+import { DocumentsSection } from "./DocumentsSection";
 
 /** Campos de lista editados como texto separado por vírgula. */
 const LIST_FIELDS = ["desiredTitles", "locations", "industries", "includeKeywords", "excludeKeywords", "excludedCompanies"] as const;
@@ -236,6 +237,7 @@ export function ProfileEditorPage() {
   );
 
   return (
+    <>
     <form className="page" onSubmit={(event) => void submit(event)}>
       <div className="page-header">
         <h1>{isNew ? t("profiles.new") : form.name}</h1>
@@ -674,5 +676,18 @@ export function ProfileEditorPage() {
         )}
       </Section>
     </form>
+    {!isNew && id && (
+      <div className="page">
+        <DocumentsSection
+          profileId={id}
+          onAdded={(profile) => {
+            // Só os itens e a versão mudam: o resto do que está sendo editado fica como está.
+            const fresh = toInput(profile, locale);
+            patch({ entries: fresh.entries, version: fresh.version });
+          }}
+        />
+      </div>
+    )}
+    </>
   );
 }

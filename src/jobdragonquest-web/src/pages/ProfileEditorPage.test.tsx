@@ -13,6 +13,7 @@ const api = vi.hoisted(() => ({
   updateProfile: vi.fn(),
   deleteProfile: vi.fn(),
   profile: vi.fn(),
+  profileDocuments: vi.fn(),
 }));
 vi.mock("../api/endpoints", () => ({ api }));
 
@@ -80,6 +81,7 @@ const saved: Profile = {
 
 beforeEach(() => {
   Object.values(api).forEach((mock) => mock.mockReset());
+  api.profileDocuments.mockResolvedValue({ data: [] });
 });
 
 describe("nomes de idiomas e países", () => {

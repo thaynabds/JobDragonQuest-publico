@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.jobdragonquest.common.security.CurrentUser;
+import dev.jobdragonquest.profiles.ProfileDtos.EntryDto;
 import dev.jobdragonquest.profiles.ProfileDtos.ProfileRequest;
 import dev.jobdragonquest.profiles.ProfileDtos.ProfileResponse;
 import dev.jobdragonquest.profiles.ProfileDtos.ProfileSummary;
@@ -46,6 +47,11 @@ class ProfileController {
     ResponseEntity<ProfileResponse> create(@Valid @RequestBody ProfileRequest request) {
         ProfileResponse profile = profiles.create(currentUser.id(), request);
         return ResponseEntity.created(URI.create("/api/v1/profiles/" + profile.id())).body(profile);
+    }
+
+    @PostMapping("/{id}/entries")
+    ProfileResponse appendEntry(@PathVariable UUID id, @Valid @RequestBody EntryDto entry) {
+        return profiles.appendEntry(currentUser.id(), id, entry);
     }
 
     @PutMapping("/{id}")

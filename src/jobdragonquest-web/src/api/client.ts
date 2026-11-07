@@ -106,6 +106,41 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   return parse<T>(response);
 }
 
+/** Envia um arquivo (multipart). O navegador monta o Content-Type com o boundary; o token vai no cabeçalho. */
+export async function sendFile<T>(path: string, form: FormData): Promise<ApiResponse<T>> {
+  if (!path.startsWith("/api/")) {
+    throw new Error("Caminho de API inválido");
+  }
+  const send = () =>
+    fetch(path, {
+      method: "POST",
+      headers: accessToken ? { Accept: "application/json", Authorization: `Bearer ${accessToken}` } : { Accept: "application/json" },
+      body: form,
+      credentials: "same-origin",
+    });
+  let response = await send();
+  if (response.status === 401 && (await refreshSession())) {
+    response = await send();
+  }
+  return parse<T>(response);
+}
+
+/** Baixa um arquivo da API como Blob, com o token no cabeçalho (link direto não levaria a autenticação). */
+export async function fetchBlob(path: string): Promise<Blob> {
+  if (!path.startsWith("/api/")) {
+    throw new Error("Caminho de API inválido");
+  }
+  const send = () => fetch(path, { headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {}, credentials: "same-origin" });
+  let response = await send();
+  if (response.status === 401 && (await refreshSession())) {
+    response = await send();
+  }
+  if (!response.ok) {
+    await parse(response);
+  }
+  return response.blob();
+}
+
 async function parse<T>(response: Response): Promise<ApiResponse<T>> {
   const text = await response.text();
   let body: unknown = null;
