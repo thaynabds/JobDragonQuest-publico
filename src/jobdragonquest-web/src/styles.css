@@ -971,3 +971,32 @@ a:focus-visible {
 .contact-list > li > button {
   align-self: flex-start;
 }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.star {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--warn);
+  font-size: 1.2rem;
+  line-height: 1;
+  min-width: 2rem;
+  min-height: 2rem;
+  cursor: pointer;
+}
+
+.star:hover,
+.star:focus-visible {
+  border-color: var(--primary);
+}

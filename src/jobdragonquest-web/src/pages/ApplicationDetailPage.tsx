@@ -3,15 +3,7 @@ import { Link, useNavigate, useParams } from "react-router";
 
 import { api } from "../api/endpoints";
 import { APPLICATION_STATES, type ApplicationState } from "../api/types";
-import {
-  Badge,
-  Button,
-  Card,
-  ExternalLink,
-  Field,
-  Loading,
-  Notice,
-} from "../components/ui";
+import { Badge, Button, Card, ExternalLink, Field, Loading, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { useAsync } from "../utils/useAsync";
 import { ContactsSection } from "./ContactsSection";
@@ -51,11 +43,7 @@ export function ApplicationDetailPage() {
       });
       setEvidence("");
       setNextAction("");
-      return data.outcome === "APPLIED"
-        ? t("application.applied")
-        : data.outcome === "SUGGESTED"
-          ? t("application.suggested")
-          : t("application.noted");
+      return data.outcome === "APPLIED" ? t("application.applied") : data.outcome === "SUGGESTED" ? t("application.suggested") : t("application.noted");
     });
   };
 
@@ -75,9 +63,7 @@ export function ApplicationDetailPage() {
     return <Notice tone="error">{errorMessage(detail.error)}</Notice>;
   }
   const { application: app, events } = detail.data;
-  const pending = events.filter(
-    (event) => event.kind === "SUGGESTION" && event.status === "PENDING",
-  );
+  const pending = events.filter((event) => event.kind === "SUGGESTION" && event.status === "PENDING");
 
   return (
     <div className="page">
@@ -88,24 +74,20 @@ export function ApplicationDetailPage() {
         <div>
           <h1>{app.title}</h1>
           <p className="muted">
-            {app.company} · {app.platform ?? label("origin", app.origin)}{" "}
-            <Badge tone="info">{label("state", app.state)}</Badge>{" "}
+            {app.company} · {app.platform ?? label("origin", app.origin)} <Badge tone="info">{label("state", app.state)}</Badge>{" "}
             {app.stale && <Badge tone="warn">{t("board.stale")}</Badge>}
           </p>
         </div>
         <div className="row-actions">
           <ExternalLink href={app.url}>{t("application.open")}</ExternalLink>
-          {app.jobId && (
-            <Link to={`/vagas/${app.jobId}`}>{t("jobs.matches")}</Link>
-          )}
+          {app.jobId && <Link to={`/vagas/${app.jobId}`}>{t("jobs.matches")}</Link>}
           <Button
             variant="danger"
             onClick={() => {
               if (window.confirm(t("common.confirmDelete"))) {
                 void api.deleteApplication(id).then(
                   () => navigate("/candidaturas", { replace: true }),
-                  (err: unknown) =>
-                    setNotice({ tone: "error", text: errorMessage(err) }),
+                  (err: unknown) => setNotice({ tone: "error", text: errorMessage(err) }),
                 );
               }
             }}
@@ -131,9 +113,7 @@ export function ApplicationDetailPage() {
         </div>
         <div>
           <span className="muted small">{t("board.score")}</span>
-          <span>
-            {app.matchScore === null ? t("common.none") : `${app.matchScore}%`}
-          </span>
+          <span>{app.matchScore === null ? t("common.none") : `${app.matchScore}%`}</span>
         </div>
         <div>
           <span className="muted small">{t("board.next")}</span>
@@ -144,35 +124,12 @@ export function ApplicationDetailPage() {
 
       {pending.map((suggestion) => (
         <Notice key={suggestion.id} tone="info">
-          <strong>{t("application.suggestion")}:</strong>{" "}
-          {label("state", suggestion.toState)} — {suggestion.evidence} (
-          {t("application.confidence")}{" "}
+          <strong>{t("application.suggestion")}:</strong> {label("state", suggestion.toState)} — {suggestion.evidence} ({t("application.confidence")}{" "}
           {Math.round(suggestion.confidence * 100)}%){" "}
-          <Button
-            variant="primary"
-            onClick={() =>
-              void act(
-                async () => (
-                  await api.acceptSuggestion(id, suggestion.id),
-                  t("application.applied")
-                ),
-              )
-            }
-          >
+          <Button variant="primary" onClick={() => void act(async () => (await api.acceptSuggestion(id, suggestion.id), t("application.applied")))}>
             {t("dashboard.accept")}
           </Button>{" "}
-          <Button
-            onClick={() =>
-              void act(
-                async () => (
-                  await api.dismissSuggestion(id, suggestion.id),
-                  t("common.saved")
-                ),
-              )
-            }
-          >
-            {t("dashboard.dismiss")}
-          </Button>
+          <Button onClick={() => void act(async () => (await api.dismissSuggestion(id, suggestion.id), t("common.saved")))}>{t("dashboard.dismiss")}</Button>
         </Notice>
       ))}
 
@@ -180,10 +137,7 @@ export function ApplicationDetailPage() {
         <Card title={t("application.changeState")}>
           <form onSubmit={transition}>
             <Field label={t("application.state")}>
-              <select
-                value={toState}
-                onChange={(e) => setToState(e.target.value as ApplicationState)}
-              >
+              <select value={toState} onChange={(e) => setToState(e.target.value as ApplicationState)}>
                 {APPLICATION_STATES.map((state) => (
                   <option key={state} value={state}>
                     {label("state", state)}
@@ -191,24 +145,11 @@ export function ApplicationDetailPage() {
                 ))}
               </select>
             </Field>
-            <Field
-              label={t("application.evidence")}
-              hint={t("application.evidenceHint")}
-            >
-              <textarea
-                rows={3}
-                required
-                maxLength={4000}
-                value={evidence}
-                onChange={(e) => setEvidence(e.target.value)}
-              />
+            <Field label={t("application.evidence")} hint={t("application.evidenceHint")}>
+              <textarea rows={3} required maxLength={4000} value={evidence} onChange={(e) => setEvidence(e.target.value)} />
             </Field>
             <Field label={t("board.next")}>
-              <input
-                maxLength={500}
-                value={nextAction}
-                onChange={(e) => setNextAction(e.target.value)}
-              />
+              <input maxLength={500} value={nextAction} onChange={(e) => setNextAction(e.target.value)} />
             </Field>
             <Button type="submit" variant="primary" disabled={!evidence.trim()}>
               {t("common.save")}
@@ -218,13 +159,7 @@ export function ApplicationDetailPage() {
         <Card title={t("application.addNote")}>
           <form onSubmit={addNote}>
             <Field label={t("application.note")}>
-              <textarea
-                rows={3}
-                required
-                maxLength={4000}
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-              />
+              <textarea rows={3} required maxLength={4000} value={note} onChange={(e) => setNote(e.target.value)} />
             </Field>
             <Button type="submit" disabled={!note.trim()}>
               {t("common.save")}
@@ -238,20 +173,9 @@ export function ApplicationDetailPage() {
       <Card title={t("application.history")}>
         <ol className="timeline">
           {[...events].reverse().map((event) => (
-            <li
-              key={event.id}
-              className={`timeline-${event.kind.toLowerCase()}`}
-            >
+            <li key={event.id} className={`timeline-${event.kind.toLowerCase()}`}>
               <div className="timeline-head">
-                <Badge
-                  tone={
-                    event.kind === "SUGGESTION"
-                      ? "warn"
-                      : event.kind === "NOTE"
-                        ? "neutral"
-                        : "info"
-                  }
-                >
+                <Badge tone={event.kind === "SUGGESTION" ? "warn" : event.kind === "NOTE" ? "neutral" : "info"}>
                   {event.kind === "STATE_CHANGE"
                     ? label("state", event.toState)
                     : event.kind === "SUGGESTION"
@@ -259,12 +183,8 @@ export function ApplicationDetailPage() {
                       : t("application.note")}
                 </Badge>
                 <span className="muted small">
-                  {formatDate(event.occurredAt, true)} ·{" "}
-                  {t("application.source")}:{" "}
-                  {label("eventSource", event.source)} ·{" "}
-                  {t("application.confidence")}{" "}
-                  {Math.round(event.confidence * 100)}%
-                  {event.kind === "SUGGESTION" ? ` · ${event.status}` : ""}
+                  {formatDate(event.occurredAt, true)} · {t("application.source")}: {label("eventSource", event.source)} · {t("application.confidence")}{" "}
+                  {Math.round(event.confidence * 100)}%{event.kind === "SUGGESTION" ? ` · ${event.status}` : ""}
                 </span>
               </div>
               {/* A evidência pode ter vindo de um e-mail: é exibida como texto, nunca como HTML. */}

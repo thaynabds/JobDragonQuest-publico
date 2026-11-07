@@ -1,19 +1,8 @@
 import { useState, type FormEvent } from "react";
 
 import { api } from "../api/endpoints";
-import {
-  CONTACT_ROLES,
-  type ContactInput,
-  type ContactRole,
-} from "../api/types";
-import {
-  Badge,
-  Button,
-  Card,
-  ExternalLink,
-  Field,
-  Notice,
-} from "../components/ui";
+import { CONTACT_ROLES, type ContactInput, type ContactRole } from "../api/types";
+import { Badge, Button, Card, ExternalLink, Field, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { useAsync } from "../utils/useAsync";
 
@@ -29,18 +18,9 @@ const empty: ContactInput = {
 };
 
 /** Contatos de recrutadores, gestores e indicações de uma candidatura (issue #108). */
-export function ContactsSection({
-  applicationId,
-  onChanged,
-}: {
-  applicationId: string;
-  onChanged: () => void;
-}) {
+export function ContactsSection({ applicationId, onChanged }: { applicationId: string; onChanged: () => void }) {
   const { t, label, formatDate, errorMessage } = useI18n();
-  const contacts = useAsync(
-    () => api.contacts(applicationId).then((r) => r.data),
-    [applicationId],
-  );
+  const contacts = useAsync(() => api.contacts(applicationId).then((r) => r.data), [applicationId]);
   const [form, setForm] = useState<ContactInput>(empty);
   const [notice, setNotice] = useState<{
     tone: "error" | "success";
@@ -86,18 +66,13 @@ export function ContactsSection({
           {notice.text}
         </Notice>
       )}
-      {contacts.error ? (
-        <Notice tone="error">{errorMessage(contacts.error)}</Notice>
-      ) : null}
-      {(contacts.data ?? []).length === 0 && !contacts.loading && (
-        <p className="muted small">{t("contacts.empty")}</p>
-      )}
+      {contacts.error ? <Notice tone="error">{errorMessage(contacts.error)}</Notice> : null}
+      {(contacts.data ?? []).length === 0 && !contacts.loading && <p className="muted small">{t("contacts.empty")}</p>}
       <ul className="contact-list">
         {(contacts.data ?? []).map((contact) => (
           <li key={contact.id}>
             <div>
-              <strong>{contact.name}</strong>{" "}
-              <Badge>{label("contactRole", contact.role)}</Badge>
+              <strong>{contact.name}</strong> <Badge>{label("contactRole", contact.role)}</Badge>
               {contact.contactedAt && (
                 <Badge tone="info">
                   {t("contacts.contactedAt", {
@@ -106,13 +81,9 @@ export function ContactsSection({
                 </Badge>
               )}
             </div>
-            {contact.position && (
-              <span className="small">{contact.position}</span>
-            )}
+            {contact.position && <span className="small">{contact.position}</span>}
             {contact.email && <span className="small">{contact.email}</span>}
-            {contact.linkedinUrl && (
-              <ExternalLink href={contact.linkedinUrl}>LinkedIn</ExternalLink>
-            )}
+            {contact.linkedinUrl && <ExternalLink href={contact.linkedinUrl}>LinkedIn</ExternalLink>}
             {contact.notes && <p className="prewrap small">{contact.notes}</p>}
             <Button variant="danger" onClick={() => void remove(contact.id)}>
               {t("contacts.remove", { name: contact.name })}
@@ -120,26 +91,12 @@ export function ContactsSection({
           </li>
         ))}
       </ul>
-      <form
-        className="form-grid"
-        onSubmit={(event) => void submit(event)}
-        aria-label={t("contacts.add")}
-      >
+      <form className="form-grid" onSubmit={(event) => void submit(event)} aria-label={t("contacts.add")}>
         <Field label={t("contacts.name")}>
-          <input
-            required
-            maxLength={120}
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
+          <input required maxLength={120} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
         </Field>
         <Field label={t("contacts.role")}>
-          <select
-            value={form.role}
-            onChange={(e) =>
-              setForm({ ...form, role: e.target.value as ContactRole })
-            }
-          >
+          <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as ContactRole })}>
             {CONTACT_ROLES.map((role) => (
               <option key={role} value={role}>
                 {label("contactRole", role)}
@@ -148,42 +105,19 @@ export function ContactsSection({
           </select>
         </Field>
         <Field label={t("contacts.position")}>
-          <input
-            maxLength={120}
-            value={form.position ?? ""}
-            onChange={(e) => setForm({ ...form, position: e.target.value })}
-          />
+          <input maxLength={120} value={form.position ?? ""} onChange={(e) => setForm({ ...form, position: e.target.value })} />
         </Field>
         <Field label={t("contacts.email")}>
-          <input
-            type="email"
-            maxLength={254}
-            value={form.email ?? ""}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-          />
+          <input type="email" maxLength={254} value={form.email ?? ""} onChange={(e) => setForm({ ...form, email: e.target.value })} />
         </Field>
         <Field label={t("contacts.linkedin")} wide>
-          <input
-            type="url"
-            maxLength={500}
-            value={form.linkedinUrl ?? ""}
-            onChange={(e) => setForm({ ...form, linkedinUrl: e.target.value })}
-          />
+          <input type="url" maxLength={500} value={form.linkedinUrl ?? ""} onChange={(e) => setForm({ ...form, linkedinUrl: e.target.value })} />
         </Field>
         <Field label={t("contacts.notes")} wide>
-          <textarea
-            rows={2}
-            maxLength={2000}
-            value={form.notes ?? ""}
-            onChange={(e) => setForm({ ...form, notes: e.target.value })}
-          />
+          <textarea rows={2} maxLength={2000} value={form.notes ?? ""} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
         </Field>
         <label className="check">
-          <input
-            type="checkbox"
-            checked={form.contacted}
-            onChange={(e) => setForm({ ...form, contacted: e.target.checked })}
-          />
+          <input type="checkbox" checked={form.contacted} onChange={(e) => setForm({ ...form, contacted: e.target.checked })} />
           {t("contacts.contacted")}
         </label>
         <div className="field">

@@ -2,13 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { api } from "../api/endpoints";
-import {
-  APPLICATION_STATES,
-  ORIGINS,
-  type ApplicationState,
-  type CreateApplicationInput,
-  type Origin,
-} from "../api/types";
+import { APPLICATION_STATES, ORIGINS, type ApplicationState, type CreateApplicationInput, type Origin } from "../api/types";
 import { Badge, Button, Card, Field, Loading, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { localInputToIso, newIdempotencyKey } from "../utils/safe";
@@ -40,9 +34,7 @@ export function BoardPage() {
   );
   const profiles = useAsync(() => api.profiles().then((r) => r.data), []);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState<
-    CreateApplicationInput & { appliedLocal: string }
-  >({
+  const [form, setForm] = useState<CreateApplicationInput & { appliedLocal: string }>({
     origin: "MANUAL",
     platform: "LinkedIn",
     company: "",
@@ -54,9 +46,7 @@ export function BoardPage() {
     profileId: "",
     appliedLocal: "",
   });
-  const [idempotencyKey, setIdempotencyKey] = useState(() =>
-    newIdempotencyKey("ext"),
-  );
+  const [idempotencyKey, setIdempotencyKey] = useState(() => newIdempotencyKey("ext"));
   const [notice, setNotice] = useState<{
     tone: "error" | "success";
     text: string;
@@ -134,11 +124,7 @@ export function BoardPage() {
     }
   };
 
-  const columns = (board.data ?? []).filter(
-    (column) =>
-      column.count > 0 ||
-      ["SUBMITTED", "INTERVIEW_SCHEDULED"].includes(column.state),
-  );
+  const columns = (board.data ?? []).filter((column) => column.count > 0 || ["SUBMITTED", "INTERVIEW_SCHEDULED"].includes(column.state));
 
   return (
     <div className="page page-wide">
@@ -158,77 +144,33 @@ export function BoardPage() {
         <Card title={t("board.new")}>
           <form className="form-grid" onSubmit={(event) => void submit(event)}>
             <Field label={t("board.company")}>
-              <input
-                value={form.company ?? ""}
-                required
-                maxLength={200}
-                onChange={(e) => setForm({ ...form, company: e.target.value })}
-              />
+              <input value={form.company ?? ""} required maxLength={200} onChange={(e) => setForm({ ...form, company: e.target.value })} />
             </Field>
             <Field label={t("application.title")}>
-              <input
-                value={form.title ?? ""}
-                required
-                maxLength={200}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-              />
+              <input value={form.title ?? ""} required maxLength={200} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             </Field>
             <Field label={t("application.origin")}>
-              <select
-                value={form.origin}
-                onChange={(e) =>
-                  setForm({ ...form, origin: e.target.value as Origin })
-                }
-              >
-                {ORIGINS.filter((origin) => origin !== "AUTOMATION").map(
-                  (origin) => (
-                    <option key={origin} value={origin}>
-                      {label("origin", origin)}
-                    </option>
-                  ),
-                )}
+              <select value={form.origin} onChange={(e) => setForm({ ...form, origin: e.target.value as Origin })}>
+                {ORIGINS.filter((origin) => origin !== "AUTOMATION").map((origin) => (
+                  <option key={origin} value={origin}>
+                    {label("origin", origin)}
+                  </option>
+                ))}
               </select>
             </Field>
             <Field label={t("board.platform")}>
-              <input
-                value={form.platform ?? ""}
-                maxLength={80}
-                list="platforms"
-                onChange={(e) => setForm({ ...form, platform: e.target.value })}
-              />
+              <input value={form.platform ?? ""} maxLength={80} list="platforms" onChange={(e) => setForm({ ...form, platform: e.target.value })} />
               <datalist id="platforms">
-                {[
-                  "LinkedIn",
-                  "Gupy",
-                  "Indeed",
-                  "Site da empresa",
-                  "Instagram",
-                  "Facebook",
-                  "E-mail",
-                  "Indicação",
-                  "Workday",
-                  "Greenhouse",
-                ].map((p) => (
+                {["LinkedIn", "Gupy", "Indeed", "Site da empresa", "Instagram", "Facebook", "E-mail", "Indicação", "Workday", "Greenhouse"].map((p) => (
                   <option key={p} value={p} />
                 ))}
               </datalist>
             </Field>
             <Field label={t("application.url")} wide>
-              <input
-                type="url"
-                value={form.url ?? ""}
-                maxLength={2048}
-                onChange={(e) => setForm({ ...form, url: e.target.value })}
-              />
+              <input type="url" value={form.url ?? ""} maxLength={2048} onChange={(e) => setForm({ ...form, url: e.target.value })} />
             </Field>
             <Field label={t("application.appliedAt")}>
-              <input
-                type="datetime-local"
-                value={form.appliedLocal}
-                onChange={(e) =>
-                  setForm({ ...form, appliedLocal: e.target.value })
-                }
-              />
+              <input type="datetime-local" value={form.appliedLocal} onChange={(e) => setForm({ ...form, appliedLocal: e.target.value })} />
             </Field>
             <Field label={t("application.state")}>
               <select
@@ -248,12 +190,7 @@ export function BoardPage() {
               </select>
             </Field>
             <Field label={t("board.profile")}>
-              <select
-                value={form.profileId ?? ""}
-                onChange={(e) =>
-                  setForm({ ...form, profileId: e.target.value })
-                }
-              >
+              <select value={form.profileId ?? ""} onChange={(e) => setForm({ ...form, profileId: e.target.value })}>
                 <option value="">{t("common.none")}</option>
                 {(profiles.data ?? []).map((profile) => (
                   <option key={profile.id} value={profile.id}>
@@ -263,19 +200,10 @@ export function BoardPage() {
               </select>
             </Field>
             <Field label={t("board.country")}>
-              <input
-                value={form.country ?? ""}
-                maxLength={2}
-                onChange={(e) => setForm({ ...form, country: e.target.value })}
-              />
+              <input value={form.country ?? ""} maxLength={2} onChange={(e) => setForm({ ...form, country: e.target.value })} />
             </Field>
             <Field label={t("application.notes")} wide>
-              <textarea
-                rows={2}
-                maxLength={4000}
-                value={form.notes ?? ""}
-                onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              />
+              <textarea rows={2} maxLength={4000} value={form.notes ?? ""} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
             </Field>
             <div className="field">
               <Button type="submit" variant="primary">
@@ -293,13 +221,7 @@ export function BoardPage() {
           setApplied(filters);
         }}
       >
-        <select
-          aria-label={t("board.profile")}
-          value={filters.profileId}
-          onChange={(e) =>
-            setFilters({ ...filters, profileId: e.target.value })
-          }
-        >
+        <select aria-label={t("board.profile")} value={filters.profileId} onChange={(e) => setFilters({ ...filters, profileId: e.target.value })}>
           <option value="">
             {t("board.profile")}: {t("common.all")}
           </option>
@@ -309,22 +231,9 @@ export function BoardPage() {
             </option>
           ))}
         </select>
-        <input
-          placeholder={t("board.company")}
-          value={filters.company}
-          onChange={(e) => setFilters({ ...filters, company: e.target.value })}
-        />
-        <input
-          placeholder={t("board.platform")}
-          value={filters.platform}
-          onChange={(e) => setFilters({ ...filters, platform: e.target.value })}
-        />
-        <input
-          placeholder={t("board.country")}
-          maxLength={2}
-          value={filters.country}
-          onChange={(e) => setFilters({ ...filters, country: e.target.value })}
-        />
+        <input placeholder={t("board.company")} value={filters.company} onChange={(e) => setFilters({ ...filters, company: e.target.value })} />
+        <input placeholder={t("board.platform")} value={filters.platform} onChange={(e) => setFilters({ ...filters, platform: e.target.value })} />
+        <input placeholder={t("board.country")} maxLength={2} value={filters.country} onChange={(e) => setFilters({ ...filters, country: e.target.value })} />
         <Button type="submit">{t("common.filter")}</Button>
       </form>
 
@@ -356,53 +265,30 @@ export function BoardPage() {
             </select>
           </Field>
           <Field label={t("board.batchEvidence")}>
-            <input
-              required
-              maxLength={4000}
-              value={batch.evidence}
-              onChange={(e) => setBatch({ ...batch, evidence: e.target.value })}
-            />
+            <input required maxLength={4000} value={batch.evidence} onChange={(e) => setBatch({ ...batch, evidence: e.target.value })} />
           </Field>
           <Button type="submit" variant="primary" disabled={busy}>
             {t("board.batchApply")}
           </Button>
-          <Button
-            type="button"
-            disabled={busy}
-            onClick={() =>
-              void runBatch("CLOSED", t("board.batchDiscardReason"))
-            }
-          >
+          <Button type="button" disabled={busy} onClick={() => void runBatch("CLOSED", t("board.batchDiscardReason"))}>
             {t("board.batchDiscard")}
           </Button>
-          <Button
-            type="button"
-            disabled={busy}
-            onClick={() => setSelected(new Set())}
-          >
+          <Button type="button" disabled={busy} onClick={() => setSelected(new Set())}>
             {t("board.batchClear")}
           </Button>
         </form>
       )}
 
-      {board.error ? (
-        <Notice tone="error">{errorMessage(board.error)}</Notice>
-      ) : null}
+      {board.error ? <Notice tone="error">{errorMessage(board.error)}</Notice> : null}
       {board.loading && !board.data ? <Loading /> : null}
       <div className="board">
         {columns.map((column) => (
-          <section
-            key={column.state}
-            className="column"
-            aria-label={label("state", column.state)}
-          >
+          <section key={column.state} className="column" aria-label={label("state", column.state)}>
             <header className="column-header">
               <span>{label("state", column.state)}</span>
               <Badge>{column.count}</Badge>
             </header>
-            {column.cards.length === 0 && (
-              <p className="muted small">{t("board.empty")}</p>
-            )}
+            {column.cards.length === 0 && <p className="muted small">{t("board.empty")}</p>}
             {column.cards.map((card) => (
               <div key={card.id} className="kanban-item">
                 <input
@@ -417,20 +303,13 @@ export function BoardPage() {
                   <strong>{card.title}</strong>
                   <span>{card.company}</span>
                   <span className="small muted">
-                    {card.platform ?? label("origin", card.origin)} ·{" "}
-                    {formatDate(card.appliedAt ?? card.createdAt)}
+                    {card.platform ?? label("origin", card.origin)} · {formatDate(card.appliedAt ?? card.createdAt)}
                   </span>
                   <span className="card-badges">
-                    {card.matchScore !== null && (
-                      <Badge tone="info">{card.matchScore}%</Badge>
-                    )}
-                    {card.stale && (
-                      <Badge tone="warn">{t("board.stale")}</Badge>
-                    )}
+                    {card.matchScore !== null && <Badge tone="info">{card.matchScore}%</Badge>}
+                    {card.stale && <Badge tone="warn">{t("board.stale")}</Badge>}
                   </span>
-                  {card.nextAction && (
-                    <span className="small">→ {card.nextAction}</span>
-                  )}
+                  {card.nextAction && <span className="small">→ {card.nextAction}</span>}
                 </Link>
               </div>
             ))}

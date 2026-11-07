@@ -1,10 +1,14 @@
 package dev.jobdragonquest.jobs;
 
 import java.time.Clock;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,12 +25,14 @@ import dev.jobdragonquest.jobs.JobDtos.JobCreated;
 import dev.jobdragonquest.jobs.JobDtos.JobRequest;
 import dev.jobdragonquest.jobs.JobDtos.JobResponse;
 import dev.jobdragonquest.jobs.JobDtos.JobSummary;
+import dev.jobdragonquest.jobs.JobDtos.SimilarJob;
 import dev.jobdragonquest.jobs.JobPosting.JobData;
 
 @Service
 public class JobService {
 
     static final int MAX_PAGE_SIZE = 100;
+    static final int SIMILAR_POOL = 300;
 
     private final JobRepository repository;
     private final AuditService audit;
@@ -98,11 +104,70 @@ public class JobService {
 
     @Transactional(readOnly = true)
     public Page<JobSummary> list(UUID userId, UUID sourceId, int page, int size) {
+        return list(userId, sourceId, false, page, size);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<JobSummary> list(UUID userId, UUID sourceId, boolean favoritesOnly, int page, int size) {
         PageRequest pageable = PageRequest.of(Math.max(page, 0), Math.clamp(size, 1, MAX_PAGE_SIZE));
-        Page<JobPosting> result = sourceId == null
-                ? repository.findByUserIdOrderByFoundAtDesc(userId, pageable)
-                : repository.findByUserIdAndWatchedSourceIdOrderByFoundAtDesc(userId, sourceId, pageable);
+        Page<JobPosting> result;
+        if (favoritesOnly) {
+            result = repository.findByUserIdAndFavoriteTrueOrderByFoundAtDesc(userId, pageable);
+        } else if (sourceId == null) {
+            result = repository.findByUserIdOrderByFoundAtDesc(userId, pageable);
+        } else {
+            result = repository.findByUserIdAndWatchedSourceIdOrderByFoundAtDesc(userId, sourceId, pageable);
+        }
         return result.map(JobSummary::of);
+    }
+
+    @Transactional
+    public JobSummary setFavorite(UUID userId, UUID jobId, boolean favorite) {
+        JobPosting job = load(userId, jobId);
+        job.markFavorite(favorite);
+        return JobSummary.of(job);
+    }
+
+    @Transactional(readOnly = true)
+    public Set<UUID> favoriteIds(UUID userId) {
+        return repository.findByUserIdAndFavoriteTrue(userId).stream().map(JobPosting::getId).collect(Collectors.toSet());
+    }
+
+    /**
+     * Vagas da conta parecidas com as vagas de base, da mais para a menos parecida. Ficam de fora as próprias bases, as
+     * vagas em {@code exclude} (já favoritas ou com candidatura) e as encerradas. Olha as {@value #SIMILAR_POOL} vagas
+     * mais recentes da conta.
+     */
+    @Transactional(readOnly = true)
+    public List<SimilarJob> similar(UUID userId, Set<UUID> basisIds, Set<UUID> exclude, int minScore, int limit) {
+        if (basisIds.isEmpty()) {
+            return List.of();
+        }
+        List<JobSimilarity.Profile> bases = repository.findByUserIdAndIdIn(userId, basisIds).stream()
+                .map(JobSimilarity.Profile::of).toList();
+        List<SimilarJob> found = new ArrayList<>();
+        for (JobPosting job : repository.findByUserIdOrderByFoundAtDesc(userId, PageRequest.of(0, SIMILAR_POOL))) {
+            if (basisIds.contains(job.getId()) || exclude.contains(job.getId()) || job.getStatus() == JobStatus.CLOSED) {
+                continue;
+            }
+            JobSimilarity.Profile candidate = JobSimilarity.Profile.of(job);
+            JobSimilarity.Profile bestBasis = null;
+            JobSimilarity.Result best = null;
+            for (JobSimilarity.Profile basis : bases) {
+                JobSimilarity.Result result = JobSimilarity.compare(candidate, basis);
+                if (best == null || result.score() > best.score()) {
+                    best = result;
+                    bestBasis = basis;
+                }
+            }
+            if (best != null && best.score() > 0 && best.score() >= minScore) {
+                found.add(new SimilarJob(JobSummary.of(job), best.score(), bestBasis.id(), bestBasis.title(),
+                        best.sharedWords(), best.sharedSkills()));
+            }
+        }
+        found.sort(Comparator.comparingInt(SimilarJob::score).reversed().thenComparing(s -> s.job().foundAt(),
+                Comparator.reverseOrder()));
+        return List.copyOf(found.subList(0, Math.min(found.size(), Math.clamp(limit, 1, MAX_PAGE_SIZE))));
     }
 
     @Transactional(readOnly = true)
