@@ -17,6 +17,7 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 | v0.2.1 | 06/11/2026 | Correção da regra de crédito do AGENTS.md (#50) |
 | v0.3.0 | 07/11/2026 | Avisos configuráveis com pop-up, notificação do sistema, som e sino (#55, #56); tokens de acesso pessoal (#57); servidor MCP com 30 ferramentas (#58); instalação em um comando e conexão do MCP (#59); README com prompt pronto para IA e deploy opcional gratuito (#54); nova logo (#61); painel em português, inglês e espanhol com idiomas automatizados (#63); central de acessibilidade com os temas do Congo e os recursos do a11y-widget (#64); plugin do Congo Grey Parrot para o Discord (#65) |
 | v0.3.2 | 07/11/2026 | Correção da conexão do MCP com o Claude Code (registro por `claude mcp add-json`), token colado aceito mesmo com marcadores de colagem e mensagem de sucesso só quando conecta (#119) |
+| v0.4.0 | 07/11/2026 | Perfil completo (13 senioridades, competências em anos, meses e dias, idiomas por nome); filtros do perfil na coleta e na compatibilidade; ações em lote; contatos do processo; favoritas e vagas parecidas; modo de automação com fila de revisão; vaga pelo link e importação por CSV; perguntas e revisão antes de enviar; extensão do navegador; currículo e carta por vaga, entrevista, salário e competências; documentos e atualização do currículo por PDF, Word, link e foto; acessibilidade salva na conta; MCP com 30 ferramentas (#96 a #127) |
 
 Medição da v0.2.0:
 - API: 108 testes, cobertura geral de 94,3%.
