@@ -2,6 +2,8 @@ package dev.jobdragonquest.applications;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,12 +22,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.jobdragonquest.applications.ApplicationDtos.ApplicationDetail;
+import dev.jobdragonquest.applications.ApplicationDtos.BatchFailure;
+import dev.jobdragonquest.applications.ApplicationDtos.BatchTransitionRequest;
+import dev.jobdragonquest.applications.ApplicationDtos.BatchTransitionResult;
+import dev.jobdragonquest.applications.ApplicationEnums.EventSource;
+import dev.jobdragonquest.common.error.DomainException;
+import dev.jobdragonquest.common.error.NotFoundException;
 import dev.jobdragonquest.applications.ApplicationDtos.ApplicationResponse;
 import dev.jobdragonquest.applications.ApplicationDtos.BoardColumn;
 import dev.jobdragonquest.applications.ApplicationDtos.CreateApplicationRequest;
 import dev.jobdragonquest.applications.ApplicationDtos.CreateResult;
 import dev.jobdragonquest.applications.ApplicationDtos.EventResponse;
 import dev.jobdragonquest.applications.ApplicationDtos.NoteRequest;
+import dev.jobdragonquest.applications.ApplicationDtos.TransitionOutcome;
 import dev.jobdragonquest.applications.ApplicationDtos.TransitionRequest;
 import dev.jobdragonquest.applications.ApplicationDtos.TransitionResult;
 import dev.jobdragonquest.applications.ApplicationDtos.UpdateApplicationRequest;
@@ -115,6 +124,31 @@ class ApplicationController {
             case NOTED -> HttpStatus.OK;
         };
         return ResponseEntity.status(status).body(result);
+    }
+
+    /**
+     * Muda a etapa de várias candidaturas, cada uma na sua transação: uma recusa (etapa inválida, candidatura que não é
+     * da conta) não desfaz as outras. Candidatura de outra conta volta como not_found, igual a uma que não existe.
+     */
+    @PostMapping("/batch/transitions")
+    BatchTransitionResult batchTransition(@Valid @RequestBody BatchTransitionRequest request) {
+        UUID userId = currentUser.id();
+        int updated = 0;
+        List<BatchFailure> failed = new ArrayList<>();
+        for (UUID applicationId : new LinkedHashSet<>(request.ids())) {
+            try {
+                TransitionResult result = applications.transition(userId, applicationId, new TransitionRequest(request.toState(),
+                        EventSource.MANUAL, request.evidence(), null, null, null, null));
+                if (result.outcome() == TransitionOutcome.APPLIED) {
+                    updated++;
+                }
+            } catch (NotFoundException ex) {
+                failed.add(new BatchFailure(applicationId, "not_found"));
+            } catch (DomainException ex) {
+                failed.add(new BatchFailure(applicationId, ex.code()));
+            }
+        }
+        return new BatchTransitionResult(updated, List.copyOf(failed));
     }
 
     @PostMapping("/{id}/notes")

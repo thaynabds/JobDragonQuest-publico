@@ -333,6 +333,11 @@ export interface CreateApplicationInput {
   profileId?: string | null;
 }
 
+export interface BatchTransitionResult {
+  updated: number;
+  failed: { id: string; code: string }[];
+}
+
 export interface TransitionResult {
   outcome: "APPLIED" | "SUGGESTED" | "NOTED";
   application: Application;
