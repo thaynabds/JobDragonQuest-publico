@@ -52,7 +52,7 @@ Competências: `skills[] {name, level 1–5, years, months 0–11, days 0–30}`
 | `GET /jobs/{id}/matches` | Todos os perfis, do mais para o menos adequado |
 | `GET /jobs/{id}/matches/{profileId}` | Análise de um perfil |
 
-Resultado da análise: `score` (0–100 ou null), `recommendation` (APPLY, REVIEW, SKIP, INSUFFICIENT_DATA), `requirements[] {kind, text, skill, outcome MET|PARTIAL|UNMET|NOT_EVALUATED, reason}`, `blockers[] {code WORK_MODE|LOCATION|LANGUAGE|SENIORITY, message}`, `strengths[]`, `warnings[]`, `titleAffinity`, `summary`.
+Resultado da análise: `score` (0–100 ou null), `recommendation` (APPLY, REVIEW, SKIP, INSUFFICIENT_DATA), `requirements[] {kind, text, skill, outcome MET|PARTIAL|UNMET|NOT_EVALUATED, reason}`, `blockers[] {code WORK_MODE|LOCATION|LANGUAGE|SENIORITY|EXCLUDED_COMPANY|EXCLUDED_KEYWORD|MISSING_KEYWORD|EMPLOYMENT_TYPE|WORK_AUTHORIZATION|SALARY, message}`. Os seis últimos vêm dos filtros do perfil: palavras e empresas comparadas como palavras inteiras, sem acento; tipo de contrato detectado no texto da vaga; país fora da autorização bloqueia vaga presencial ou híbrida e só alerta na remota; salário comparado entre mês e ano (hora só com hora, moeda diferente só alerta). Dado ausente na vaga não bloqueia. Na coleta automática, empresa excluída, palavra excluída ou nenhuma palavra obrigatória tiram a vaga antes de gravar, `strengths[]`, `warnings[]`, `titleAffinity`, `summary`.
 
 ## Candidaturas
 

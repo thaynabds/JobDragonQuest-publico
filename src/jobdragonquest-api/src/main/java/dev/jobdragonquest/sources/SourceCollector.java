@@ -31,6 +31,7 @@ import dev.jobdragonquest.jobs.JobRequirement;
 import dev.jobdragonquest.jobs.JobService;
 import dev.jobdragonquest.matching.MatchResult;
 import dev.jobdragonquest.matching.MatchingEngine;
+import dev.jobdragonquest.matching.PreferenceFilters;
 import dev.jobdragonquest.profiles.ProfileService;
 import dev.jobdragonquest.profiles.ProfileSnapshot;
 import dev.jobdragonquest.sources.SourceDtos.RunResponse;
@@ -157,10 +158,13 @@ public class SourceCollector {
             return finish(sourceId, trigger, RunStatus.FAILED, 0, 0, 0, ex.getMessage(), startedAt);
         }
 
-        List<CollectedJob> relevant = fetched.stream()
+        List<CollectedJob> byTitle = fetched.stream()
                 .filter(job -> plan.terms().isEmpty() || plan.terms().stream().anyMatch(term -> TitleMatcher.containsAllWords(job.title(), term)))
-                .limit(MAX_JOBS_PER_RUN)
                 .toList();
+        // Empresa excluída, palavra excluída ou nenhuma palavra obrigatória em TODOS os perfis ligados: a vaga nem entra.
+        List<CollectedJob> wanted = byTitle.stream().filter(job -> !filteredOut(plan, job)).toList();
+        int filtered = byTitle.size() - wanted.size();
+        List<CollectedJob> relevant = wanted.stream().limit(MAX_JOBS_PER_RUN).toList();
         int created = 0;
         int recommended = 0;
         int skipped = 0;
@@ -192,12 +196,18 @@ public class SourceCollector {
             }
         }
         String message = fetched.size() + " vaga(s) no board, " + relevant.size() + " relevante(s), " + created
-                + " nova(s), " + recommended + " recomendada(s)" + (skipped > 0 ? ", " + skipped + " ignorada(s) por dados inválidos" : "");
+                + " nova(s), " + recommended + " recomendada(s)" + (skipped > 0 ? ", " + skipped + " ignorada(s) por dados inválidos" : "")
+                + (filtered > 0 ? ", " + filtered + " fora das preferências do perfil" : "");
         RunResponse response = finish(sourceId, trigger, RunStatus.OK, relevant.size(), created, recommended, message, startedAt);
         if (created > 0) {
             publisher.publishEvent(new JobsCollectedEvent(plan.userId(), sourceId, plan.companyName(), scores, response.id()));
         }
         return response;
+    }
+
+    private static boolean filteredOut(Plan plan, CollectedJob job) {
+        return !plan.profiles().isEmpty() && plan.profiles().stream().allMatch(profile ->
+                !PreferenceFilters.hardBlockers(profile.filters(), plan.companyName(), job.title(), job.description()).isEmpty());
     }
 
     private boolean recommend(Plan plan, UUID jobId, MatchResult best) {
