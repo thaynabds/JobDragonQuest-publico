@@ -65,7 +65,7 @@ O plugin `integrations/congo/jobdragonquest.py` roda dentro do bot de Discord do
 | Instalação | `scripts/conectar-congo.sh` copia o plugin para `congo-grey-parrot-discord/plugins/` e grava `~/.config/jobdragonquest/congo.env` (permissão 600). O histórico do repositório do Congo não muda |
 | Ativação | No Discord: `/funcoes ativar jobdragonquest`. Plugins do Congo começam desligados |
 | Comandos | `/jobdragonquest resumo`, `/jobdragonquest avisos`, `/jobdragonquest pendencias`. Só na conversa privada (DM) com o bot: o comando não aparece nos servidores. Só a dona configurada recebe resposta |
-| Avisos | A cada 60 s (mínimo 30), os avisos com o canal "sistema" ligado viram mensagem direta, uma vez cada. Não marca como entregue: o painel aberto também mostra o pop-up |
+| Avisos | A cada 60 s (mínimo 30), os avisos recentes com o canal "sistema" ligado, ainda não lidos nem adiados, viram mensagem direta, uma vez cada, mesmo que o painel aberto já tenha mostrado o pop-up. Na primeira execução só marca a hora de início, sem mandar avisos antigos |
 | Privacidade | Respeita "esconder empresa e cargo"; mensagens sem menções (`allowed_mentions` vazio) e cortadas em 1800 caracteres |
 | Segurança | API só local por HTTP ou HTTPS, sem redirecionamento, resposta limitada a 1 MiB; o token nunca aparece em mensagem, log ou erro; configuração com permissão frouxa é recusada |
 | Custo | Nenhum: Discord e Congo são gratuitos |
