@@ -4,6 +4,7 @@ import type {
   ApplicationDetail,
   ApplicationEvent,
   ApplicationState,
+  CreatedToken,
   BoardColumn,
   BulkCreateResult,
   BulkUpdateInput,
@@ -17,6 +18,7 @@ import type {
   Me,
   Page,
   PendingItem,
+  PersonalToken,
   Profile,
   ProfileInput,
   ProfileSummary,
@@ -95,4 +97,8 @@ export const api = {
     request<void>(`/api/v1/applications/${id(applicationId)}/suggestions/${id(eventId)}/dismiss`, { method: "POST" }),
   deleteApplication: (applicationId: string) =>
     request<void>(`/api/v1/applications/${id(applicationId)}`, { method: "DELETE" }),
+
+  tokens: () => request<PersonalToken[]>("/api/v1/tokens"),
+  createToken: (body: { name: string; days: number }) => request<CreatedToken>("/api/v1/tokens", { method: "POST", body }),
+  revokeToken: (tokenId: string) => request<void>(`/api/v1/tokens/${id(tokenId)}`, { method: "DELETE" }),
 };

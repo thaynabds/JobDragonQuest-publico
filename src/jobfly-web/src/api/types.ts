@@ -377,3 +377,19 @@ export interface Page<T> {
   totalElements: number;
   totalPages: number;
 }
+
+export interface PersonalToken {
+  id: string;
+  name: string;
+  prefix: string;
+  createdAt: string;
+  expiresAt: string;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+  active: boolean;
+}
+
+export interface CreatedToken {
+  token: PersonalToken;
+  value: string;
+}

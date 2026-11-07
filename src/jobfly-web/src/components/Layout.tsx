@@ -10,6 +10,7 @@ const NAV = [
   { to: "/vagas", key: "nav.jobs" },
   { to: "/fontes", key: "nav.sources" },
   { to: "/perfis", key: "nav.profiles" },
+  { to: "/configuracoes", key: "nav.settings" },
 ] as const;
 
 export function Layout() {
