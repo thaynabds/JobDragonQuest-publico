@@ -252,6 +252,33 @@ export const TOOLS = [
     run: (client, args) => client.request("POST", apiPath(["applications", args.id, "notes"]), { text: args.texto }),
   }),
   tool({
+    name: "jobdragonquest_registrar_contato",
+    title: "Registrar contato do processo",
+    description:
+      "Guarda um contato (recrutador, gestor, entrevistador ou indicação) numa candidatura. Não muda a etapa: para isso use jobdragonquest_atualizar_etapa com evidência. Use só dados que a pessoa informou ou que vieram do processo.",
+    schema: z.object({
+      id,
+      papel: z.enum(["RECRUITER", "HIRING_MANAGER", "INTERVIEWER", "REFERRAL", "OTHER"]),
+      nome: text(120),
+      cargo: text(120).optional(),
+      email: z.email().max(254).optional(),
+      linkedin: httpUrl.optional(),
+      notas: text(2000).optional(),
+    }),
+    readOnly: false,
+    // contacted fica sempre false: a mudança de etapa pela API seria gravada como manual, e a IA não fala pela pessoa.
+    run: (client, args) =>
+      client.request("POST", apiPath(["applications", args.id, "contacts"]), {
+        role: args.papel,
+        name: args.nome,
+        position: args.cargo ?? null,
+        email: args.email ?? null,
+        linkedinUrl: args.linkedin ?? null,
+        notes: args.notas ?? null,
+        contacted: false,
+      }),
+  }),
+  tool({
     name: "jobdragonquest_listar_fontes",
     title: "Fontes vigiadas",
     description: "Sites, ATS e redes sociais vigiados, com perfis ligados, próxima coleta e situação.",

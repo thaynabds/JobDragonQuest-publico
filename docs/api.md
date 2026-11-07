@@ -67,6 +67,9 @@ Resultado da análise: `score` (0–100 ou null), `recommendation` (APPLY, REVIE
 | `POST /applications/{id}/transitions` | `{toState, source, evidence, confidence?, occurredAt?, nextAction?, nextDueAt?}`. 200 `APPLIED` ou `NOTED`. 202 `SUGGESTED` quando a confiança é baixa. 409 `invalid_transition` |
 | `POST /applications/batch/transitions` | `{ids (1 a 100), toState, evidence}`. Mudança manual em lote, cada candidatura na sua transação. 200 `{updated, failed[{id, code}]}`: candidatura de outra conta ou inexistente volta como `not_found`; mesma etapa vira anotação e não conta |
 | `POST /applications/{id}/notes` | `{text}`: anotação da pessoa |
+| `GET /applications/{id}/contacts` | Contatos do processo (recrutador, gestor, entrevistador, indicação). Só da conta dona; outra conta recebe 404 |
+| `POST /applications/{id}/contacts` | `{role RECRUITER|HIRING_MANAGER|INTERVIEWER|REFERRAL|OTHER, name, position?, email?, linkedinUrl?, notes?, contacted?}`. Até 20 por candidatura (409 `contact_limit`); e-mail inválido 400 `invalid_email`. Com `contacted: true`, candidatura enviada ou confirmada vai para `RECRUITER_CONTACT` com o contato como evidência; etapa mais adiante não volta |
+| `DELETE /applications/{id}/contacts/{contactId}` | Remove o contato. 204 |
 | `POST /applications/{id}/suggestions/{eventId}/accept` | Aplica a sugestão, conferindo de novo a transição |
 | `POST /applications/{id}/suggestions/{eventId}/dismiss` | 204 |
 
