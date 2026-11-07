@@ -86,9 +86,9 @@ const ci = read(".github/workflows/ci.yml");
 check("CI publica os relatórios de teste como artefato", /actions\/upload-artifact@/.test(ci) && /surefire-reports/.test(ci));
 check("CI escreve o total de testes no resumo da execução (API, painel e MCP)", (ci.match(/resumo-testes\.mjs/g) ?? []).length >= 3
   && /GITHUB_STEP_SUMMARY/.test(read("scripts/resumo-testes.mjs")));
-check("CI analisa dependências (npm audit e OSV-Scanner na API, no painel e no MCP, com versão fixada por SHA)", /npm audit/.test(ci)
+check("CI analisa dependências (npm audit e OSV-Scanner no SBOM da API com transitivas, no painel e no MCP, fixado por SHA)", /npm audit/.test(ci)
   && /google\/osv-scanner-action\/osv-scanner-action@[0-9a-f]{40}/.test(ci)
-  && ["jobdragonquest-api/pom.xml", "jobdragonquest-web/package-lock.json", "jobdragonquest-mcp/package-lock.json"].every((file) => ci.includes(file))
+  && ["cyclonedx-maven-plugin", "jobdragonquest-api/target/bom.cdx.json", "jobdragonquest-web/package-lock.json", "jobdragonquest-mcp/package-lock.json"].every((file) => ci.includes(file))
   && existsSync(join(ROOT, "osv-scanner.toml")));
 check("CI confere Conventional Commits nos PRs", /scripts\/verificar\/commits\.mjs/.test(ci));
 check("painel roda lint no verify", /"lint":\s*"eslint/.test(read("src/jobdragonquest-web/package.json"))
