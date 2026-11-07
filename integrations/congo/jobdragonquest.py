@@ -1,7 +1,7 @@
 """Plugin do JobDragonQuest para o bot de Discord do Congo Grey Parrot.
 
 Entrega os avisos do JobDragonQuest por mensagem direta (mesmo com o painel fechado) e responde a /jobdragonquest resumo,
-/jobdragonquest avisos e /jobdragonquest pendencias, só para a dona configurada e de forma privada.
+/jobdragonquest avisos e /jobdragonquest pendencias só na conversa privada com o bot e só para a dona configurada.
 
 Instalação: scripts/conectar-congo.sh no repositório do JobDragonQuest. Depois, no Discord: /funcoes ativar jobdragonquest.
 Configuração em ~/.config/jobdragonquest/congo.env (permissão 600), nunca no código:
@@ -223,7 +223,12 @@ def setup(bot) -> None:  # pragma: no cover - depende do discord.py e de um bot 
         log.warning("Plugin JobDragonQuest sem configuração: %s", exc)
         config = None
 
-    group = app_commands.Group(name="jobdragonquest", description="Seu JobDragonQuest: resumo, avisos e pendências (privado)")
+    # Só na conversa privada com o bot: o comando não aparece nos servidores nem em grupos.
+    group = app_commands.Group(
+        name="jobdragonquest",
+        description="Seu JobDragonQuest: resumo, avisos e pendências (privado)",
+        allowed_contexts=app_commands.AppCommandContext(guild=False, dm_channel=True, private_channel=False),
+    )
     none = discord.AllowedMentions.none()
 
     async def answer(interaction: discord.Interaction, build: Callable[[JobDragonQuestApi], str]) -> None:
