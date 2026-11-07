@@ -101,12 +101,25 @@ class SourceCollectorTest extends ApiTestSupport {
         org.assertj.core.api.Assertions.assertThat(saved.getNextRunAt()).isAfter(Instant.now().plusSeconds(5 * 3600));
     }
 
+    @Autowired
+    private org.springframework.jdbc.core.JdbcTemplate jdbc;
+
+    /**
+     * Os testes dividem o banco: fontes vencidas de outras classes entrariam no lote do agendador. Adia todas as outras
+     * para o teste enxergar só a própria fonte, seja qual for a ordem em que as classes rodam.
+     */
+    private void onlyThisSourceDue(UUID source) {
+        jdbc.update("update watched_source set next_run_at = ? where id <> ?",
+                java.sql.Timestamp.from(Instant.now().plusSeconds(30L * 24 * 3600)), source);
+    }
+
     @Test
     void schedulerCollectsDueSourcesOnceAndRespectsOwnership() throws Exception {
         when(greenhouse.kind()).thenReturn(SourceKind.GREENHOUSE);
         when(greenhouse.fetch("acme")).thenReturn(BOARD);
         String token = newUser();
         String source = setup(token);
+        onlyThisSourceDue(UUID.fromString(source));
 
         org.assertj.core.api.Assertions.assertThat(collector.runDue()).isGreaterThanOrEqualTo(1);
         getJson(token, "/api/v1/sources/" + source).andExpect(jsonPath("$.lastStatus").value("OK"));
@@ -128,6 +141,7 @@ class SourceCollectorTest extends ApiTestSupport {
         when(greenhouse.fetch("acme")).thenReturn(BOARD);
         String token = newUser();
         UUID source = UUID.fromString(setup(token));
+        onlyThisSourceDue(source);
         Instant now = Instant.now();
 
         // Simula uma coleta em andamento (ex.: o agendador pegou a fonte).
