@@ -6,10 +6,10 @@
 
 > Idioma: **Português** | [English](README.en.md) | [Español](README.es.md)
 
-[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.2.0-7c3aed)](https://github.com/thaynabds/JobFly/releases/tag/v0.2.0)
+[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.3.0-7c3aed)](https://github.com/thaynabds/JobFly/releases/tag/v0.3.0)
 [![Licença](https://img.shields.io/badge/licen%C3%A7a-todos%20os%20direitos%20reservados-6b7280)](#licença)
 [![CI](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobFly/actions/workflows/ci.yml)
-[![Testes](https://img.shields.io/badge/testes-128%20passando-16a34a)](#qualidade-e-segurança)
+[![Testes](https://img.shields.io/badge/testes-191%20passando-16a34a)](#qualidade-e-segurança)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobfly-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobfly-api)
 [![React](https://img.shields.io/badge/React-19-0891b2)](src/jobfly-web)
@@ -30,7 +30,7 @@ O JobFly junta tudo numa central única e explicável:
 
 ## Funcionalidades
 
-### Implementado (v0.2.0)
+### Implementado (v0.3.0)
 
 | Área | O que faz |
 |---|---|
@@ -161,7 +161,7 @@ JobFly/
 
 | Branch | Para quê | Recebe de | Regra |
 |---|---|---|---|
-| `main` | Produção: só versões estáveis com tag | `develop`, por PR de release | Nunca recebe commit direto. Cada release ganha uma tag anotada SemVer (`v0.1.0`, `v0.2.0`) |
+| `main` | Produção: só versões estáveis com tag | `develop`, por PR de release | Nunca recebe commit direto. Cada release ganha uma tag anotada SemVer (`v0.1.0`, `v0.2.0`, `v0.3.0`) |
 | `develop` | Integração do que está pronto | `feature/*` e `fix/*`, por PR | Todo PR referencia a issue com `Closes #N` |
 | `feature/issue-NN-descricao` | Uma issue de funcionalidade, documentação ou ferramenta | sai da `develop` | Commits atômicos em Conventional Commits: `feat(sources): ... (#9)` |
 | `fix/issue-NN-descricao` | Correção de um defeito registrado em issue | sai da `develop` | `fix(escopo): ... (#31)` |
@@ -187,8 +187,8 @@ O backlog completo está nas [issues do repositório](https://github.com/thaynab
 
 ## Qualidade e segurança
 
-- **128 testes automatizados**: 108 na API (unitários e de integração com a aplicação completa) e 20 no painel. Mais 26 verificações do teste de fumaça e o teste de coleta real.
-- **Cobertura:** o build falha abaixo de 80% de linhas nos módulos críticos. Hoje a cobertura geral é de 94,3%.
+- **191 testes automatizados**: 127 na API (unitários e de integração com a aplicação completa), 43 no painel, 11 no servidor MCP e 10 no plugin do Congo. Mais verificações contra o sistema rodando de verdade: 26 do teste de fumaça, 24 dos avisos, 15 de uma IA usando o JobFly pelo MCP, 23 da instalação e a coleta real.
+- **Cobertura:** o build falha abaixo de 80% de linhas nos módulos críticos. Hoje a cobertura geral da API é de 93,6%.
 - **Segurança** ([detalhes](docs/seguranca.md)):
   - isolamento por usuário (recurso alheio responde 404);
   - Argon2id e refresh token rotativo com detecção de reuso;
@@ -197,7 +197,10 @@ O backlog completo está nas [issues do repositório](https://github.com/thaynab
   - CSP no painel;
   - serviços só em 127.0.0.1;
   - segredos fora do Git;
-  - 0 vulnerabilidades conhecidas nas dependências do painel (`npm audit`).
+  - tokens de acesso pessoal guardados só como hash, que não criam outros tokens e são revogados na hora;
+  - servidor MCP sem ferramenta de exclusão, com argumentos validados e respostas marcadas como dados não confiáveis;
+  - auditoria automática de vazamento (segredos, dados pessoais, metadados e logs);
+  - 0 vulnerabilidades conhecidas nas dependências do painel e do MCP (`npm audit`).
 
 ## Licença
 
