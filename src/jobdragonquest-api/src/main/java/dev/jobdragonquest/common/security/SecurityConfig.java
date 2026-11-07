@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import dev.jobdragonquest.common.error.ProblemResponses;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -80,7 +81,13 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/**").authenticated()
                         .anyRequest().denyAll())
-                .oauth2ResourceServer(oauth -> oauth.authenticationManagerResolver(managerResolver(jwtDecoder, personalTokens)));
+                .exceptionHandling(errors -> errors
+                        .authenticationEntryPoint(ProblemResponses.unauthorized())
+                        .accessDeniedHandler(ProblemResponses.forbidden()))
+                .oauth2ResourceServer(oauth -> oauth
+                        .authenticationManagerResolver(managerResolver(jwtDecoder, personalTokens))
+                        .authenticationEntryPoint(ProblemResponses.unauthorized())
+                        .accessDeniedHandler(ProblemResponses.forbidden()));
         return http.build();
     }
 

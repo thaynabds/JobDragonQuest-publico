@@ -127,15 +127,19 @@ describe("pop-ups e notificações do sistema", () => {
     expect(screen.queryByText(/sem atualização/i)).toBeNull();
   });
 
-  it("esconde empresa e cargo na notificação do sistema quando configurado", async () => {
-    mocks.notificationPreferences.mockResolvedValue({ data: { settings: { hideDetails: true }, timeZone: "UTC", preferences: [] } });
-    let resolveDue: (value: unknown) => void = () => undefined;
-    mocks.notificationsDue.mockReturnValue(new Promise((resolve) => (resolveDue = resolve)));
+  it("esconde empresa e cargo na notificação do sistema mesmo quando o aviso chega antes das preferências", async () => {
+    // Os avisos respondem na hora e as preferências só depois: a entrega tem de esperar por elas.
+    let resolvePreferences: (value: unknown) => void = () => undefined;
+    mocks.notificationPreferences.mockReturnValue(new Promise((resolve) => (resolvePreferences = resolve)));
+    mocks.notificationsDue.mockResolvedValue({ data: [item({ popup: false })] });
     renderProvider(<Toasts />);
     await waitFor(() => expect(mocks.notificationPreferences).toHaveBeenCalled());
     await act(async () => {
-      await Promise.resolve();
-      resolveDue({ data: [item({ popup: false })] });
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
+    expect(systemCalls).toHaveLength(0);
+    await act(async () => {
+      resolvePreferences({ data: { settings: { hideDetails: true }, timeZone: "UTC", preferences: [] } });
     });
     await waitFor(() => expect(systemCalls).toHaveLength(1));
     expect(systemCalls[0]).toEqual({ title: "JobDragonQuest", body: "Você tem um aviso novo no JobDragonQuest." });
