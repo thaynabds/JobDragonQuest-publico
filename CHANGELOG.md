@@ -6,6 +6,8 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.4.2] - 2026-11-07
+
 ### Alterado
 - pdfbox 3.0.8 (leitura de PDF dos documentos do perfil) e SDK do MCP 1.32.2 (#150).
 - Ações do CI atualizadas (checkout 7, setup-java 6, setup-node 7, setup-python 7) e fixadas por SHA (#150).
@@ -112,7 +114,8 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 - Núcleo da API: contas, perfis, vagas, compatibilidade, candidaturas de qualquer origem, Kanban, pendências e auditoria,
   rodando no PostgreSQL local.
 
-[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.1...develop
+[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.2...develop
+[0.4.2]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.3.1...v0.3.2

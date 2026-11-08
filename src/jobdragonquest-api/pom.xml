@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.jobdragonquest</groupId>
 	<artifactId>jobdragonquest-api</artifactId>
-	<version>0.4.1</version>
+	<version>0.4.2</version>
 	<name>jobdragonquest-api</name>
 	<description>API do JobDragonQuest: perfis, vagas, compatibilidade e candidaturas.</description>
 
