@@ -21,9 +21,10 @@ import stat
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from pathlib import Path
-from typing import Callable, NamedTuple
+from typing import NamedTuple
+from collections.abc import Callable
 
 FEATURE = "jobdragonquest"
 DESCRIPTION = "Liga o JobDragonQuest: avisos por mensagem direta e /jobdragonquest resumo, avisos e pendencias (só para a dona)."
@@ -217,7 +218,7 @@ def parse_instant(value: object) -> datetime | None:
         parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError:
         return None
-    return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=UTC)
 
 
 def pending_dms(api: JobDragonQuestApi, sent: SentLog, now: datetime | None = None) -> list[tuple[str, str]]:
@@ -226,7 +227,7 @@ def pending_dms(api: JobDragonQuestApi, sent: SentLog, now: datetime | None = No
     Lê os avisos recentes da conta (não só a fila de entrega): com o painel aberto, o aviso vira "entregue" em
     segundos, mas a pessoa ainda deve recebê-lo no Discord. Na primeira execução só marca a hora de início.
     """
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(UTC)
     if sent.since is None:
         sent.start(now)
         return []

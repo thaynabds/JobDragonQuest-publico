@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Hook de pre-commit: lint só das partes que mudaram e bloqueio de segredo no que vai ser commitado.
+# Instalação: scripts/instalar-hooks.sh (git config core.hooksPath .githooks). Pular uma vez: git commit --no-verify.
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+cd "$root"
+mapfile -t staged < <(git diff --cached --name-only --diff-filter=ACMR)
+[[ ${#staged[@]} -gt 0 ]] || exit 0
+
+# Segredos e arquivos que nunca entram no Git.
+for file in "${staged[@]}"; do
+  if [[ "$file" =~ (^|/)\.env$ || "$file" =~ ^data/ || "$file" =~ ^privado/ || "$file" =~ \.(pem|key)$ ]]; then
+    echo "pre-commit: $file não pode ser versionado." >&2; exit 1
+  fi
+done
+if git diff --cached -U0 | grep -E '^\+' | grep -qE '(AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{20,}|sk-ant-[A-Za-z0-9-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY|jdq_[A-Za-z0-9_-]{20,})'; then
+  echo "pre-commit: o que vai ser commitado parece conter um segredo. Remova antes de commitar." >&2; exit 1
+fi
+
+has() { printf '%s\n' "${staged[@]}" | grep -qE "$1"; }
+if has '^src/jobdragonquest-api/.*\.java$|^src/jobdragonquest-api/(pom|checkstyle)\.xml$'; then
+  echo "pre-commit: Checkstyle da API..."
+  (cd src/jobdragonquest-api && ./mvnw -q -B -ntp checkstyle:check)
+fi
+if has '^src/jobdragonquest-web/.*\.(ts|tsx|js)$'; then
+  echo "pre-commit: ESLint do painel..."
+  (cd src/jobdragonquest-web && npx --no-install eslint --max-warnings=0 .)
+fi
+if has '\.py$'; then
+  if command -v ruff >/dev/null; then echo "pre-commit: Ruff..."; ruff check .
+  else echo "pre-commit: Ruff não instalado (pip install ruff==0.17.1); o CI confere o Python." >&2; fi
+fi

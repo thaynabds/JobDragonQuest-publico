@@ -1,0 +1,14 @@
+# Lint do Python (plugin do Congo e scripts de verificação). Roda no CI e no hook de pre-commit.
+target-version = "py312"
+line-length = 160
+
+[lint]
+# E/W estilo, F erros, B armadilhas comuns, S segurança (Bandit), UP sintaxe moderna.
+select = ["E", "W", "F", "B", "S", "UP"]
+# S101: assert é usado só nos testes. S603/S607: os scripts chamam ferramentas fixas, sem shell.
+ignore = ["S101", "S603", "S607"]
+
+[lint.per-file-ignores]
+# S310: urlopen só recebe URL já validada (http/https, caminho fixo /api/v1/ ou endereço local conferido no início).
+"integrations/congo/jobdragonquest.py" = ["S310"]
+"scripts/testar-*.py" = ["S310"]

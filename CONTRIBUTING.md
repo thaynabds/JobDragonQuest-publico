@@ -13,6 +13,13 @@ scripts/instalar.sh
 
 Para rodar depois: `scripts/iniciar.sh`. Detalhes no [README](README.md#instalação-rápida).
 
+## Hooks e lint
+
+Ligue os hooks uma vez por clone: `scripts/instalar-hooks.sh`. O `pre-commit` bloqueia `.env`, `data/`, chaves e tokens
+no que vai ser commitado e roda o lint só das partes que mudaram (Checkstyle na API, ESLint no painel, Ruff no Python); o
+`commit-msg` confere a mensagem com a mesma regra do CI. O CI repete tudo, então pular o hook (`--no-verify`) não
+pula a checagem.
+
 ## Fluxo de branches (Git Flow)
 
 - `main` só recebe releases e hotfixes. `develop` é a integração. Nada é commitado direto nelas.

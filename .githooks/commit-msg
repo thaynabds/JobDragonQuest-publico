@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Confere a mensagem do commit com a mesma regra do CI (Conventional Commits citando a issue, sem crédito a IA).
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+exec node "$root/scripts/verificar/commits.mjs" --arquivo "$1"
