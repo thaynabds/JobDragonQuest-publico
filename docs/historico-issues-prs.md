@@ -5,7 +5,7 @@ público tem o mesmo código e as mesmas tags, mas o GitHub não copia issues ne
 a evidência auditável do processo. Só campos de processo são exportados (sem corpo, comentário ou autor).
 Por que existem dois repositórios: [governanca.md](governanca.md).
 
-Resumo: 68 issues (67 fechadas) e 92 PRs (77 com merge).
+Resumo: 68 issues (67 fechadas) e 95 PRs (80 com merge).
 
 ## Issues
 
@@ -78,7 +78,7 @@ Resumo: 68 issues (67 fechadas) e 92 PRs (77 com merge).
 | 131 | ci(qualidade): relatório de testes, análise de dependências, commits verificados, lint e formato de erro | CLOSED | 2026-11-07 | 2026-11-07 | PR 133 | test, ci, type:ci, priority:medium, scope:devops |
 | 150 | chore(deps): aplicar as atualizações seguras do Dependabot e definir a política de versões major | CLOSED | 2026-11-07 | 2026-11-08 | PR 152, PR 157, PR 158 | type:chore, priority:high, scope:devops |
 | 151 | chore(deps): migrar para TypeScript 7, Vite 8, Vitest 5, jsdom 30 e plugin-react 6 | OPEN | 2026-11-07 |  |  | type:chore, priority:medium, status:ready, stack:frontend |
-| 159 | feat: backlog restante da avaliação Week_01 (lint, pre-commit, observabilidade, E2E, p95, release notes, runbook, acessibilidade) | CLOSED | 2026-11-08 | 2026-11-08 | PR 160 | type:chore, priority:medium, scope:devops |
+| 159 | feat: backlog restante da avaliação Week_01 (lint, pre-commit, observabilidade, E2E, p95, release notes, runbook, acessibilidade) | CLOSED | 2026-11-08 | 2026-11-08 | PR 160, PR 163 | type:chore, priority:medium, scope:devops |
 
 ## Pull requests
 
@@ -158,7 +158,7 @@ Resumo: 68 issues (67 fechadas) e 92 PRs (77 com merge).
 | 137 | chore(ci): bump actions/setup-node from 4 to 7 | CLOSED | `dependabot/github_actions/develop/actions/setup-node-7` → `develop` | 2026-11-07 |  |  |
 | 138 | chore(ci): bump actions/setup-python from 5 to 7 | CLOSED | `dependabot/github_actions/develop/actions/setup-python-7` → `develop` | 2026-11-07 |  |  |
 | 139 | chore(ci): bump actions/setup-java from 6.1.0 to 6.2.0 | CLOSED | `dependabot/github_actions/develop/actions/setup-java-6` → `develop` | 2026-11-07 |  |  |
-| 140 | chore(deps): bump org.apache.pdfbox:pdfbox from 3.0.3 to 3.0.8 in /src/jobdragonquest-api | OPEN | `dependabot/maven/src/jobdragonquest-api/develop/org.apache.pdfbox-pdfbox-3.0.8` → `develop` | 2026-11-07 |  |  |
+| 140 | chore(deps): bump org.apache.pdfbox:pdfbox from 3.0.3 to 3.0.8 in /src/jobdragonquest-api | CLOSED | `dependabot/maven/src/jobdragonquest-api/develop/org.apache.pdfbox-pdfbox-3.0.8` → `develop` | 2026-11-07 |  |  |
 | 141 | chore(deps): bump @modelcontextprotocol/sdk from 1.32.1 to 1.32.2 in /src/jobdragonquest-mcp | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-mcp/develop/modelcontextprotocol/sdk-1.32.2` → `develop` | 2026-11-07 |  |  |
 | 142 | chore(deps): bump @vitejs/plugin-react from 5.2.0 to 6.2.1 in /src/jobdragonquest-web | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/vitejs/plugin-react-6.2.1` → `develop` | 2026-11-07 |  |  |
 | 143 | chore(deps): bump typescript from 5.9.3 to 7.0.2 in /src/jobdragonquest-mcp | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-mcp/develop/typescript-7.0.2` → `develop` | 2026-11-07 |  |  |
@@ -176,3 +176,6 @@ Resumo: 68 issues (67 fechadas) e 92 PRs (77 com merge).
 | 157 | fix(scripts): verificadores de histórico e de crédito depois do Dependabot (#150) | MERGED | `fix/issue-150-verificadores` → `develop` | 2026-11-08 | 2026-11-08 | #150 |
 | 158 | fix(scripts): espelho aceita o e-mail privado dos bots do GitHub (#150) | MERGED | `fix/issue-150-espelho-dependabot` → `develop` | 2026-11-08 | 2026-11-08 | #150 |
 | 160 | feat: backlog restante da avaliação Week_01 (#159) | MERGED | `feature/issue-159-backlog-week01` → `develop` | 2026-11-08 | 2026-11-08 | #159 |
+| 161 | release: v0.5.0 | MERGED | `release/0.5.0` → `main` | 2026-11-08 | 2026-11-08 |  |
+| 162 | chore: main (v0.5.0) de volta para develop | MERGED | `chore/main-para-develop-0.5.0` → `develop` | 2026-11-08 | 2026-11-08 |  |
+| 163 | fix(scripts): padrões de segredo do hook sem disparar a auditoria (#159) | MERGED | `fix/issue-159-hook-padroes` → `develop` | 2026-11-08 | 2026-11-08 | #159 |
