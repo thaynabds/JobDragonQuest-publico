@@ -74,6 +74,5 @@ Medição da v0.2.0:
 
 1. **E-mail (RF21).** Gmail e Outlook por OAuth com escopos mínimos, classificação de mensagens, vínculo com a candidatura (com confirmação quando houver dúvida) e marcadores. Nunca apagar. Destrava os critérios 2, 9, 10 e 12 e os cenários 6, 9 e 10.
 2. **Camada de IA opcional** (`LlmProvider`: Claude, OpenAI ou local) para extrair vagas de publicações e imagens (cenário 12), sempre sem inventar dado do perfil.
-3. **Testes ponta a ponta no navegador** (o fluxo coleta → análise → candidatura já tem teste ponta a ponta pela API).
-4. **Operação:** Docker Compose, Redis para o limite de tentativas distribuído e OpenTelemetry (logs estruturados e p95 do [RNF07] entregues na v0.5.0).
-5. **Privacidade:** exportação dos dados da conta ([RNF12], LGPD).
+3. **Operação:** Docker Compose, Redis para o limite de tentativas distribuído e OpenTelemetry (logs estruturados e p95 do [RNF07] entregues na v0.5.0).
+4. **Privacidade:** exportação dos dados da conta ([RNF12], LGPD).

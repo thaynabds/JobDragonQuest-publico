@@ -6,6 +6,14 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+### Adicionado
+- Teste ponta a ponta no navegador (Playwright): conta, perfil, candidatura, etapa com evidência e isolamento de outra
+  conta, contra a API e um PostgreSQL limpos no CI (#166).
+- `docs/adr/`: um arquivo por decisão de arquitetura (ADR-001 a ADR-010) (#166).
+
+### Corrigido
+- ADRs citavam react-i18next, fila com `SKIP LOCKED`, escopos de token e `traceId`, que não existem no código (#166).
+
 ## [0.5.0] - 2026-11-07
 
 ### Adicionado

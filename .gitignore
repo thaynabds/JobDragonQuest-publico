@@ -38,3 +38,4 @@ __pycache__/
 # Material privado (auditorias, notas de trabalho, dados da dona): nunca versionar
 privado/
 *_notas_trabalho.md
+playwright-report/

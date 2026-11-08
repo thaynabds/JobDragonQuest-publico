@@ -9,6 +9,7 @@
 | [casos-de-uso.md](casos-de-uso.md) | Casos de uso com fluxo principal, alternativos e exceções |
 | [user-stories.md](user-stories.md) | Histórias de usuário com critérios de aceite em Gherkin |
 | [arquitetura.md](arquitetura.md) | Arquitetura, módulos e decisões (ADRs) |
+| [adr/README.md](adr/README.md) | Um arquivo por decisão de arquitetura (ADR-001 a ADR-010) |
 | [diagramas.md](diagramas.md) | Diagramas C4, de classes, DER e máquina de estados |
 | [modelo-dados.md](modelo-dados.md) | Tabelas, chaves e migrações |
 | [api.md](api.md) | API REST v1: rotas, formatos e o formato padrão de erro |

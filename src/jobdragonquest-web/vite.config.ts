@@ -35,6 +35,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ["src/test-setup.ts"],
     restoreMocks: true,
+    // Os testes do Playwright (e2e/) rodam pelo npm run e2e, contra o sistema de verdade.
+    exclude: ["e2e/**", "node_modules/**", "dist/**"],
     testTimeout: 30_000,
     // No GitHub Actions também grava o relatório JUnit que o CI publica e resume (scripts/resumo-testes.mjs).
     reporters: process.env.GITHUB_ACTIONS === "true" ? ["default", "junit"] : ["default"],
