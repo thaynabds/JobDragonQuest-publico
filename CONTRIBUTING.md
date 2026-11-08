@@ -43,6 +43,8 @@ tipo(escopo): descrição curta, sem ponto final (#NN)
 - Tipos: `feat`, `fix`, `docs`, `test`, `refactor`, `perf`, `ci`, `build`, `chore`, `style`, `revert`.
 - Escopo opcional, curto: `sources`, `web`, `mcp`, `api`, `scripts`, `docs`...
 - Um commit faz uma coisa. Se a mensagem precisa de "e", provavelmente são dois commits.
+- O hook e o CI avisam (sem bloquear) quando um commit passa de 30 arquivos ou 800 linhas. Commit grande legítimo, como
+  uma troca de nome em todo o projeto, pode seguir; explique no corpo da mensagem.
 - Mudança que quebra compatibilidade: `feat(api)!: ...` e um parágrafo `BREAKING CHANGE:` no corpo.
 - Nenhuma linha de coautoria ou crédito a IA.
 

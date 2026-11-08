@@ -12,6 +12,17 @@ export const MAX_SUBJECT = 130;
 // Montado em partes para este arquivo não casar consigo mesmo na auditoria de crédito.
 const AI_CREDIT = new RegExp(["co-authored-by:\\s*(claude|copilot|chatgpt|gemini)", "generated with \\[?claude", "noreply@" + "anthropic"].join("|"), "i");
 
+export const BIG_FILES = 30;
+export const BIG_LINES = 800;
+
+/** Aviso (não erro) para commit grande demais: provavelmente junta mudanças que deveriam ser commits separados. */
+export function sizeWarning(files, lines) {
+  if (files > BIG_FILES || lines > BIG_LINES) {
+    return `commit grande (${files} arquivos, ${lines} linhas): se ele junta mudanças diferentes, separe em commits menores`;
+  }
+  return null;
+}
+
 /** Devolve a lista de problemas de uma mensagem de commit (vazia quando a mensagem está boa). */
 export function problems(message) {
   const [subject = "", ...rest] = String(message).replace(/\r/g, "").split("\n");
@@ -62,6 +73,13 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const commits = log.split("\x1e").map((entry) => entry.trim()).filter(Boolean).map((entry) => entry.split("\x1f"));
   let bad = 0;
   for (const [sha, message] of commits) {
+    const stat = git(["show", "--numstat", "--format=", sha]).split("\n").filter(Boolean);
+    const lines = stat.reduce((sum, row) => sum + (Number(row.split("\t")[0]) || 0) + (Number(row.split("\t")[1]) || 0), 0);
+    const warning = sizeWarning(stat.length, lines);
+    if (warning) {
+      // No GitHub Actions vira um aviso amarelo no PR; não reprova o CI.
+      console.log(`${process.env.GITHUB_ACTIONS === "true" ? "::warning::" : "AVISO   "}${sha.slice(0, 7)} ${warning}`);
+    }
     const found = problems(message.trim());
     if (found.length > 0) {
       bad += 1;
