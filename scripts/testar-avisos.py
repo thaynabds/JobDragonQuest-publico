@@ -110,7 +110,7 @@ call("POST", f"/api/v1/applications/{app}/transitions", owner, {
 ok(not any(n.get("state") == "OFFER_RECEIVED" for n in due(owner)), "tópico desligado não avisa")
 
 interview = application(owner, "SUBMITTED")
-soon = (dt.datetime.now(dt.timezone.utc) + dt.timedelta(minutes=40)).isoformat()
+soon = (dt.datetime.now(dt.UTC) + dt.timedelta(minutes=40)).isoformat()
 call("POST", f"/api/v1/applications/{interview}/transitions", owner, {
     "toState": "INTERVIEW_SCHEDULED", "source": "MANUAL", "evidence": "Marcada", "nextDueAt": soon})
 reminders = wait_for(owner, "INTERVIEW_REMINDER")
