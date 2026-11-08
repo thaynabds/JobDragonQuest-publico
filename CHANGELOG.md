@@ -6,6 +6,8 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.5.0] - 2026-11-07
+
 ### Adicionado
 - Ruff (Python) e Checkstyle (Java) no CI, hooks de pre-commit e commit-msg (`scripts/instalar-hooks.sh`) (#159).
 - `X-Request-Id` em cada requisição e no log, com opção de log em JSON (#159).
@@ -121,7 +123,8 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 - Núcleo da API: contas, perfis, vagas, compatibilidade, candidaturas de qualquer origem, Kanban, pendências e auditoria,
   rodando no PostgreSQL local.
 
-[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.2...develop
+[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.5.0...develop
+[0.5.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.3.2...v0.4.0

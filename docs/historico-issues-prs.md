@@ -5,7 +5,7 @@ público tem o mesmo código e as mesmas tags, mas o GitHub não copia issues ne
 a evidência auditável do processo. Só campos de processo são exportados (sem corpo, comentário ou autor).
 Por que existem dois repositórios: [governanca.md](governanca.md).
 
-Resumo: 67 issues (66 fechadas) e 89 PRs (73 com merge).
+Resumo: 68 issues (67 fechadas) e 92 PRs (77 com merge).
 
 ## Issues
 
@@ -76,8 +76,9 @@ Resumo: 67 issues (66 fechadas) e 89 PRs (73 com merge).
 | 126 | feat: preferências de acessibilidade salvas na conta | CLOSED | 2026-11-07 | 2026-11-07 | PR 127 | enhancement |
 | 130 | docs(governanca): pendências de governança da avaliação técnica Week_01 | CLOSED | 2026-11-07 | 2026-11-07 | PR 132 | documentation, type:docs, priority:high, scope:docs |
 | 131 | ci(qualidade): relatório de testes, análise de dependências, commits verificados, lint e formato de erro | CLOSED | 2026-11-07 | 2026-11-07 | PR 133 | test, ci, type:ci, priority:medium, scope:devops |
-| 150 | chore(deps): aplicar as atualizações seguras do Dependabot e definir a política de versões major | CLOSED | 2026-11-07 | 2026-11-08 | PR 152 | type:chore, priority:high, scope:devops |
+| 150 | chore(deps): aplicar as atualizações seguras do Dependabot e definir a política de versões major | CLOSED | 2026-11-07 | 2026-11-08 | PR 152, PR 157, PR 158 | type:chore, priority:high, scope:devops |
 | 151 | chore(deps): migrar para TypeScript 7, Vite 8, Vitest 5, jsdom 30 e plugin-react 6 | OPEN | 2026-11-07 |  |  | type:chore, priority:medium, status:ready, stack:frontend |
+| 159 | feat: backlog restante da avaliação Week_01 (lint, pre-commit, observabilidade, E2E, p95, release notes, runbook, acessibilidade) | CLOSED | 2026-11-08 | 2026-11-08 | PR 160 | type:chore, priority:medium, scope:devops |
 
 ## Pull requests
 
@@ -171,4 +172,7 @@ Resumo: 67 issues (66 fechadas) e 89 PRs (73 com merge).
 | 153 | release: v0.4.2 | MERGED | `release/0.4.2` → `main` | 2026-11-08 | 2026-11-08 |  |
 | 154 | chore: main (v0.4.2) de volta para develop | MERGED | `chore/main-para-develop-0.4.2` → `develop` | 2026-11-08 | 2026-11-08 |  |
 | 155 | chore(ci): bump actions/setup-java from 6.1.0 to 6.2.0 | OPEN | `dependabot/github_actions/develop/actions/setup-java-6.2.0` → `develop` | 2026-11-08 |  |  |
-| 156 | chore(deps): bump the menores group in /src/jobdragonquest-web with 3 updates | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/menores-a9da9bfb95` → `develop` | 2026-11-08 |  |  |
+| 156 | chore(deps): bump the menores group in /src/jobdragonquest-web with 3 updates | MERGED | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/menores-a9da9bfb95` → `develop` | 2026-11-08 | 2026-11-08 |  |
+| 157 | fix(scripts): verificadores de histórico e de crédito depois do Dependabot (#150) | MERGED | `fix/issue-150-verificadores` → `develop` | 2026-11-08 | 2026-11-08 | #150 |
+| 158 | fix(scripts): espelho aceita o e-mail privado dos bots do GitHub (#150) | MERGED | `fix/issue-150-espelho-dependabot` → `develop` | 2026-11-08 | 2026-11-08 | #150 |
+| 160 | feat: backlog restante da avaliação Week_01 (#159) | MERGED | `feature/issue-159-backlog-week01` → `develop` | 2026-11-08 | 2026-11-08 | #159 |
