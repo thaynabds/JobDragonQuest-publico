@@ -8,7 +8,7 @@
 
 > Idioma: **Português** | [English](README.en.md) | [Español](README.es.md)
 
-[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.5.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.5.0)
+[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.5.1-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.5.1)
 [![Licença](https://img.shields.io/badge/licen%C3%A7a-todos%20os%20direitos%20reservados-6b7280)](#licença)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
 [![Testes](https://img.shields.io/badge/testes-309%20passando-16a34a)](#qualidade-e-segurança)
@@ -18,7 +18,7 @@
 
 **Plataforma de gestão de carreira e automação de candidaturas a vagas de emprego e estágio, no Brasil e no exterior.**
 
-**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositório:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versão:** 0.5.0
+**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositório:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versão:** 0.5.1
 
 ## Instalação rápida
 
@@ -77,7 +77,7 @@ O JobDragonQuest junta tudo numa central única e explicável:
 
 ## Funcionalidades
 
-### Implementado (v0.5.0)
+### Implementado (v0.5.1)
 
 | Área | O que faz |
 |---|---|
@@ -204,7 +204,7 @@ As issues e os PRs ficam no repositório principal, que é privado; o espelho p�
 
 ## Qualidade e segurança
 
-- **309 testes automatizados**: 209 na API (unitários e de integração com a aplicação completa), 66 no painel, 18 no servidor MCP, 12 no plugin do Congo e 4 na extensão do navegador. Mais verificações contra o sistema rodando de verdade: 26 do teste de fumaça, 24 dos avisos, 15 de uma IA usando o JobDragonQuest pelo MCP, 29 da instalação e a coleta real.
+- **309 testes automatizados**: 209 na API (unitários e de integração com a aplicação completa), 66 no painel, 18 no servidor MCP, 12 no plugin do Congo e 4 na extensão do navegador. Mais um teste ponta a ponta no navegador (Playwright) no CI e verificações contra o sistema rodando de verdade: 26 do teste de fumaça, 24 dos avisos, 15 de uma IA usando o JobDragonQuest pelo MCP, 29 da instalação e a coleta real.
 - **Cobertura:** o build falha abaixo de 80% de linhas nos módulos críticos. Hoje a cobertura geral da API é de 92,3% (linhas). O p95 das leituras principais é de no máximo 103 ms (meta de 300 ms).
 - **CI em cada push e PR:** testes das cinco partes, lint do painel, checagem das mensagens de commit e análise de dependências. O total de testes de cada execução aparece no resumo do CI, e os relatórios de teste e cobertura ficam como artefato por 30 dias.
 - **Segurança** ([detalhes](docs/seguranca.md)):

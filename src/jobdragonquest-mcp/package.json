@@ -1,6 +1,6 @@
 {
   "name": "jobdragonquest-mcp",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "Servidor MCP (stdio) para uma IA usar o JobDragonQuest local com um token de acesso pessoal.",
   "type": "module",
