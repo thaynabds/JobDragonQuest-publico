@@ -2,7 +2,7 @@
 // de dados pessoais; o README publicado na main já mostra a versão nova.
 import { check, finish, run } from "./lib.mjs";
 
-const VERSION = "v0.4.1";
+const VERSION = "v0.4.2";
 const remote = (name, ref) => (run("git", ["ls-remote", name, ref]).stdout.split("\t")[0] ?? "").trim();
 for (const ref of ["refs/heads/main", "refs/heads/develop", `refs/tags/${VERSION}`]) {
   const origin = remote("origin", ref);
@@ -13,7 +13,7 @@ const audit = run("bash", ["scripts/publicar-espelho.sh", "--verificar"], { time
 check("auditoria do espelho (e-mails privados, sem notas, sem vazamento)", audit.status === 0 && audit.stdout.includes("ESPELHO_VERIFICADO_OK"), (audit.stdout + audit.stderr).slice(-300));
 const readme = run("gh", ["api", "repos/thaynabds/JobDragonQuest-publico/contents/README.md?ref=main", "-q", ".content"]);
 const text = Buffer.from(readme.stdout.replace(/\s/g, ""), "base64").toString("utf8");
-check("README público na versão nova", text.includes("0.4.1") && text.includes("## Instalação rápida"));
+check("README público na versão nova", text.includes("0.4.2") && text.includes("## Instalação rápida"));
 // CI verde na main dos dois repositórios, na execução do commit publicado, e página de Release da versão.
 const mainSha = remote("origin", "refs/heads/main");
 for (const repo of ["thaynabds/JobDragonQuest", "thaynabds/JobDragonQuest-publico"]) {
