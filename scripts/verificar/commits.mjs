@@ -1,6 +1,7 @@
 // Confere as mensagens de commit: Conventional Commits citando a issue, sem crédito a IA.
 // Uso: node scripts/verificar/commits.mjs [faixa]   (padrão: origin/develop..HEAD). Commits de merge ficam de fora.
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -39,6 +40,18 @@ function git(args) {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  if (process.argv[2] === "--arquivo") {
+    // Modo do hook commit-msg: confere a mensagem que está sendo escrita, ignorando as linhas de comentário do Git.
+    const message = readFileSync(process.argv[3], "utf8").split("\n").filter((line) => !line.startsWith("#")).join("\n").trim();
+    if (/^(Merge|Revert) /.test(message)) process.exit(0);
+    const found = problems(message);
+    if (found.length > 0) {
+      console.error(`Mensagem de commit fora do padrão:\n  ${found.join("\n  ")}\nVeja CONTRIBUTING.md.`);
+      process.exit(1);
+    }
+    console.log("COMMITS_OK");
+    process.exit(0);
+  }
   const range = process.argv[2] ?? "origin/develop..HEAD";
   // A faixa vem do CI ou de quem roda; só aceita formas de referência do Git, nunca opção de linha de comando.
   if (!/^[A-Za-z0-9._\/-]+(\.\.\.?[A-Za-z0-9._\/-]+)?$/.test(range) || range.startsWith("-")) {
