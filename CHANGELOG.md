@@ -6,6 +6,15 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+### Alterado
+- pdfbox 3.0.8 (leitura de PDF dos documentos do perfil) e SDK do MCP 1.32.2 (#150).
+- Ações do CI atualizadas (checkout 7, setup-java 6, setup-node 7, setup-python 7) e fixadas por SHA (#150).
+- Dependabot ignora versões major de bibliotecas, que exigem migração planejada (#151), e agrupa as menores (#150).
+
+### Corrigido
+- PRs do Dependabot deixavam vermelha a página de Actions do espelho público, onde não podem ser mergeados: o CI de
+  pull_request passa a rodar só no repositório principal (#150).
+
 ## [0.4.1] - 2026-11-07
 
 ### Adicionado
