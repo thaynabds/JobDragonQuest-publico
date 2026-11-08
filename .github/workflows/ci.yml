@@ -7,6 +7,9 @@ on:
   pull_request:
     branches: [develop, main]
 
+# O espelho público só recebe main, develop e tags pelo script de publicação; PRs lá (do Dependabot) nunca são mergeados,
+# então o CI de pull_request só roda no repositório principal. Os pushes rodam nos dois.
+
 # Permissão mínima: o workflow só lê o código.
 permissions:
   contents: read
@@ -17,6 +20,7 @@ concurrency:
 
 jobs:
   api:
+    if: github.event_name == 'push' || github.repository == 'thaynabds/JobDragonQuest'
     name: API (Java 21, ./mvnw verify)
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -24,10 +28,10 @@ jobs:
       run:
         working-directory: src/jobdragonquest-api
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: "21"
@@ -50,6 +54,7 @@ jobs:
           if-no-files-found: warn
 
   web:
+    if: github.event_name == 'push' || github.repository == 'thaynabds/JobDragonQuest'
     name: Painel (Node 20, npm run verify)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -57,10 +62,10 @@ jobs:
       run:
         working-directory: src/jobdragonquest-web
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "20.19"
           cache: npm
@@ -85,6 +90,7 @@ jobs:
           if-no-files-found: warn
 
   mcp:
+    if: github.event_name == 'push' || github.repository == 'thaynabds/JobDragonQuest'
     name: Servidor MCP (Node 20, npm run verify)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -92,10 +98,10 @@ jobs:
       run:
         working-directory: src/jobdragonquest-mcp
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "20.19"
           cache: npm
@@ -120,28 +126,30 @@ jobs:
           if-no-files-found: warn
 
   congo:
+    if: github.event_name == 'push' || github.repository == 'thaynabds/JobDragonQuest'
     name: Plugin do Congo (Python 3.12, unittest)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
       - name: Testes do plugin sem rede
         run: python -m unittest discover -s integrations/congo -p 'test_*.py' -v
 
   dependencias:
+    if: github.event_name == 'push' || github.repository == 'thaynabds/JobDragonQuest'
     name: Dependências com vulnerabilidade conhecida (OSV-Scanner)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: "21"
@@ -163,11 +171,11 @@ jobs:
 
   commits:
     name: Mensagens de commit (Conventional Commits)
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.repository == 'thaynabds/JobDragonQuest'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0

@@ -1,6 +1,6 @@
 {
   "name": "jobdragonquest-mcp",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "description": "Servidor MCP (stdio) para uma IA usar o JobDragonQuest local com um token de acesso pessoal.",
   "type": "module",
@@ -18,7 +18,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.32.1",
+    "@modelcontextprotocol/sdk": "1.32.2",
     "zod": "4.6.7"
   },
   "devDependencies": {
