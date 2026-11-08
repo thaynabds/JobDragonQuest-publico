@@ -30,10 +30,11 @@ test("conta, perfil, candidatura e etapa com evidência, isolados de outra conta
   await page.getByLabel("Empresa").fill("Acme E2E");
   await page.getByLabel("Cargo").fill("Desenvolvedora Java Júnior");
   await page.getByRole("button", { name: "Salvar" }).click();
-  await expect(page.getByText("Candidatura registrada.")).toBeVisible();
+  // Salvar abre o detalhe da candidatura nova.
+  await expect(page).toHaveURL(/\/candidaturas\/[0-9a-f-]{36}$/);
+  await expect(page.getByText("Acme E2E").first()).toBeVisible();
 
   // Detalhe: muda a etapa para "Enviada" com evidência e confere no histórico depois de recarregar.
-  await page.getByRole("link", { name: /Acme E2E/ }).first().click();
   const etapa = page.locator("form", { has: page.getByLabel("O que aconteceu (evidência)") });
   await etapa.getByLabel("Etapa atual").selectOption("SUBMITTED");
   await etapa.getByLabel("O que aconteceu (evidência)").fill("Enviei pelo site da empresa");
