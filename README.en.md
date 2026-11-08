@@ -204,7 +204,7 @@ Issues and PRs live in the main repository, which is private; the public mirror 
 
 ## Quality and security
 
-- **309 automated tests**: 209 in the API (unit and full-application integration tests), 66 in the dashboard, 18 in the MCP server, 12 in the Congo plugin and 4 in the browser extension. Plus checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobDragonQuest through MCP, 29 for installation, and the real collection test.
+- **309 automated tests**: 209 in the API (unit and full-application integration tests), 66 in the dashboard, 18 in the MCP server, 12 in the Congo plugin and 4 in the browser extension. Plus an end-to-end browser test (Playwright) in CI and checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobDragonQuest through MCP, 29 for installation, and the real collection test.
 - **Coverage:** the build fails below 80% line coverage in critical modules. Overall API coverage is 92.3% (lines) today. The p95 of the main reads is at most 103 ms (target: 300 ms).
 - **CI on every push and PR:** tests for all five parts, dashboard lint, commit message checks and dependency scanning. Each run shows the test totals in its summary, and the test and coverage reports are kept as artifacts for 30 days.
 - **Security** ([details](docs/seguranca.md)):

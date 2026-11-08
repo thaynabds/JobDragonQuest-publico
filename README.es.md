@@ -204,7 +204,7 @@ Las issues y los PRs están en el repositorio principal, que es privado; el espe
 
 ## Calidad y seguridad
 
-- **309 pruebas automatizadas**: 209 en la API (unitarias y de integración con la aplicación completa), 66 en el panel, 18 en el servidor MCP, 12 en el plugin de Congo y 4 en la extensión del navegador. Además, verificaciones contra el sistema funcionando de verdad: 26 de la prueba de humo, 24 de los avisos, 15 de una IA usando JobDragonQuest por MCP, 29 de la instalación y la recolección real.
+- **309 pruebas automatizadas**: 209 en la API (unitarias y de integración con la aplicación completa), 66 en el panel, 18 en el servidor MCP, 12 en el plugin de Congo y 4 en la extensión del navegador. Además, una prueba de punta a punta en el navegador (Playwright) en el CI y verificaciones contra el sistema funcionando de verdad: 26 de la prueba de humo, 24 de los avisos, 15 de una IA usando JobDragonQuest por MCP, 29 de la instalación y la recolección real.
 - **Cobertura:** el build falla por debajo del 80% de líneas en los módulos críticos. Hoy la cobertura general de la API es del 92,3% (líneas). El p95 de las lecturas principales es como máximo de 103 ms (meta: 300 ms).
 - **CI en cada push y PR:** pruebas de las cinco partes, lint del panel, revisión de los mensajes de commit y análisis de dependencias. El total de pruebas de cada ejecución aparece en el resumen del CI, y los informes de pruebas y cobertura quedan como artefacto por 30 días.
 - **Seguridad** ([detalles](docs/seguranca.md)):
