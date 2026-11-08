@@ -8,7 +8,7 @@ import os
 import tempfile
 import unittest
 import urllib.error
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -43,7 +43,7 @@ class FakeApi:
         raise AssertionError(path)
 
 
-START = datetime(2026, 11, 7, 5, 0, tzinfo=timezone.utc)
+START = datetime(2026, 11, 7, 5, 0, tzinfo=UTC)
 LATER = "2026-11-07T05:10:00Z"
 
 
@@ -99,7 +99,7 @@ class MessagesTest(unittest.TestCase):
 
 
 class DeliveryTest(unittest.TestCase):
-    def log(self, tmp: str) -> "plugin.SentLog":
+    def log(self, tmp: str) -> plugin.SentLog:
         log = plugin.SentLog(Path(tmp) / "enviados.json")
         log.start(START)
         return log
@@ -123,7 +123,7 @@ class DeliveryTest(unittest.TestCase):
                 {"id": "d", "system": True, "createdAt": LATER, "snoozedUntil": "2026-11-07T08:00:00Z", "message": "Adiado"},
                 {"id": "e", "system": True, "createdAt": "2026-11-07T04:59:00Z", "message": "Antes do início"},
             ])
-            now = datetime(2026, 11, 7, 5, 15, tzinfo=timezone.utc)
+            now = datetime(2026, 11, 7, 5, 15, tzinfo=UTC)
             batch = plugin.pending_dms(api, log, now)
             self.assertEqual(batch, [("a", "JobDragonQuest · Importante: Proposta recebida")])
             log.add("a")
@@ -133,7 +133,7 @@ class DeliveryTest(unittest.TestCase):
     def test_respects_hide_details(self):
         with tempfile.TemporaryDirectory() as tmp:
             api = FakeApi([{"id": "a", "system": True, "createdAt": LATER, "message": "Acme (Dev)"}], hide=True)
-            batch = plugin.pending_dms(api, self.log(tmp), datetime(2026, 11, 7, 6, 0, tzinfo=timezone.utc))
+            batch = plugin.pending_dms(api, self.log(tmp), datetime(2026, 11, 7, 6, 0, tzinfo=UTC))
         self.assertNotIn("Acme", batch[0][1])
 
     def test_sent_log_survives_corrupt_or_old_file_and_caps_size(self):

@@ -33,6 +33,12 @@ server:
     include-stacktrace: never
     include-message: never
 
+# Cada linha de log traz o X-Request-Id da requisição. Logs em JSON (para coletores como Loki ou Elastic): defina
+# LOGGING_STRUCTURED_FORMAT_CONSOLE=ecs (ou logstash); o requestId vai junto como campo.
+logging:
+  pattern:
+    level: "%5p [%X{requestId:-}]"
+
 management:
   endpoints:
     web:

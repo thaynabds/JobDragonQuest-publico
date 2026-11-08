@@ -1,0 +1,34 @@
+# Cria a página de Release de cada tag vX.Y.Z com as notas da seção correspondente do CHANGELOG.md.
+# Roda no repositório principal e no espelho público (as tags chegam aos dois). Se a página já existir, não mexe.
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Página de Release a partir do CHANGELOG
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Notas da versão
+        env:
+          TAG: ${{ github.ref_name }}
+        run: node scripts/notas-da-release.mjs "$TAG" > "$RUNNER_TEMP/notas.md"
+      - name: Criar a página (se ainda não existir)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "A página da $TAG já existe."
+          else
+            gh release create "$TAG" -R "$GITHUB_REPOSITORY" --verify-tag --title "JobDragonQuest $TAG" --notes-file "$RUNNER_TEMP/notas.md" --latest
+          fi
