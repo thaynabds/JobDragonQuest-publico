@@ -36,9 +36,9 @@ const day = (iso) => (iso ? iso.slice(0, 10) : "");
 export function loadHistory() {
   const issues = gh(["issue", "list", "-R", REPO, "-s", "all", "-L", "1000", "--json", "number,title,state,createdAt,closedAt,labels"])
     .sort((a, b) => a.number - b.number);
-  const pulls = gh(["pr", "list", "-R", REPO, "-s", "all", "-L", "1000", "--json", "number,title,state,createdAt,mergedAt,baseRefName,headRefName,body"])
+  const pulls = gh(["pr", "list", "-R", REPO, "-s", "all", "-L", "1000", "--json", "number,title,state,createdAt,mergedAt,baseRefName,headRefName,body,author"])
     .sort((a, b) => a.number - b.number)
-    .map((pr) => ({ ...pr, closes: closedIssues(pr.body), body: undefined }));
+    .map((pr) => ({ ...pr, closes: closedIssues(pr.body), body: undefined, author: { login: pr.author?.is_bot || /dependabot/.test(pr.author?.login ?? "") ? "dependabot" : "pessoa" } }));
   return { issues, pulls };
 }
 

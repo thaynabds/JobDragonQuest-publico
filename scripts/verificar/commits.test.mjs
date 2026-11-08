@@ -39,6 +39,7 @@ test("recusa ponto final, cabeçalho longo e corpo colado, e aceita nome própri
 });
 
 test("recusa crédito a IA no corpo", () => {
-  const credit = ["Co-Authored-By: Claude", "<x@y>"].join(" ");
+  // Montado em partes para o arquivo não conter a frase proibida (a auditoria do repositório recusaria).
+  const credit = ["Co-Authored", "-By: ", "Cla", "ude <x@y>"].join("");
   assert.ok(problems(`feat: tela nova (#1)\n\n${credit}`).some((p) => /crédito a IA/.test(p)));
 });

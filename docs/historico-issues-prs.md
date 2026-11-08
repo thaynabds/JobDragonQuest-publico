@@ -5,7 +5,7 @@ público tem o mesmo código e as mesmas tags, mas o GitHub não copia issues ne
 a evidência auditável do processo. Só campos de processo são exportados (sem corpo, comentário ou autor).
 Por que existem dois repositórios: [governanca.md](governanca.md).
 
-Resumo: 67 issues (66 fechadas) e 85 PRs (71 com merge).
+Resumo: 67 issues (66 fechadas) e 89 PRs (73 com merge).
 
 ## Issues
 
@@ -153,18 +153,22 @@ Resumo: 67 issues (66 fechadas) e 85 PRs (71 com merge).
 | 133 | ci(qualidade): relatórios de teste, OSV-Scanner, commits verificados, ESLint e formato de erro (#131) | MERGED | `feature/issue-131-qualidade` → `develop` | 2026-11-07 | 2026-11-07 | #131 |
 | 134 | release: v0.4.1 | MERGED | `release/0.4.1` → `main` | 2026-11-07 | 2026-11-07 |  |
 | 135 | chore: main (v0.4.1) de volta para develop | MERGED | `chore/main-para-develop-0.4.1` → `develop` | 2026-11-07 | 2026-11-07 |  |
-| 136 | chore(ci): bump actions/checkout from 4 to 7 | OPEN | `dependabot/github_actions/develop/actions/checkout-7` → `develop` | 2026-11-07 |  |  |
-| 137 | chore(ci): bump actions/setup-node from 4 to 7 | OPEN | `dependabot/github_actions/develop/actions/setup-node-7` → `develop` | 2026-11-07 |  |  |
-| 138 | chore(ci): bump actions/setup-python from 5 to 7 | OPEN | `dependabot/github_actions/develop/actions/setup-python-7` → `develop` | 2026-11-07 |  |  |
-| 139 | chore(ci): bump actions/setup-java from 4 to 6 | OPEN | `dependabot/github_actions/develop/actions/setup-java-6` → `develop` | 2026-11-07 |  |  |
+| 136 | chore(ci): bump actions/checkout from 4 to 7 | CLOSED | `dependabot/github_actions/develop/actions/checkout-7` → `develop` | 2026-11-07 |  |  |
+| 137 | chore(ci): bump actions/setup-node from 4 to 7 | CLOSED | `dependabot/github_actions/develop/actions/setup-node-7` → `develop` | 2026-11-07 |  |  |
+| 138 | chore(ci): bump actions/setup-python from 5 to 7 | CLOSED | `dependabot/github_actions/develop/actions/setup-python-7` → `develop` | 2026-11-07 |  |  |
+| 139 | chore(ci): bump actions/setup-java from 6.1.0 to 6.2.0 | CLOSED | `dependabot/github_actions/develop/actions/setup-java-6` → `develop` | 2026-11-07 |  |  |
 | 140 | chore(deps): bump org.apache.pdfbox:pdfbox from 3.0.3 to 3.0.8 in /src/jobdragonquest-api | OPEN | `dependabot/maven/src/jobdragonquest-api/develop/org.apache.pdfbox-pdfbox-3.0.8` → `develop` | 2026-11-07 |  |  |
-| 141 | chore(deps): bump @modelcontextprotocol/sdk from 1.32.1 to 1.32.2 in /src/jobdragonquest-mcp | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-mcp/develop/modelcontextprotocol/sdk-1.32.2` → `develop` | 2026-11-07 |  |  |
-| 142 | chore(deps): bump @vitejs/plugin-react from 5.2.0 to 6.2.1 in /src/jobdragonquest-web | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/vitejs/plugin-react-6.2.1` → `develop` | 2026-11-07 |  |  |
-| 143 | chore(deps): bump typescript from 5.9.3 to 7.0.2 in /src/jobdragonquest-mcp | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-mcp/develop/typescript-7.0.2` → `develop` | 2026-11-07 |  |  |
-| 144 | chore(deps): bump @types/node from 20.19.43 to 26.6.6 in /src/jobdragonquest-mcp | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-mcp/develop/types/node-26.6.6` → `develop` | 2026-11-07 |  |  |
-| 145 | chore(deps): bump vite from 7.3.7 to 8.3.5 in /src/jobdragonquest-web | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/vite-8.3.5` → `develop` | 2026-11-07 |  |  |
-| 146 | chore(deps): bump vitest from 4.1.12 to 5.1.0 in /src/jobdragonquest-web | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/vitest-5.1.0` → `develop` | 2026-11-07 |  |  |
-| 147 | chore(deps): bump vitest from 4.1.12 to 5.1.0 in /src/jobdragonquest-mcp | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-mcp/develop/vitest-5.1.0` → `develop` | 2026-11-07 |  |  |
-| 148 | chore(deps): bump jsdom from 26.1.0 to 30.1.3 in /src/jobdragonquest-web | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/jsdom-30.1.3` → `develop` | 2026-11-07 |  |  |
-| 149 | chore(deps): bump typescript from 5.9.3 to 7.0.2 in /src/jobdragonquest-web | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/typescript-7.0.2` → `develop` | 2026-11-07 |  |  |
+| 141 | chore(deps): bump @modelcontextprotocol/sdk from 1.32.1 to 1.32.2 in /src/jobdragonquest-mcp | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-mcp/develop/modelcontextprotocol/sdk-1.32.2` → `develop` | 2026-11-07 |  |  |
+| 142 | chore(deps): bump @vitejs/plugin-react from 5.2.0 to 6.2.1 in /src/jobdragonquest-web | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/vitejs/plugin-react-6.2.1` → `develop` | 2026-11-07 |  |  |
+| 143 | chore(deps): bump typescript from 5.9.3 to 7.0.2 in /src/jobdragonquest-mcp | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-mcp/develop/typescript-7.0.2` → `develop` | 2026-11-07 |  |  |
+| 144 | chore(deps): bump @types/node from 20.19.43 to 26.6.6 in /src/jobdragonquest-mcp | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-mcp/develop/types/node-26.6.6` → `develop` | 2026-11-07 |  |  |
+| 145 | chore(deps): bump vite from 7.3.7 to 8.3.5 in /src/jobdragonquest-web | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/vite-8.3.5` → `develop` | 2026-11-07 |  |  |
+| 146 | chore(deps): bump vitest from 4.1.12 to 5.1.0 in /src/jobdragonquest-web | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/vitest-5.1.0` → `develop` | 2026-11-07 |  |  |
+| 147 | chore(deps): bump vitest from 4.1.12 to 5.1.0 in /src/jobdragonquest-mcp | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-mcp/develop/vitest-5.1.0` → `develop` | 2026-11-07 |  |  |
+| 148 | chore(deps): bump jsdom from 26.1.0 to 30.1.3 in /src/jobdragonquest-web | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/jsdom-30.1.3` → `develop` | 2026-11-07 |  |  |
+| 149 | chore(deps): bump typescript from 5.9.3 to 7.0.2 in /src/jobdragonquest-web | CLOSED | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/typescript-7.0.2` → `develop` | 2026-11-07 |  |  |
 | 152 | chore(deps): atualizações seguras do Dependabot e política de versões major (#150) | MERGED | `feature/issue-150-dependencias` → `develop` | 2026-11-08 | 2026-11-08 | #150 |
+| 153 | release: v0.4.2 | MERGED | `release/0.4.2` → `main` | 2026-11-08 | 2026-11-08 |  |
+| 154 | chore: main (v0.4.2) de volta para develop | MERGED | `chore/main-para-develop-0.4.2` → `develop` | 2026-11-08 | 2026-11-08 |  |
+| 155 | chore(ci): bump actions/setup-java from 6.1.0 to 6.2.0 | OPEN | `dependabot/github_actions/develop/actions/setup-java-6.2.0` → `develop` | 2026-11-08 |  |  |
+| 156 | chore(deps): bump the menores group in /src/jobdragonquest-web with 3 updates | OPEN | `dependabot/npm_and_yarn/src/jobdragonquest-web/develop/menores-a9da9bfb95` → `develop` | 2026-11-08 |  |  |
