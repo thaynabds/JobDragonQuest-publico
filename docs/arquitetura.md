@@ -17,39 +17,9 @@
                     └──────────────────────────────┘──▶ ATS públicos (fase 2)
 ```
 
-## 2. Decisões (ADRs resumidos)
+## 2. Decisões (ADRs)
 
-### ADR-001: monólito modular em vez de microsserviços no início
-- **Contexto:** há um usuário principal, uma pessoa desenvolvendo e um computador sem Docker. O prompt pede para evitar tanto um monólito desorganizado quanto uma fragmentação desnecessária.
-- **Decisão:** um serviço Spring Boot com módulos isolados por pacote (`identity`, `profiles`, `jobs`, `matching`, `applications`, `pending`, `audit`). Cada módulo expõe só uma fachada (`*Service`) e DTOs. Nenhum módulo acessa o repositório de outro.
-- **Consequência:** deploy e transação simples. Um módulo pode virar serviço próprio quando houver carga ou equipe que justifique. Os primeiros candidatos são `collectors` (coleta de vagas) e `mail` (e-mail), por terem I/O externo e ritmo próprio.
-
-### ADR-002: Java 21 + Spring Boot 4.1.2
-- Preferência declarada pela usuária, ecossistema maduro de segurança (Spring Security 7, OAuth2 Resource Server), Hibernate 7 e virtual threads para I/O externo.
-- A ideia inicial era a 3.5, mas o Spring Initializr não a oferece mais: ela saiu do suporte aberto. Começar um projeto novo numa linha sem correções de segurança seria dívida desde o primeiro dia. Por isso usamos a 4.1.2, a versão estável atual.
-
-### ADR-003: React + TypeScript + Vite no front
-- Ecossistema amplo e componentes acessíveis, com i18n por `react-i18next`.
-- Angular também atenderia. A escolha pesa a produtividade e a facilidade de manutenção individual.
-
-### ADR-004: fila em banco (padrão outbox) antes de RabbitMQ ou Kafka
-- O volume esperado é de dezenas a centenas de tarefas por dia. Uma tabela `task` com `SELECT ... FOR UPDATE SKIP LOCKED` dá fila durável, idempotente e transacional sem infraestrutura extra.
-- Kafka só se justifica com vários consumidores independentes e alto volume, o que não é o caso. RabbitMQ entra se a coleta virar um serviço separado.
-
-### ADR-005: compatibilidade determinística e explicável, com IA como camada opcional
-- A nota é calculada por regras auditáveis (requisitos obrigatórios, desejáveis, impedimentos eliminatórios), sempre com justificativa.
-- O LLM entra para extrair requisitos de texto livre e mapear sinônimos. Ele não decide a nota final sozinho, o que atende RF-04 e RN-02 e funciona sem provedor de IA (RF-08.1).
-
-### ADR-006: autenticação própria com JWT assinado (HS256) e refresh token opaco
-- Access token de 15 minutos, validado pelo `oauth2-resource-server`. Refresh token aleatório de 256 bits, guardado só como hash SHA-256, rotativo e com detecção de reuso (um token reutilizado revoga a família).
-- O login OIDC (Google, Microsoft) usa o mesmo emissor interno depois da federação (fase 2).
-
-### ADR-007: servidor MCP como processo separado e fino
-- `jobdragonquest-mcp` fala stdio com o cliente (Claude Desktop/Code) e chama a API REST com um token de escopo restrito (`mcp:read`, `mcp:write`). Assim, o MCP não tem acesso direto ao banco e herda toda a autorização da API.
-
-### ADR-008: navegação automatizada só onde é permitida
-- LinkedIn, Indeed e Glassdoor proíbem scraping e automação nos termos de uso. Para eles, as entradas são link, extensão de navegador (ação iniciada pela usuária), e-mail de alerta e importação.
-- Automação de formulários só em ATS que permitam e sempre com pausa em CAPTCHA e MFA. Detalhes em [integracoes.md](integracoes.md).
+Cada decisão tem um arquivo próprio em [adr/](adr/README.md): monólito modular (001), Java 21 e Spring Boot 4.1 (002), React e TypeScript (003), agendador com reserva no banco (004), compatibilidade determinística (005), autenticação própria (006), MCP separado (007), automação só onde é permitida (008), espelho público (009) e formato único de erro (010).
 
 ## 3. Módulos do backend
 
@@ -71,7 +41,7 @@ A API REST é versionada em `/api/v1`. Os erros seguem o formato Problem Details
 ## 5. Observabilidade
 
 - Actuator `health` (público, sem detalhes) e `prometheus` (só com papel `ADMIN`).
-- Logs com `traceId` e `userId`, nunca com token, senha ou corpo de e-mail.
+- Cada linha de log traz o `requestId` (o mesmo `X-Request-Id` da resposta), nunca token, senha ou corpo de e-mail. Log em JSON com `LOGGING_STRUCTURED_FORMAT_CONSOLE=ecs`.
 
 ## 6. Execução
 

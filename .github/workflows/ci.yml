@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
           distribution: temurin
           java-version: "21"
@@ -153,7 +153,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
           distribution: temurin
           java-version: "21"
@@ -188,3 +188,74 @@ jobs:
           BASE: ${{ github.event.pull_request.base.sha }}
           HEAD: ${{ github.event.pull_request.head.sha }}
         run: node scripts/verificar/commits.mjs "$BASE..$HEAD"
+
+  e2e:
+    name: Ponta a ponta no navegador (Playwright)
+    if: github.event_name == 'push' || github.repository == 'thaynabds/JobDragonQuest'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: jobdragonquest
+          POSTGRES_USER: jobdragonquest
+          POSTGRES_PASSWORD: senha-so-do-ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U jobdragonquest" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      JOBDRAGONQUEST_DB_URL: jdbc:postgresql://127.0.0.1:5432/jobdragonquest
+      JOBDRAGONQUEST_DB_USER: jobdragonquest
+      JOBDRAGONQUEST_DB_PASSWORD: senha-so-do-ci
+      JOBDRAGONQUEST_SECURE_COOKIES: "false"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "20.19"
+          cache: npm
+          cache-dependency-path: src/jobdragonquest-web/package-lock.json
+      - name: Build da API
+        working-directory: src/jobdragonquest-api
+        run: ./mvnw -B -ntp -DskipTests -Dcheckstyle.skip -Djacoco.skip=true package
+      - name: Subir a API (segredo do JWT gerado só para esta execução)
+        working-directory: src/jobdragonquest-api
+        run: |
+          export JOBDRAGONQUEST_JWT_SECRET="$(openssl rand -base64 48)"
+          jar="$(ls target/jobdragonquest-api-*.jar | grep -v plain | head -1)"
+          nohup java -jar "$jar" > "$RUNNER_TEMP/api.log" 2>&1 &
+          for i in $(seq 1 60); do curl -fs http://127.0.0.1:8080/actuator/health >/dev/null && exit 0; sleep 2; done
+          tail -50 "$RUNNER_TEMP/api.log"; exit 1
+      - name: Build e preview do painel
+        working-directory: src/jobdragonquest-web
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+          nohup npm run preview > "$RUNNER_TEMP/web.log" 2>&1 &
+          for i in $(seq 1 30); do curl -fs http://127.0.0.1:5173/ >/dev/null && exit 0; sleep 1; done
+          tail -30 "$RUNNER_TEMP/web.log"; exit 1
+      - name: Navegador do Playwright
+        working-directory: src/jobdragonquest-web
+        run: npx playwright install --with-deps chromium
+      - name: Testes no navegador
+        working-directory: src/jobdragonquest-web
+        run: npm run e2e
+      - name: Relatório e logs se falhar
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-relatorio
+          path: |
+            src/jobdragonquest-web/playwright-report/
+            src/jobdragonquest-web/test-results/
+            ${{ runner.temp }}/api.log
+          retention-days: 14
+          if-no-files-found: ignore

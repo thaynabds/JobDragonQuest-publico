@@ -22,6 +22,7 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 | v0.4.1 | 07/11/2026 | Pendências da avaliação técnica Week_01: licença, changelog, guia de contribuição, política de segurança, templates, Dependabot, labels, histórico de issues e PRs no espelho, rastreabilidade RF → issue → teste (#130); relatórios de teste e OSV-Scanner no CI, checagem de commits, ESLint, formato de erro único e correção de privacidade nas notificações do sistema (#131) |
 | v0.4.2 | 07/11/2026 | pdfbox 3.0.8 e SDK do MCP 1.32.2; ações do CI novas fixadas por SHA; Dependabot sem versões major de bibliotecas; CI de PR só no repositório principal, para o espelho público não ficar vermelho com PRs que não podem ser mergeados (#150) |
 | v0.5.0 | 07/11/2026 | Backlog restante da avaliação Week_01: Ruff, Checkstyle e hooks de pre-commit; X-Request-Id e log em JSON; teste ponta a ponta pela API; p95 medido (RNF07); release notes automáticas; runbook e checklist de acessibilidade (#159) |
+| v0.5.1 | 07/11/2026 | Teste ponta a ponta no navegador (Playwright) no CI; ADRs em um arquivo por decisão (#166); setup-java 6.2.0 (#150) |
 
 Medição da v0.2.0:
 - API: 108 testes, cobertura geral de 94,3%.
@@ -74,6 +75,5 @@ Medição da v0.2.0:
 
 1. **E-mail (RF21).** Gmail e Outlook por OAuth com escopos mínimos, classificação de mensagens, vínculo com a candidatura (com confirmação quando houver dúvida) e marcadores. Nunca apagar. Destrava os critérios 2, 9, 10 e 12 e os cenários 6, 9 e 10.
 2. **Camada de IA opcional** (`LlmProvider`: Claude, OpenAI ou local) para extrair vagas de publicações e imagens (cenário 12), sempre sem inventar dado do perfil.
-3. **Testes ponta a ponta no navegador** (o fluxo coleta → análise → candidatura já tem teste ponta a ponta pela API).
-4. **Operação:** Docker Compose, Redis para o limite de tentativas distribuído e OpenTelemetry (logs estruturados e p95 do [RNF07] entregues na v0.5.0).
-5. **Privacidade:** exportação dos dados da conta ([RNF12], LGPD).
+3. **Operação:** Docker Compose, Redis para o limite de tentativas distribuído e OpenTelemetry (logs estruturados e p95 do [RNF07] entregues na v0.5.0).
+4. **Privacidade:** exportação dos dados da conta ([RNF12], LGPD).
