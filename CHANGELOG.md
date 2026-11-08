@@ -6,6 +6,13 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+### Adicionado
+- Ruff (Python) e Checkstyle (Java) no CI, hooks de pre-commit e commit-msg (`scripts/instalar-hooks.sh`) (#159).
+- `X-Request-Id` em cada requisição e no log, com opção de log em JSON (#159).
+- Teste ponta a ponta do fluxo coleta → análise → candidatura e medição do p95 (pior rota 103 ms, limite 300 ms) (#159).
+- Página de Release criada pelo CI a partir do CHANGELOG (#159).
+- `docs/runbook.md` e `docs/acessibilidade.md` (#159).
+
 ## [0.4.2] - 2026-11-07
 
 ### Alterado

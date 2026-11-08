@@ -15,6 +15,8 @@
 | [integracoes.md](integracoes.md) | Integrações possíveis e o que os termos de uso permitem |
 | [seguranca.md](seguranca.md) | Modelo de ameaças e defesas |
 | [deploy.md](deploy.md) | Deploy opcional |
+| [runbook.md](runbook.md) | Operação e problemas comuns |
+| [acessibilidade.md](acessibilidade.md) | Checklist de acessibilidade (WCAG 2.2 AA) |
 | [roadmap.md](roadmap.md) | Situação de cada critério e próximas entregas |
 | [governanca.md](governanca.md) | Repositório principal × espelho público, Git Flow e como auditar o processo |
 | [historico-issues-prs.md](historico-issues-prs.md) | Histórico exportado de issues e PRs do repositório principal |
