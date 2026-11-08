@@ -28,8 +28,8 @@ node scripts/verificar/vazamento.mjs >/dev/null || { echo "A auditoria de vazame
 mapfile -t tags < <(git tag --list 'v*')
 refs=(main develop "${tags[@]}")
 
-# E-mails permitidos: só os endereços privados do GitHub.
-allowed='^([0-9]+\+[A-Za-z0-9-]+@users\.noreply\.github\.com|noreply@github\.com)$'
+# E-mails permitidos: só os endereços privados do GitHub (inclusive o dos bots, como o Dependabot).
+allowed='^([0-9]+\+[A-Za-z0-9-]+(\[bot\])?@users\.noreply\.github\.com|noreply@github\.com)$'
 bad="$(git log --format='%ae%n%ce' "${refs[@]}" | sort -u | grep -Ev "$allowed" || true)"
 [[ -z "$bad" ]] || { echo "Há commits com e-mail que não é privado do GitHub: nada foi enviado." >&2; exit 1; }
 for tag in "${tags[@]}"; do
