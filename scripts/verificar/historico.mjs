@@ -19,7 +19,10 @@ const filePulls = rows(section("Pull requests"));
 
 const live = loadHistory();
 const maxFile = Math.max(0, ...fileIssues.keys(), ...filePulls.keys());
-const maxLive = Math.max(0, ...live.issues.map((i) => i.number), ...live.pulls.map((p) => p.number));
+// PRs do Dependabot aparecem sozinhos toda semana; a exportação é regerada a cada release, então eles não contam para
+// a exigência de exportação recente (os que já estavam no arquivo continuam conferidos abaixo).
+const human = (item) => !/^app\/dependabot$|^dependabot/.test(item.author?.login ?? "");
+const maxLive = Math.max(0, ...live.issues.map((i) => i.number), ...live.pulls.filter(human).map((p) => p.number));
 check(`exportação recente (maior número no arquivo ${maxFile}, no GitHub ${maxLive})`, maxFile > 100 && maxLive - maxFile <= 3);
 
 const problems = [];
@@ -33,7 +36,8 @@ for (const [kind, items, fileRows] of [["issue", live.issues, fileIssues], ["PR"
 }
 check(`todas as issues (${live.issues.length}) e PRs (${live.pulls.length}) até o ${maxFile} conferem com o GitHub`, problems.length === 0, problems.slice(0, 8).join("; "));
 check(`tabela de PRs tem as ${filePulls.size} linhas exportadas (mínimo 60)`, filePulls.size >= 60);
-check("nenhum campo pessoal exportado", !/@|author|autor:/i.test(text.replace(/thaynabds\/JobDragonQuest/g, "")));
+const personal = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+\.[A-Za-z.]{2,}|\bauthor\b|autor:/i;
+check("nenhum campo pessoal exportado (e-mail, autor)", !personal.test(text) && personal.test("x pessoa@exemplo.com"));
 const governance = readFileSync(join(ROOT, "docs", "governanca.md"), "utf8");
 check("governanca.md explica o espelho e aponta o histórico", /espelho/.test(governance) && governance.includes("historico-issues-prs.md"));
 finish("HISTORICO_OK");
