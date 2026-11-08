@@ -6,6 +6,9 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+### Adicionado
+- Aviso de commit grande (mais de 30 arquivos ou 800 linhas) no hook de pre-commit e nos PRs do CI, sem bloquear (#170).
+
 ## [0.5.1] - 2026-11-07
 
 ### Adicionado
