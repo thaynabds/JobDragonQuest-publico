@@ -1,4 +1,4 @@
-import { chamar, lerConfig, paginaValida } from "./comum.js";
+import { campoDoPerfil, chamar, lerConfig, paginaValida } from "./comum.js";
 
 const situacao = document.getElementById("situacao");
 const formulario = document.getElementById("formulario");
@@ -45,6 +45,43 @@ formulario.addEventListener("submit", async (evento) => {
     mostrar("Vaga cadastrada no JobDragonQuest.");
   } catch (erro) {
     mostrar("Não deu para cadastrar: " + erro.message);
+  }
+});
+
+// Rodam na página aberta, só depois do clique. Nunca enviam o formulário e não tocam em campo já preenchido.
+function lerRotulos() {
+  return [...document.querySelectorAll("input:not([type=hidden]):not([type=password]):not([type=file]), textarea")].map((campo) =>
+    campo.value || campo.disabled || campo.readOnly ? "" : [campo.labels?.[0]?.innerText, campo.name, campo.id, campo.placeholder, campo.getAttribute("aria-label")].join(" "));
+}
+
+function aplicarValores(valores) {
+  const campos = [...document.querySelectorAll("input:not([type=hidden]):not([type=password]):not([type=file]), textarea")];
+  let total = 0;
+  valores.forEach((valor, indice) => {
+    const campo = campos[indice];
+    if (!valor || !campo || campo.value) return;
+    campo.value = valor;
+    campo.dispatchEvent(new Event("input", { bubbles: true }));
+    campo.dispatchEvent(new Event("change", { bubbles: true }));
+    total += 1;
+  });
+  return total;
+}
+
+document.getElementById("preencher").addEventListener("click", async () => {
+  try {
+    const config = await lerConfig(chrome.storage.local);
+    const perfis = await chamar(config, "/api/v1/profiles");
+    const p = await chamar(config, "/api/v1/profiles/" + encodeURIComponent(perfis[0].id));
+    const o = p.options ?? {};
+    const dados = { nome: o.socialName ?? p.name, email: o.contactEmail, telefone: o.phone, cidade: p.city, linkedin: p.linkedinUrl, github: p.githubUrl, portfolio: p.portfolioUrl };
+    const [aba] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [rotulos] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: lerRotulos });
+    const valores = rotulos.result.map((rotulo) => dados[campoDoPerfil(rotulo)] ?? null);
+    const [resultado] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: aplicarValores, args: [valores] });
+    mostrar(resultado.result + " campo(s) preenchido(s). Confira e envie você mesma.");
+  } catch (erro) {
+    mostrar("Não deu para preencher: " + erro.message);
   }
 });
 

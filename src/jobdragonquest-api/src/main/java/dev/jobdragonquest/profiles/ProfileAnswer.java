@@ -13,12 +13,32 @@ public class ProfileAnswer {
     @Column(nullable = false, length = 4000)
     private String answer;
 
+    @Column(length = 60)
+    private String category;
+
+    @Column(name = "updated_on")
+    private java.time.LocalDate updatedOn;
+
     protected ProfileAnswer() {
     }
 
     public ProfileAnswer(String question, String answer) {
         this.question = question;
         this.answer = answer;
+    }
+
+    ProfileAnswer details(String newCategory, java.time.LocalDate date) {
+        this.category = newCategory;
+        this.updatedOn = date;
+        return this;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public java.time.LocalDate getUpdatedOn() {
+        return updatedOn;
     }
 
     public String getQuestion() {

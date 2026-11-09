@@ -151,6 +151,14 @@ public class AuthService {
         return user;
     }
 
+    /** Exclui a conta e, em cascata no banco, tudo o que pertence a ela. Exige a senha atual. */
+    @Transactional
+    public void deleteAccount(UUID userId, String currentPassword) {
+        UserAccount user = get(userId);
+        requirePassword(user, currentPassword);
+        users.delete(user);
+    }
+
     /** Muda o e-mail de login. Exige a senha atual e respeita a lista de e-mails permitidos do servidor. */
     @Transactional
     public UserAccount changeEmail(UUID userId, ChangeEmailRequest request) {

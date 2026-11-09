@@ -34,14 +34,23 @@ export async function lerConfig(armazenamento) {
   return { api: apiValida(dados.api ?? "http://127.0.0.1:8080"), token: tokenValido(dados.token) };
 }
 
+/** Dado do perfil que corresponde ao rótulo de um campo. Senha, documento e pagamento nunca são preenchidos. */
+export function campoDoPerfil(rotulo) {
+  const texto = String(rotulo ?? "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+  if (/senha|password|cpf|ssn|cartao|card|cvv|banc|bank/.test(texto)) return null;
+  const regras = [["linkedin", /linkedin/], ["github", /github/], ["portfolio", /portfolio|website|site pessoal/], ["email", /e-?mail|correo/], ["telefone", /telefone|celular|phone|mobile|whatsapp|telefono/], ["cidade", /cidade|city|ciudad/], ["nome", /nome|name|nombre/]];
+  const achado = regras.find(([, padrao]) => padrao.test(texto));
+  return achado ? achado[0] : null;
+}
+
 /** Chamada à API local com o token no cabeçalho; nunca envia cookies. */
 export async function chamar(config, caminho, corpo) {
   const resposta = await fetch(config.api + caminho, {
-    method: "POST",
+    method: corpo === undefined ? "GET" : "POST",
     credentials: "omit",
     redirect: "error",
-    headers: { "Content-Type": "application/json", Authorization: "Bearer " + config.token },
-    body: JSON.stringify(corpo),
+    headers: { ...(corpo === undefined ? {} : { "Content-Type": "application/json" }), Authorization: "Bearer " + config.token },
+    body: corpo === undefined ? undefined : JSON.stringify(corpo),
   });
   const texto = await resposta.text();
   let dados = null;

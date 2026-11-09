@@ -21,7 +21,11 @@ import dev.jobdragonquest.jobs.JobDtos.JobResponse;
 import dev.jobdragonquest.jobs.JobDtos.RequirementDto;
 import dev.jobdragonquest.jobs.JobRequirement;
 import dev.jobdragonquest.jobs.JobService;
+import dev.jobdragonquest.common.text.TextLanguage;
 import dev.jobdragonquest.jobs.JobSnapshot;
+import dev.jobdragonquest.profiles.ProfileDtos.LanguageView;
+import dev.jobdragonquest.profiles.ProfileOptions;
+import dev.jobdragonquest.profiles.ProfileOptions.ResumeField;
 import dev.jobdragonquest.profiles.ProfileDtos.EntryDto;
 import dev.jobdragonquest.profiles.ProfileDtos.ProfileResponse;
 import dev.jobdragonquest.profiles.ProfileDtos.SkillView;
@@ -48,7 +52,12 @@ public class CareerService {
     /** Currículo montado do perfil. {@code jobTitle}/{@code company}: vaga de referência, quando há. */
     public record Resume(String headline, String currentTitle, String location, String summary, List<String> links,
             List<ResumeSkill> skills, List<ResumeEntry> experience, List<ResumeEntry> education, List<ResumeEntry> other,
-            List<String> languages, String jobTitle, String company, String language, boolean needsTranslation) {
+            List<String> languages, String jobTitle, String company, String language, boolean needsTranslation,
+            List<ResumeExtra> extras) {
+    }
+
+    /** Dado adicional que a pessoa escolheu mostrar: {@code section} é o nome da seção, {@code values} o conteúdo. */
+    public record ResumeExtra(String section, List<String> values) {
     }
 
     public record CoverLetter(String text, List<String> missing, String language, boolean needsTranslation) {
@@ -79,7 +88,8 @@ public class CareerService {
         Set<String> wanted = job == null ? Set.of() : job.requirements().stream().map(RequirementDto::skill)
                 .filter(java.util.Objects::nonNull).map(SkillNormalizer::normalize).collect(Collectors.toSet());
 
-        List<ResumeSkill> skills = p.skills().stream()
+        Set<ResumeField> hidden = p.options() == null || p.options().resumeHidden() == null ? Set.of() : p.options().resumeHidden();
+        List<ResumeSkill> skills = p.skills().stream().filter(SkillView::showInResume)
                 .map(s -> new ResumeSkill(s.name(), s.level(), time(s), wanted.contains(SkillNormalizer.normalize(s.name()))))
                 .sorted(Comparator.comparing((ResumeSkill s) -> !s.highlighted()).thenComparing(ResumeSkill::level, Comparator.reverseOrder())
                         .thenComparing(ResumeSkill::name))
@@ -91,7 +101,7 @@ public class CareerService {
         Translation translated = translation(p, language);
         boolean[] untranslated = {false};
         java.util.function.UnaryOperator<String> auto = text -> automatic(p, language, text, untranslated);
-        for (EntryDto e : p.entries()) {
+        for (EntryDto e : p.entries().stream().filter(entry -> !Boolean.FALSE.equals(entry.showInResume())).toList()) {
             boolean relevant = !wanted.isEmpty() && mentions(e, wanted);
             ResumeEntry entry = new ResumeEntry(e.kind().name(), auto.apply(e.title()), e.organization(), e.startDate(), e.endDate(),
                     Boolean.TRUE.equals(e.current()), e.location(), auto.apply(e.description()), entrySkills(e), relevant);
@@ -108,20 +118,90 @@ public class CareerService {
         education.sort(order);
         other.sort(order);
         List<String> links = new ArrayList<>();
-        for (String link : new String[] {p.linkedinUrl(), p.githubUrl(), p.portfolioUrl(), p.websiteUrl()}) {
-            if (link != null) {
-                links.add(link);
-            }
-        }
+        addLink(links, hidden, ResumeField.LINKEDIN, p.linkedinUrl());
+        addLink(links, hidden, ResumeField.GITHUB, p.githubUrl());
+        addLink(links, hidden, ResumeField.PORTFOLIO, p.portfolioUrl());
+        addLink(links, hidden, ResumeField.WEBSITE, p.websiteUrl());
         if (p.options() != null && p.options().extraLinks() != null) {
-            p.options().extraLinks().forEach(extra -> links.add(extra.url()));
+            p.options().extraLinks().stream().filter(extra -> !Boolean.FALSE.equals(extra.showInResume())).forEach(extra -> links.add(extra.url()));
         }
-        List<String> languages = p.languages().stream().map(l -> l.code() + " (" + l.level() + ")").toList();
+        List<String> languages = p.languages().stream().filter(LanguageView::showInResume).map(l -> l.code() + " (" + l.level() + ")").toList();
         String headline = translated != null && translated.headline() != null ? translated.headline() : auto.apply(p.headline());
         String summary = translated != null && translated.summary() != null ? translated.summary() : auto.apply(p.summary());
-        return new Resume(headline, p.currentTitle(), join(", ", p.city(), p.stateRegion(), p.country()), summary, links,
+        return new Resume(hidden.contains(ResumeField.HEADLINE) ? null : headline, hidden.contains(ResumeField.CURRENT_TITLE) ? null : p.currentTitle(),
+                hidden.contains(ResumeField.LOCATION) ? null : join(", ", p.city(), p.stateRegion(), p.country()),
+                hidden.contains(ResumeField.SUMMARY) ? null : summary, links,
                 skills, experience, education, other, languages, job == null ? null : job.title(), job == null ? null : job.company(),
-                language, untranslated[0]);
+                language, untranslated[0], extras(p.options(), hidden));
+    }
+
+    private static void addLink(List<String> links, Set<ResumeField> hidden, ResumeField field, String link) {
+        if (link != null && !hidden.contains(field)) {
+            links.add(link);
+        }
+    }
+
+    /** Só o que a pessoa ligou: dado sensível nunca aparece por padrão. */
+    private static List<ResumeExtra> extras(ProfileOptions o, Set<ResumeField> hidden) {
+        if (o == null || o.resumeVisible() == null) {
+            return List.of();
+        }
+        List<ResumeExtra> extras = new ArrayList<>();
+        for (ProfileOptions.ResumeSection section : ProfileOptions.ResumeSection.values()) {
+            if (!o.resumeVisible().contains(section)) {
+                continue;
+            }
+            List<String> values = new ArrayList<>();
+            switch (section) {
+                case CONTACT -> {
+                    addText(values, hidden.contains(ResumeField.PHONE) ? null : phone(o.phoneCountryCode(), o.phone()));
+                    addText(values, hidden.contains(ResumeField.SECONDARY_PHONE) ? null : phone(o.phoneCountryCode(), o.secondaryPhone()));
+                    addText(values, hidden.contains(ResumeField.EMAIL) ? null : o.contactEmail());
+                }
+                case SOFT_SKILLS -> addAll(values, o.softSkills());
+                case DIVERSITY -> {
+                    if (o.diversity() != null) {
+                        o.diversity().forEach(item -> values.add(item.name()));
+                    }
+                    addAll(values, o.diversityOther());
+                }
+                case CONTACT_HOURS -> {
+                    if (o.contactHours() != null) {
+                        o.contactHours().forEach(day -> day.slots().forEach(slot -> values.add(day.day() + " " + slot.start() + "-" + slot.end())));
+                    }
+                }
+                case WORK_PREFERENCES -> addText(values, o.workload());
+                case SALARY -> addText(values, join(" - ", o.salaryMin() == null ? null : o.salaryMin().toPlainString(), o.salaryMax() == null ? null : o.salaryMax().toPlainString()));
+                case SOCIAL_NAME -> addText(values, o.socialName());
+                case GENDER -> addText(values, o.genderIdentity());
+                case BIRTH_DATE -> addText(values, o.birthDate() == null ? null : o.birthDate().toString());
+                case GPA -> addText(values, o.gpa());
+                case NATIONALITY -> addAll(values, o.nationalities());
+                case POSTAL_CODE -> addText(values, o.postalCode());
+                case MILITARY -> addText(values, o.military() == null ? null : o.military().name());
+                default -> { }
+            }
+            if (!values.isEmpty()) {
+                extras.add(new ResumeExtra(section.name(), values));
+            }
+        }
+        return extras;
+    }
+
+    private static String phone(String code, String number) {
+        return number == null ? null : code == null ? number : code + " " + number;
+    }
+
+    private static void addText(List<String> values, String value) {
+        if (value != null && !value.isBlank()) {
+            values.add(value);
+        }
+    }
+
+    private static void addAll(List<String> values, List<String> more) {
+        if (more != null) {
+            values.addAll(more);
+        }
     }
 
     /** Idioma dos documentos: o da vaga, se a opção estiver ligada e der para reconhecer; senão, português. */

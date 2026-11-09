@@ -11,7 +11,8 @@ import { useAsync } from "../utils/useAsync";
 /** Dados da conta: nome, e-mail de login e senha. E-mail e senha pedem a senha atual. */
 export function AccountSection() {
   const { t, errorMessage } = useI18n();
-  const { user, reloadUser } = useAuth();
+  const { user, reloadUser, logout } = useAuth();
+  const [deletePassword, setDeletePassword] = useState("");
   const [name, setName] = useState(user?.displayName ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [emailPassword, setEmailPassword] = useState("");
@@ -131,6 +132,12 @@ export function AccountSection() {
         <Button type="submit" disabled={busy || !recoveryPassword}>
           {t("account.recoveryGenerate")}
         </Button>
+      </form>
+      <form onSubmit={(event) => run(event, async () => { await api.deleteAccount(deletePassword); await logout(); })}>
+        <h3>{t("account.deleteTitle")}</h3>
+        <p className="muted small">{t("account.deleteWarning")}</p>
+        <Field label={t("auth.password")}><PasswordInput value={deletePassword} required maxLength={128} autoComplete="current-password" onChange={(e) => setDeletePassword(e.target.value)} /></Field>
+        <Button type="submit" disabled={busy || !deletePassword}>{t("account.delete")}</Button>
       </form>
       {codes && (
         <Notice tone="info" onClose={() => setCodes(null)}>

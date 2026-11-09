@@ -47,9 +47,18 @@ public record ProfileSnapshot(
             Set<String> workAuthorization,
             BigDecimal salaryExpectation,
             String salaryCurrency,
-            SalaryPeriod salaryPeriod) {
+            SalaryPeriod salaryPeriod,
+            Set<String> jobLanguages) {
 
         public static final Filters NONE = new Filters(List.of(), List.of(), List.of(), Set.of(), Set.of(), null, null, null);
+
+        /** Sem filtro de idioma da vaga. */
+        public Filters(List<String> excludedCompanies, List<String> includeKeywords, List<String> excludeKeywords,
+                Set<EmploymentType> employmentTypes, Set<String> workAuthorization, BigDecimal salaryExpectation,
+                String salaryCurrency, SalaryPeriod salaryPeriod) {
+            this(excludedCompanies, includeKeywords, excludeKeywords, employmentTypes, workAuthorization, salaryExpectation,
+                    salaryCurrency, salaryPeriod, Set.of());
+        }
     }
 
     /** Perfil sem filtros de preferência (usado onde só a compatibilidade técnica importa). */
@@ -70,6 +79,14 @@ public record ProfileSnapshot(
         automationMode = automationMode == null ? AutomationMode.REVIEW : automationMode;
     }
 
+    private static Set<String> jobLanguages(ProfileOptions options) {
+        if (options == null || options.jobLanguages() == null) {
+            return Set.of();
+        }
+        return options.jobLanguages().stream().map(LanguageCatalog::resolve).flatMap(java.util.Optional::stream)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
     static ProfileSnapshot of(Profile profile) {
         Map<String, Skill> skills = profile.getSkills().stream().collect(Collectors.toUnmodifiableMap(
                 ProfileSkill::getNormalized, s -> new Skill(s.getName(), s.getLevel(), s.getYears()), (a, b) -> a));
@@ -79,7 +96,7 @@ public record ProfileSnapshot(
         Filters filters = new Filters(details.excludedCompanies(), details.includeKeywords(), details.excludeKeywords(),
                 details.employmentTypes(),
                 details.workAuthorization().stream().map(code -> code.toUpperCase(Locale.ROOT)).collect(Collectors.toUnmodifiableSet()),
-                profile.getSalaryExpectation(), profile.getSalaryCurrency(), details.salaryPeriod());
+                profile.getSalaryExpectation(), profile.getSalaryCurrency(), details.salaryPeriod(), jobLanguages(details.options()));
         return new ProfileSnapshot(profile.getId(), profile.getName(), profile.getSeniority(), profile.getMinMatchScore(),
                 profile.getDesiredTitles(), profile.getLocations(), profile.getWorkModes(), skills, languages, filters,
                 profile.getAutomationMode());

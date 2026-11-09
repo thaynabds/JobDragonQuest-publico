@@ -57,7 +57,7 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
     return { perfil: perfil.id as string, vaga: vaga.id as string };
   }, longo);
 
-  const rotas = ["/", "/candidaturas", "/revisao", "/vagas", `/vagas/${dados.vaga}`, "/fontes", "/perfis", "/perfis/novo", `/perfis/${dados.perfil}`, `/perfis/${dados.perfil}/curriculo`, "/carreira", "/configuracoes"];
+  const rotas = ["/", "/assistentes", "/triagem", "/concursos", "/ajuda", "/candidaturas", "/revisao", "/vagas", `/vagas/${dados.vaga}`, "/fontes", "/perfis", "/perfis/novo", `/perfis/${dados.perfil}`, `/perfis/${dados.perfil}/curriculo`, "/carreira", "/configuracoes"];
   for (const rota of rotas) {
     await page.goto(rota);
     // Os avisos consultam a API o tempo todo: não dá para esperar a rede parar.
@@ -75,6 +75,23 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
   if (menu.pagina > menu.largura + 1) problemas.push(`menu aberto: ${menu.pagina}/${menu.largura}`);
   await page.keyboard.press("Escape");
   await expect(page.getByRole("link", { name: "Candidaturas" })).toBeHidden();
+
+  // O widget oficial de acessibilidade precisa estar na página.
+  await page.goto("/");
+  await expect(page.locator("#a11y-btn")).toBeVisible();
+
+  // Painel de avisos aberto: fica dentro da janela e não cria rolagem na página.
+  await page.goto("/");
+  for (const largura of [...LARGURAS, 700]) {
+    await page.setViewportSize({ width: largura, height: 700 });
+    await page.locator(".bell-button").click();
+    await expect(page.locator("#bell-panel")).toBeVisible();
+    const caixa = await page.locator("#bell-panel").boundingBox();
+    const medida = await estouros(page);
+    if (!caixa || caixa.x < 0 || caixa.x + caixa.width > medida.largura || medida.pagina > medida.largura + 1) problemas.push(`avisos @${largura}: ${JSON.stringify(caixa)} ${medida.pagina}/${medida.largura}`);
+    await page.locator(".bell-button").click();
+    await expect(page.locator("#bell-panel")).toBeHidden();
+  }
 
   expect(problemas).toEqual([]);
 });

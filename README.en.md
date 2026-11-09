@@ -8,17 +8,17 @@
 
 > Language: [Português](README.md) | **English** | [Español](README.es.md)
 
-[![Version](https://img.shields.io/badge/version-0.6.2-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.6.2)
+[![Version](https://img.shields.io/badge/version-0.7.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.7.0)
 [![License](https://img.shields.io/badge/license-all%20rights%20reserved-6b7280)](#license)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-357%20passing-16a34a)](#quality-and-security)
+[![Tests](https://img.shields.io/badge/tests-374%20passing-16a34a)](#quality-and-security)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobdragonquest-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobdragonquest-api)
 [![React](https://img.shields.io/badge/React-19-0891b2)](src/jobdragonquest-web)
 
 **A career management and job application automation platform for jobs and internships, in Brazil and abroad.**
 
-**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.6.2
+**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.7.0
 
 ## Quick install
 
@@ -77,10 +77,13 @@ JobDragonQuest brings it all into one explainable hub:
 
 ## Features
 
-### Implemented (v0.6.2)
+### Implemented (v0.7.0)
 
 | Area | What it does |
 |---|---|
+| Resume and career | Live preview, per-item visibility, Word download, career assistants run by the AI connected through MCP (free) and a screening answers base |
+| Public exams | Stages and deadlines, watched official pages, PDF reading, possible mentions by name and registration, and a warning when a document could not be read |
+| Languages | Search in Portuguese, English and Spanish; full dashboard in those three and main screens in French, Italian, Chinese, Japanese, Hindi, Arabic, Bengali, Russian and Indonesian |
 | Documents | Versioned résumés, cover letters, certificates and application attachments (up to 5 MB, type checked by content, only your account sees them). Update your résumé by sending a PDF certificate, a Word file, a link or a photo: the text is read on your computer (PDF with Apache PDFBox, photo with Tesseract if installed or through your AI) and becomes a proposed item you check before it goes into the profile |
 | Résumé and career | Résumé from the profile, general or tailored to the job (only reorders and highlights, never makes things up), ready to print as PDF from the browser; cover letter per job; interview prep; most requested skills and salary range from the collected jobs. All local and free |
 | Accounts | Sign-up and login with Argon2id, 15-minute sessions renewed by a rotating refresh token (everything is revoked if it is stolen), lockout after failed attempts |
@@ -206,7 +209,7 @@ Issues and PRs live in the main repository, which is private; the public mirror 
 
 ## Quality and security
 
-- **357 automated tests**: 247 in the API (unit and full-application integration tests), 76 in the dashboard, 18 in the MCP server, 12 in the Congo plugin and 4 in the browser extension. Plus an end-to-end browser test (Playwright) in CI and checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobDragonQuest through MCP, 29 for installation, and the real collection test.
+- **374 automated tests**: 261 in the API (unit and full-application integration tests), 76 in the dashboard, 20 in the MCP server, 12 in the Congo plugin and 4 in the browser extension. Plus an end-to-end browser test (Playwright) in CI and checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobDragonQuest through MCP, 29 for installation, and the real collection test.
 - **Coverage:** the build fails below 80% line coverage in critical modules. Overall API coverage is 91.9% (lines) today. The p95 of the main reads is at most 103 ms (target: 300 ms).
 - **CI on every push and PR:** tests for all five parts, dashboard lint, commit message checks and dependency scanning. Each run shows the test totals in its summary, and the test and coverage reports are kept as artifacts for 30 days.
 - **Security** ([details](docs/seguranca.md)):

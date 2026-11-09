@@ -33,6 +33,9 @@ public class ProfileSkill {
     @Column(name = "exp_days")
     private Integer expDays;
 
+    @Column(name = "show_in_resume", nullable = false)
+    private boolean showInResume = true;
+
     protected ProfileSkill() {
     }
 
@@ -44,6 +47,15 @@ public class ProfileSkill {
         this.expMonths = expMonths;
         this.expDays = expDays;
         this.years = totalYears(expYears, expMonths, expDays);
+    }
+
+    ProfileSkill showInResume(Boolean show) {
+        this.showInResume = !Boolean.FALSE.equals(show);
+        return this;
+    }
+
+    public boolean isShowInResume() {
+        return showInResume;
     }
 
     /** Total em anos, com uma casa decimal, ou null quando nenhum tempo foi informado. */

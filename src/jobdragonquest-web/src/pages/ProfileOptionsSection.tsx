@@ -50,9 +50,6 @@ export function ProfileOptionsSection({ value, onChange }: { value: ProfileOptio
     </fieldset>
   );
 
-  const links = o.extraLinks ?? [];
-  const setLink = (index: number, change: Partial<{ label: string; url: string }>) =>
-    set({ extraLinks: links.map((link, i) => (i === index ? { ...link, ...change } : link)) });
   const translations = o.translations ?? [];
   const translation = (language: string) => translations.find((x) => x.language === language);
   const setTranslation = (language: string, change: Partial<{ headline: string | null; summary: string | null; coverLetter: string | null }>) => {
@@ -131,6 +128,8 @@ export function ProfileOptionsSection({ value, onChange }: { value: ProfileOptio
             {text("birthDate", "options.birthDate", 10, "date")}
             {check("over18", "options.over18")}
             {text("gpa", "options.gpa", 10)}
+            {text("drivingLicense", "options.drivingLicense", 120)}
+            {text("securityClearance", "options.securityClearance", 120)}
             <Field label={t("options.military")}>
               <select value={o.military ?? ""} onChange={(e) => set({ military: (e.target.value || null) as ProfileOptions["military"] })}>
                 <option value="">{t("common.none")}</option>
@@ -146,6 +145,16 @@ export function ProfileOptionsSection({ value, onChange }: { value: ProfileOptio
                   <input type="checkbox" checked={(o.diversity ?? []).includes(d)} onChange={() => set({ diversity: toggle(o.diversity, d) })} /> {k(`options.diversity.${d}`)}
                 </label>
               ))}
+            </fieldset>
+            <fieldset className="field-wide">
+              <legend>{t("options.diversityOther")}</legend>
+              {(o.diversityOther ?? []).map((item, index) => (
+                <div className="form-row" key={index}>
+                  <input aria-label={t("options.diversityOther")} maxLength={120} value={item} onChange={(e) => set({ diversityOther: (o.diversityOther ?? []).map((v, i) => (i === index ? e.target.value : v)) })} />
+                  <Button variant="ghost" onClick={() => set({ diversityOther: (o.diversityOther ?? []).filter((_, i) => i !== index) })}>{t("common.remove")}</Button>
+                </div>
+              ))}
+              <Button disabled={(o.diversityOther ?? []).length >= 30} onClick={() => set({ diversityOther: [...(o.diversityOther ?? []), ""] })}>{t("options.diversityAdd")}</Button>
             </fieldset>
           </>
         ))}
@@ -170,30 +179,6 @@ export function ProfileOptionsSection({ value, onChange }: { value: ProfileOptio
                 </label>
               ))}
             </fieldset>
-          </>
-        ))}
-        {group("options.links", (
-          <>
-            {links.map((link, index) => (
-              <div className="form-grid entry field-wide" key={index}>
-                <Field label={t("options.linkLabel")}>
-                  <input required maxLength={60} value={link.label} placeholder={t("options.linkLabelPlaceholder")} onChange={(e) => setLink(index, { label: e.target.value })} />
-                </Field>
-                <Field label={t("options.linkUrl")}>
-                  <input required type="url" maxLength={2048} value={link.url} placeholder="https://" onChange={(e) => setLink(index, { url: e.target.value })} />
-                </Field>
-                <div className="field">
-                  <Button variant="ghost" onClick={() => set({ extraLinks: links.filter((_, i) => i !== index) })}>
-                    {t("common.remove")}
-                  </Button>
-                </div>
-              </div>
-            ))}
-            <div className="field">
-              <Button disabled={links.length >= 20} onClick={() => set({ extraLinks: [...links, { label: "", url: "" }] })}>
-                {t("options.addLink")}
-              </Button>
-            </div>
           </>
         ))}
         {group("options.languageDocs", (
@@ -221,5 +206,34 @@ export function ProfileOptionsSection({ value, onChange }: { value: ProfileOptio
         ))}
       </div>
     </Card>
+  );
+}
+
+/** Links profissionais adicionais: a pessoa adiciona quantos quiser. */
+export function ExtraLinksEditor({ value, onChange }: { value: ProfileOptions | null | undefined; onChange: (options: ProfileOptions) => void }) {
+  const { t } = useI18n();
+  const o: ProfileOptions = value ?? {};
+  const links = o.extraLinks ?? [];
+  const setLinks = (extraLinks: NonNullable<ProfileOptions["extraLinks"]>) => onChange({ ...o, extraLinks });
+  const setLink = (index: number, change: Partial<{ label: string; url: string }>) => setLinks(links.map((link, i) => (i === index ? { ...link, ...change } : link)));
+  return (
+    <>
+      {links.map((link, index) => (
+        <div className="form-grid entry field-wide" key={index}>
+          <Field label={t("options.linkLabel")}>
+            <input required maxLength={60} value={link.label} placeholder={t("options.linkLabelPlaceholder")} onChange={(e) => setLink(index, { label: e.target.value })} />
+          </Field>
+          <Field label={t("options.linkUrl")}>
+            <input required type="url" maxLength={2048} value={link.url} placeholder="https://" onChange={(e) => setLink(index, { url: e.target.value })} />
+          </Field>
+          <div className="field">
+            <Button variant="ghost" onClick={() => setLinks(links.filter((_, i) => i !== index))}>{t("common.remove")}</Button>
+          </div>
+        </div>
+      ))}
+      <div className="field">
+        <Button disabled={links.length >= 500} onClick={() => setLinks([...links, { label: "", url: "" }])}>{t("options.addLink")}</Button>
+      </div>
+    </>
   );
 }

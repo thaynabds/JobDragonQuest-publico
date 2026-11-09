@@ -57,12 +57,16 @@ public record ProfileOptions(
         @Size(max = 10) String gpa,
         Answer military,
         @Size(max = 6) Set<@NotNull Diversity> diversity,
+        @Size(max = 30) List<@NotBlank @Size(max = 120) String> diversityOther,
+        @Size(max = 120) String drivingLicense,
+        @Size(max = 120) String securityClearance,
         // Currículo
         @Size(max = 50) List<@NotBlank @Size(max = 80) String> softSkills,
         @Size(max = 7) List<@Valid @NotNull ContactDay> contactHours,
-        @Size(max = 6) Set<@NotNull ResumeSection> resumeVisible,
+        @Size(max = 20) Set<@NotNull ResumeSection> resumeVisible,
+        @Size(max = 20) Set<@NotNull ResumeField> resumeHidden,
         // Links extras e documentos no idioma da vaga
-        @Size(max = 20) List<@Valid @NotNull ExtraLink> extraLinks,
+        @Size(max = 500) List<@Valid @NotNull ExtraLink> extraLinks,
         Boolean documentsInJobLanguage,
         Boolean autoTranslate,
         @Size(max = 3) List<@Valid @NotNull Translation> translations) {
@@ -73,12 +77,21 @@ public record ProfileOptions(
 
     public enum Diversity { LGBTQIA, WOMAN, DISABILITY, BLACK, BROWN, INDIGENOUS }
 
-    public enum ResumeSection { CONTACT, SOFT_SKILLS, DIVERSITY, CONTACT_HOURS, WORK_PREFERENCES, SALARY }
+    /** Dados que só entram no currículo se a pessoa ligar. */
+    public enum ResumeSection {
+        CONTACT, SOFT_SKILLS, DIVERSITY, CONTACT_HOURS, WORK_PREFERENCES, SALARY, SOCIAL_NAME, GENDER, BIRTH_DATE, GPA,
+        NATIONALITY, POSTAL_CODE, MILITARY
+    }
+
+    /** Dados que entram no currículo por padrão e que a pessoa pode tirar. */
+    public enum ResumeField {
+        HEADLINE, CURRENT_TITLE, LOCATION, SUMMARY, LINKEDIN, GITHUB, PORTFOLIO, WEBSITE, PHONE, SECONDARY_PHONE, EMAIL
+    }
 
     public enum Weekday { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY }
 
     /** Link profissional com nome livre (ex.: Behance, Lattes). */
-    public record ExtraLink(@NotBlank @Size(max = 60) String label, @NotBlank @Size(max = 2048) String url) {
+    public record ExtraLink(@NotBlank @Size(max = 60) String label, @NotBlank @Size(max = 2048) String url, Boolean showInResume) {
     }
 
     /** Textos que a própria pessoa escreveu em outro idioma, usados quando a vaga está nesse idioma. */

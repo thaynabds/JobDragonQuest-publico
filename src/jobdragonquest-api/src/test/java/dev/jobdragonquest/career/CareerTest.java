@@ -33,6 +33,67 @@ class CareerTest extends ApiTestSupport {
     }
 
     @Test
+    void itemEscondidoSaiDoCurriculoEDadoSensivelSoComPermissao() throws Exception {
+        String token = newUser();
+        String body = """
+                {"name":"Escolhas","seniority":"JUNIOR","headline":"Some","summary":"Fica",
+                 "skills":[{"name":"Java","level":4},{"name":"Cobol","level":1,"showInResume":false}],
+                 "languages":[{"code":"en","level":"B2","showInResume":false}],
+                 "entries":[{"kind":"PROJECT","title":"Visivel","extraUrls":["https://exemplo.test/a","https://exemplo.test/b"]},
+                            {"kind":"PROJECT","title":"Oculto","showInResume":false}],
+                 "options":{"resumeHidden":["HEADLINE"],"birthDate":"2000-01-02","gpa":"3.5","resumeVisible":["GPA"],
+                            "diversityOther":["Texto livre"],
+                            "extraLinks":[{"label":"A","url":"https://exemplo.test/um"},
+                                          {"label":"B","url":"https://exemplo.test/dois","showInResume":false}]}}""";
+        String profile = read(postJson(token, "/api/v1/profiles", body).andExpect(status().isCreated()), "$.id");
+        getJson(token, "/api/v1/profiles/" + profile).andExpect(jsonPath("$.entries[0].extraUrls.length()").value(2));
+        getJson(token, "/api/v1/profiles/" + profile + "/resume")
+                .andExpect(jsonPath("$.headline").doesNotExist())
+                .andExpect(jsonPath("$.summary").value("Fica"))
+                .andExpect(jsonPath("$.skills[*].name").value(not(hasItem("Cobol"))))
+                .andExpect(jsonPath("$.languages.length()").value(0))
+                .andExpect(jsonPath("$.other[*].title").value(not(hasItem("Oculto"))))
+                .andExpect(jsonPath("$.links").value(hasItem("https://exemplo.test/um")))
+                .andExpect(jsonPath("$.links").value(not(hasItem("https://exemplo.test/dois"))))
+                .andExpect(jsonPath("$.extras[0].section").value("GPA"))
+                .andExpect(jsonPath("$.extras.length()").value(1));
+    }
+
+    @Test
+    void linkExtraDoItemNaoAceitaJavascript() throws Exception {
+        String token = newUser();
+        postJson(token, "/api/v1/profiles", """
+                {"name":"X","seniority":"JUNIOR","entries":[{"kind":"PROJECT","title":"T","extraUrls":["javascript:alert(1)"]}]}""")
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void excluirContaExigeSenhaEApagaOsDados() throws Exception {
+        String token = newUser();
+        postJson(token, "/api/v1/profiles", PROFILE).andExpect(status().isCreated());
+        postJson(token, "/api/v1/me/delete", "{\"currentPassword\":\"senha-errada-123456\"}").andExpect(status().is4xxClientError());
+        getJson(token, "/api/v1/profiles").andExpect(status().isOk());
+        postJson(token, "/api/v1/me/delete", "{\"currentPassword\":\"" + PASSWORD + "\"}").andExpect(status().isNoContent());
+        getJson(token, "/api/v1/profiles").andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    void idiomaDaVagaForaDaListaBloqueia() {
+        var filters = new dev.jobdragonquest.profiles.ProfileSnapshot.Filters(java.util.List.of(), java.util.List.of(), java.util.List.of(),
+                java.util.Set.of(), java.util.Set.of(), null, null, null, java.util.Set.of("pt"));
+        org.assertj.core.api.Assertions.assertThat(dev.jobdragonquest.matching.PreferenceFilters.hardBlockers(filters, "A", "Engineer",
+                "You will work with the team and our product, and experience for the role are welcome to you"))
+                .extracting(b -> b.code()).contains("JOB_LANGUAGE");
+    }
+
+    @Test
+    void metodoNaoAceitoResponde405() throws Exception {
+        String token = newUser();
+        String profile = read(postJson(token, "/api/v1/profiles", PROFILE).andExpect(status().isCreated()), "$.id");
+        postJson(token, "/api/v1/profiles/" + profile + "/resume", "{}").andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
     void resumeAndLetterUseOnlyProfileDataAndHighlightWhatTheJobAsks() throws Exception {
         String token = newUser();
         String profile = read(postJson(token, "/api/v1/profiles", PROFILE).andExpect(status().isCreated()), "$.id");

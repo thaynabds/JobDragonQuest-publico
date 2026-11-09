@@ -8,17 +8,17 @@
 
 > Idioma: [Português](README.md) | [English](README.en.md) | **Español**
 
-[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.6.2-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.6.2)
+[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.7.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.7.0)
 [![Licencia](https://img.shields.io/badge/licencia-todos%20los%20derechos%20reservados-6b7280)](#licencia)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
-[![Pruebas](https://img.shields.io/badge/pruebas-357%20aprobadas-16a34a)](#calidad-y-seguridad)
+[![Pruebas](https://img.shields.io/badge/pruebas-374%20aprobadas-16a34a)](#calidad-y-seguridad)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobdragonquest-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobdragonquest-api)
 [![React](https://img.shields.io/badge/React-19-0891b2)](src/jobdragonquest-web)
 
 **Plataforma de gestión de carrera y automatización de postulaciones a empleos y prácticas, en Brasil y en el exterior.**
 
-**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositorio:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versión:** 0.6.2
+**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositorio:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versión:** 0.7.0
 
 ## Instalación rápida
 
@@ -77,10 +77,13 @@ JobDragonQuest lo reúne todo en una central única y explicable:
 
 ## Funcionalidades
 
-### Implementado (v0.6.2)
+### Implementado (v0.7.0)
 
 | Área | Qué hace |
 |---|---|
+| Currículum y carrera | Vista previa en tiempo real, elección de lo que aparece, descarga en Word, asistentes de carrera ejecutados por la IA conectada por MCP (gratis) y base de preguntas de selección |
+| Oposiciones | Etapas y plazos, páginas oficiales vigiladas, lectura de PDF, posibles menciones por nombre e inscripción y aviso cuando un documento no se pudo leer |
+| Idiomas | Búsqueda en portugués, inglés y español; panel completo en esos tres y pantallas principales en francés, italiano, chino, japonés, hindi, árabe, bengalí, ruso e indonesio |
 | Documentos | Currículums con versión, cartas, certificados y adjuntos de postulación (hasta 5 MB, tipo verificado por el contenido, solo tu cuenta los ve). Actualiza tu currículum enviando un certificado en PDF, un Word, un enlace o una foto: el texto se lee en tu computadora (PDF con Apache PDFBox, foto con Tesseract si está instalado o con tu IA) y se vuelve una propuesta de ítem que revisas antes de que entre al perfil |
 | Currículum y carrera | Currículum del perfil, general o ajustado a la vacante (solo reordena y destaca, nunca inventa), listo para imprimir en PDF desde el navegador; carta por vacante; preparación de entrevista; competencias más pedidas y rango salarial a partir de las vacantes recolectadas. Todo local y gratuito |
 | Cuentas | Registro e inicio de sesión con Argon2id, sesión de 15 minutos renovada por un token rotativo (se revoca todo si lo roban), bloqueo tras intentos fallidos |
@@ -206,7 +209,7 @@ Las issues y los PRs están en el repositorio principal, que es privado; el espe
 
 ## Calidad y seguridad
 
-- **357 pruebas automatizadas**: 247 en la API (unitarias y de integración con la aplicación completa), 76 en el panel, 18 en el servidor MCP, 12 en el plugin de Congo y 4 en la extensión del navegador. Además, una prueba de punta a punta en el navegador (Playwright) en el CI y verificaciones contra el sistema funcionando de verdad: 26 de la prueba de humo, 24 de los avisos, 15 de una IA usando JobDragonQuest por MCP, 29 de la instalación y la recolección real.
+- **374 pruebas automatizadas**: 261 en la API (unitarias y de integración con la aplicación completa), 76 en el panel, 20 en el servidor MCP, 12 en el plugin de Congo y 4 en la extensión del navegador. Además, una prueba de punta a punta en el navegador (Playwright) en el CI y verificaciones contra el sistema funcionando de verdad: 26 de la prueba de humo, 24 de los avisos, 15 de una IA usando JobDragonQuest por MCP, 29 de la instalación y la recolección real.
 - **Cobertura:** el build falla por debajo del 80% de líneas en los módulos críticos. Hoy la cobertura general de la API es del 91,9% (líneas). El p95 de las lecturas principales es como máximo de 103 ms (meta: 300 ms).
 - **CI en cada push y PR:** pruebas de las cinco partes, lint del panel, revisión de los mensajes de commit y análisis de dependencias. El total de pruebas de cada ejecución aparece en el resumen del CI, y los informes de pruebas y cobertura quedan como artefacto por 30 días.
 - **Seguridad** ([detalles](docs/seguranca.md)):

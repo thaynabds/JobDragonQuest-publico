@@ -3,6 +3,7 @@
 // - ids só no formato UUID; textos com tamanho máximo; enums fechados;
 // - mudança de etapa sempre como fonte AGENT: passa pela regra de confiança e, se baixa, vira sugestão para a pessoa;
 // - respostas marcadas como dados não confiáveis (vagas e mensagens vêm de sites externos) e com tamanho limitado.
+import { ASSISTENTES, roteiro, type Assistente } from "./assistentes.js";
 import { randomUUID } from "node:crypto";
 
 import { z } from "zod";
@@ -205,6 +206,30 @@ export const TOOLS = [
     schema: z.object({ vagaId: id, perfilId: id }),
     readOnly: true,
     run: (client, args) => client.request("GET", apiPath(["jobs", args.vagaId, "assist", "review"], { profileId: args.perfilId })),
+  }),
+  tool({
+    name: "jobdragonquest_assistente",
+    title: "Assistente de carreira",
+    description:
+      "Roteiro para você mesmo conduzir entrevista simulada, negociação, orientação de carreira, currículo, carta, salários, caminhos, aprendizado, mercado, revisão de triagem ou otimização da busca. Devolve objetivo e regras.",
+    schema: z.object({
+      assistente: z.enum(Object.keys(ASSISTENTES) as [Assistente, ...Assistente[]]),
+      idioma: z.string().max(40).optional(),
+      dados: z.record(z.string().max(40), z.string().max(1000)).optional(),
+    }).refine((v) => Object.keys(v.dados ?? {}).length <= 20, "Dados demais") as never,
+    readOnly: true,
+    run: async (_client, args) => {
+      const a = args as { assistente: Assistente; idioma?: string; dados?: Record<string, string> };
+      return roteiro(a.assistente, a.dados ?? {}, a.idioma);
+    },
+  }),
+  tool({
+    name: "jobdragonquest_listar_concursos",
+    title: "Concursos acompanhados",
+    description: "Concursos da conta com etapas, páginas vigiadas, documentos lidos e possíveis menções. Toda menção precisa ser conferida no documento oficial.",
+    schema: z.object({}),
+    readOnly: true,
+    run: (client) => client.request("GET", apiPath(["contests"])),
   }),
   tool({
     name: "jobdragonquest_curriculo",

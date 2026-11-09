@@ -17,3 +17,9 @@ Referência: WCAG 2.2 nível AA. ✅ coberto por teste automatizado (`a11y.test.
 | Idioma | `lang` da página segue o idioma escolhido (pt, en, es) | ✅ |
 | Preferências salvas na conta | valem em qualquer navegador | ✅ |
 | Leitor de tela | NVDA ou Orca nas telas principais | 🔍 a cada release |
+
+## Widget
+
+O painel usa o [AccessAbility Widget](https://github.com/thaynabds/accessability-widget), com versão fixada em `package.json`. O CI avisa quando há versão nova. As preferências ficam só no navegador; a fonte para dislexia é baixada de um CDN público apenas se a pessoa ligar esse recurso.
+
+O widget injeta o próprio CSS, por isso a CSP do painel aceita `style-src 'unsafe-inline'`. Scripts continuam só do próprio site, e a única origem externa de fonte é o CDN usado pela fonte para dislexia.
