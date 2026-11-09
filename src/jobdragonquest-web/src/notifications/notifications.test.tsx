@@ -14,6 +14,8 @@ import { AUTO_DISMISS_MS, Toasts } from "./Toasts";
 it("pop-ups comuns somem em 12 segundos por padrão", () => expect(AUTO_DISMISS_MS).toBe(12_000));
 
 const mocks = vi.hoisted(() => ({
+  dismissNotification: vi.fn(() => Promise.resolve({ data: undefined })),
+  dismissAllNotifications: vi.fn(() => Promise.resolve({ data: { count: 1 } })),
   notificationsDue: vi.fn(),
   notifications: vi.fn(),
   notificationPreferences: vi.fn(),
@@ -157,6 +159,18 @@ describe("pop-ups e notificações do sistema", () => {
     await userEvent.click(screen.getByRole("button", { name: "Adiar 1 h" }));
     expect(mocks.snooze).toHaveBeenCalledWith("high", 60);
     expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("exclui um aviso ou todos pelo sino", async () => {
+    mocks.notificationsDue.mockResolvedValue({ data: [] });
+    mocks.notifications.mockResolvedValue({ data: { items: [item({ deliveredAt: "x" })], unreadCount: 1, page: 0, size: 20, totalItems: 1 } });
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    renderProvider(<Bell />);
+    await userEvent.click(await screen.findByRole("button", { name: "Avisos: 1 não lido(s)" }));
+    await userEvent.click(await screen.findByRole("button", { name: "Excluir" }));
+    expect(mocks.dismissNotification).toHaveBeenCalledTimes(1);
+    await userEvent.click(screen.getByRole("button", { name: "Limpar todos" }));
+    expect(mocks.dismissAllNotifications).toHaveBeenCalledTimes(1);
   });
 
   it("o sino mostra o contador e marca todos como lidos", async () => {

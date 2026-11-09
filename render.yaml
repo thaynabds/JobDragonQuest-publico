@@ -1,0 +1,48 @@
+# Deploy privado no Render (plano gratuito): API e painel. O banco fica no Neon (docs/deploy.md).
+services:
+  - type: web
+    name: jobdragonquest-api
+    runtime: docker
+    plan: free
+    region: ohio
+    rootDir: src/jobdragonquest-api
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    envVars:
+      - key: JOBDRAGONQUEST_DB_URL
+        sync: false
+      - key: JOBDRAGONQUEST_DB_USER
+        sync: false
+      # Senha do banco: colada à mão no painel do Render, nunca no repositório.
+      - key: JOBDRAGONQUEST_DB_PASSWORD
+        sync: false
+      - key: JOBDRAGONQUEST_JWT_SECRET
+        generateValue: true
+      # E-mails que podem criar conta: definidos no painel do Render, fora do repositório.
+      - key: JOBDRAGONQUEST_ALLOWED_EMAILS
+        sync: false
+      - key: JOBDRAGONQUEST_ALLOWED_ORIGINS
+        value: https://jobdragonquest.onrender.com
+      - key: JOBDRAGONQUEST_PORT
+        value: "8080"
+
+  # Painel (site estático gratuito). /api/* é encaminhado para a API, então login e cookie ficam no mesmo endereço.
+  - type: web
+    name: jobdragonquest
+    runtime: static
+    rootDir: src/jobdragonquest-web
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://jobdragonquest-api.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html

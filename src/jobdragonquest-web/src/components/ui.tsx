@@ -23,13 +23,33 @@ export function Card({ title, actions, children, className }: { title?: ReactNod
   );
 }
 
-export function Field({ label, hint, children, wide }: { label: string; hint?: string; children: ReactNode; wide?: boolean }) {
+/** Botão "i": ao passar o cursor ou focar, abre um balão explicando o campo. */
+export function InfoTip({ text }: { text: string }) {
   return (
-    <label className={`field${wide ? " field-wide" : ""}`}>
+    <span className="info-tip">
+      <button type="button" aria-label={text}>
+        i
+      </button>
+      <span role="tooltip">{text}</span>
+    </span>
+  );
+}
+
+export function Field({ label, hint, info, children, wide }: { label: string; hint?: string; info?: string; children: ReactNode; wide?: boolean }) {
+  const field = (
+    <label className={`field${wide && !info ? " field-wide" : ""}`}>
       <span className="field-label">{label}</span>
       {children}
       {hint && <span className="field-hint">{hint}</span>}
     </label>
+  );
+  if (!info) return field;
+  // Fora do <label>: o texto de ajuda não entra no nome acessível do campo.
+  return (
+    <div className={`field-with-info${wide ? " field-wide" : ""}`}>
+      {field}
+      <InfoTip text={info} />
+    </div>
   );
 }
 

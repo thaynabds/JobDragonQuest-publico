@@ -7,7 +7,7 @@ import { I18nProvider } from "../i18n/I18nContext";
 import { CareerPage } from "./CareerPage";
 import { ResumePage } from "./ResumePage";
 
-const api = vi.hoisted(() => ({ resume: vi.fn(), coverLetter: vi.fn(), profiles: vi.fn(), careerSkills: vi.fn(), careerSalary: vi.fn() }));
+const api = vi.hoisted(() => ({ currencyRates: vi.fn(() => Promise.resolve({ data: { base: "USD", updatedAt: "hoje", rates: { USD: 1, BRL: 5 } } })), profile: vi.fn(() => Promise.resolve({ data: { options: null } })), resume: vi.fn(), coverLetter: vi.fn(), profiles: vi.fn(), careerSkills: vi.fn(), careerSalary: vi.fn() }));
 vi.mock("../api/endpoints", () => ({ api }));
 vi.mock("../auth/AuthContext", () => ({ useAuth: () => ({ user: { displayName: "Pessoa Teste", email: "pessoa@teste.dev" } }) }));
 

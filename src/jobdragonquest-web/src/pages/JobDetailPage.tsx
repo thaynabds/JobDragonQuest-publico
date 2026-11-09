@@ -1,3 +1,4 @@
+import { CurrencyConverter } from "../components/CurrencyConverter";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
@@ -121,6 +122,7 @@ export function JobDetailPage() {
       <p className="muted small">
         {t("jobs.foundAt")}: {formatDate(data.foundAt, true)} · {data.source}
       </p>
+      {data.salaryMin != null && data.salaryCurrency && <CurrencyConverter initialAmount={data.salaryMin} initialCurrency={data.salaryCurrency} />}
     </div>
   );
 }

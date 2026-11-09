@@ -23,7 +23,36 @@ public final class AuthDtos {
 
     public record LoginRequest(
             @NotBlank @Email @Size(max = 254) String email,
-            @NotBlank @Size(max = 128) String password) {
+            @NotBlank @Size(max = 128) String password,
+            Boolean rememberMe) {
+    }
+
+    public record RecoverRequest(
+            @NotBlank @Email @Size(max = 254) String email,
+            @NotBlank @Size(max = 64) String code,
+            @NotBlank @Size(min = 12, max = 128) String newPassword) {
+    }
+
+    public record CurrentPasswordRequest(@NotBlank @Size(max = 128) String currentPassword) {
+    }
+
+    public record RecoveryCodes(java.util.List<String> codes) {
+    }
+
+    public record RecoveryStatus(long remaining) {
+    }
+
+    public record UpdateNameRequest(@NotBlank @Size(max = 120) String displayName) {
+    }
+
+    public record ChangeEmailRequest(
+            @NotBlank @Email @Size(max = 254) String email,
+            @NotBlank @Size(max = 128) String currentPassword) {
+    }
+
+    public record ChangePasswordRequest(
+            @NotBlank @Size(max = 128) String currentPassword,
+            @NotBlank @Size(min = 12, max = 128) String newPassword) {
     }
 
     public record TokenResponse(String accessToken, String tokenType, long expiresIn) {

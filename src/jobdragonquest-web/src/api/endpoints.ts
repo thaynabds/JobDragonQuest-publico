@@ -52,6 +52,7 @@ import type {
   Summary,
   TokenResponse,
   TransitionResult,
+  SystemVersion,
 } from "./types";
 
 const id = (value: string) => encodeURIComponent(value);
@@ -75,7 +76,7 @@ export const api = {
       body,
       anonymous: true,
     }),
-  login: (body: { email: string; password: string }) =>
+  login: (body: { email: string; password: string; rememberMe: boolean }) =>
     request<TokenResponse>("/api/v1/auth/login", {
       method: "POST",
       body,
@@ -203,7 +204,7 @@ export const api = {
     }),
 
   tokens: () => request<PersonalToken[]>("/api/v1/tokens"),
-  createToken: (body: { name: string; days: number }) => request<CreatedToken>("/api/v1/tokens", { method: "POST", body }),
+  createToken: (body: { name: string; days?: number; neverExpires?: boolean }) => request<CreatedToken>("/api/v1/tokens", { method: "POST", body }),
   revokeToken: (tokenId: string) => request<void>(`/api/v1/tokens/${id(tokenId)}`, { method: "DELETE" }),
 
   notifications: (params: { unreadOnly?: boolean; page?: number; size?: number }) => request<NotificationList>(`/api/v1/notifications${query(params)}`),
@@ -214,6 +215,18 @@ export const api = {
       body: { ids },
     }),
   markRead: (notificationId: string) => request<NotificationItem>(`/api/v1/notifications/${id(notificationId)}/read`, { method: "POST" }),
+  dismissNotification: (notificationId: string) => request<void>(`/api/v1/notifications/${id(notificationId)}`, { method: "DELETE" }),
+  dismissAllNotifications: () => request<{ count: number }>("/api/v1/notifications", { method: "DELETE" }),
+  systemVersion: () => request<SystemVersion>("/api/v1/system/version"),
+  updateName: (displayName: string) => request<Me>("/api/v1/me", { method: "PUT", body: { displayName } }),
+  updateEmail: (email: string, currentPassword: string) => request<Me>("/api/v1/me/email", { method: "PUT", body: { email, currentPassword } }),
+  updatePassword: (currentPassword: string, newPassword: string) =>
+    request<TokenResponse>("/api/v1/me/password", { method: "PUT", body: { currentPassword, newPassword } }),
+  recoverAccount: (body: { email: string; code: string; newPassword: string }) =>
+    request<void>("/api/v1/auth/recover", { method: "POST", body, anonymous: true }),
+  recoveryStatus: () => request<{ remaining: number }>("/api/v1/me/recovery-codes"),
+  newRecoveryCodes: (currentPassword: string) => request<{ codes: string[] }>("/api/v1/me/recovery-codes", { method: "POST", body: { currentPassword } }),
+  currencyRates: () => request<{ base: string; updatedAt: string; rates: Record<string, number> }>("/api/v1/currency/rates"),
   markAllRead: () =>
     request<{ count: number }>("/api/v1/notifications/read-all", {
       method: "POST",

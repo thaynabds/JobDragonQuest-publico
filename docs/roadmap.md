@@ -23,6 +23,7 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 | v0.4.2 | 07/11/2026 | pdfbox 3.0.8 e SDK do MCP 1.32.2; ações do CI novas fixadas por SHA; Dependabot sem versões major de bibliotecas; CI de PR só no repositório principal, para o espelho público não ficar vermelho com PRs que não podem ser mergeados (#150) |
 | v0.5.0 | 07/11/2026 | Backlog restante da avaliação Week_01: Ruff, Checkstyle e hooks de pre-commit; X-Request-Id e log em JSON; teste ponta a ponta pela API; p95 medido (RNF07); release notes automáticas; runbook e checklist de acessibilidade (#159) |
 | v0.5.1 | 07/11/2026 | Teste ponta a ponta no navegador (Playwright) no CI; ADRs em um arquivo por decisão (#166); setup-java 6.2.0 (#150) |
+| v0.6.0 | 09/11/2026 | Conta completa e recuperação por códigos; opções de busca, candidatura e currículo no perfil; documentos no idioma da vaga; leitura de ODT, Excel e Markdown e currículo em itens; tokens sem validade; frequência livre; excluir avisos; aviso de versão; ajuda nos campos; conversor de moedas (#172, #174) |
 
 Medição da v0.2.0:
 - API: 108 testes, cobertura geral de 94,3%.

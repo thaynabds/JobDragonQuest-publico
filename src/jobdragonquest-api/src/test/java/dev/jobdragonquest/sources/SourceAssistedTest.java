@@ -34,7 +34,7 @@ class SourceAssistedTest extends ApiTestSupport {
 
         getJson(token, "/api/v1/dashboard/pending")
                 .andExpect(jsonPath("$[?(@.type=='SOURCE_TO_CHECK')].sourceId", hasItem(id)))
-                .andExpect(jsonPath("$[?(@.sourceId=='%s')].url".formatted(id), hasItem("https://linkedin.com/jobs/search?keywords=java")));
+                .andExpect(jsonPath("$[?(@.sourceId=='%s')].url".formatted(id), hasItem("https://www.linkedin.com/jobs/search/?keywords=java")));
         getJson(token, "/api/v1/dashboard/summary")
                 .andExpect(jsonPath("$.sourcesWatched").value(2))
                 .andExpect(jsonPath("$.sourcesToCheck").value(2));

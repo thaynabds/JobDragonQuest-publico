@@ -26,6 +26,8 @@ const allowedHosts = (process.env.JOBDRAGONQUEST_ALLOWED_HOSTS ?? "")
   .filter((host) => /^\.?[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(host));
 
 export default defineConfig({
+  // Versão do painel, comparada com a da API para avisar quando há atualização.
+  define: { __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? "dev") },
   plugins: [react(), contentSecurityPolicy],
   server: { host: "127.0.0.1", port: 5173, strictPort: true, proxy, allowedHosts },
   preview: { host: "127.0.0.1", port: 5173, strictPort: true, proxy, allowedHosts },

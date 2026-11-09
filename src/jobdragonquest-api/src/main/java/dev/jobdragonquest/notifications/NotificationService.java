@@ -86,8 +86,8 @@ public class NotificationService {
         }
         PageRequest request = PageRequest.of(page, size);
         Page<Notification> result = unreadOnly
-                ? notifications.findByUserIdAndReadAtIsNullOrderByCreatedAtDesc(userId, request)
-                : notifications.findByUserIdOrderByCreatedAtDesc(userId, request);
+                ? notifications.findByUserIdAndReadAtIsNullAndDismissedAtIsNullOrderByCreatedAtDesc(userId, request)
+                : notifications.findByUserIdAndDismissedAtIsNullOrderByCreatedAtDesc(userId, request);
         return new NotificationList(result.map(NotificationResponse::of).getContent(),
                 notifications.countByUserIdAndReadAtIsNull(userId), page, size, result.getTotalElements());
     }
@@ -113,6 +113,16 @@ public class NotificationService {
         Notification notification = load(userId, id);
         notification.markRead(clock.instant());
         return NotificationResponse.of(notification);
+    }
+
+    @Transactional
+    public void dismiss(UUID userId, UUID id) {
+        notifications.findByIdAndUserId(id, userId).orElseThrow(() -> new NotFoundException("Aviso")).dismiss(clock.instant());
+    }
+
+    @Transactional
+    public int dismissAll(UUID userId) {
+        return notifications.dismissAll(userId, clock.instant());
     }
 
     @Transactional

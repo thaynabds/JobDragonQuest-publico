@@ -19,9 +19,9 @@ interface NotificationRepository extends JpaRepository<Notification, UUID> {
 
     Optional<Notification> findByIdAndUserId(UUID id, UUID userId);
 
-    Page<Notification> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
+    Page<Notification> findByUserIdAndDismissedAtIsNullOrderByCreatedAtDesc(UUID userId, Pageable pageable);
 
-    Page<Notification> findByUserIdAndReadAtIsNullOrderByCreatedAtDesc(UUID userId, Pageable pageable);
+    Page<Notification> findByUserIdAndReadAtIsNullAndDismissedAtIsNullOrderByCreatedAtDesc(UUID userId, Pageable pageable);
 
     long countByUserIdAndReadAtIsNull(UUID userId);
 
@@ -33,6 +33,12 @@ interface NotificationRepository extends JpaRepository<Notification, UUID> {
     List<Notification> findDue(@Param("userId") UUID userId, @Param("now") Instant now, Pageable pageable);
 
     List<Notification> findByUserIdAndIdIn(UUID userId, Collection<UUID> ids);
+
+    @Modifying
+    @Query("""
+            update Notification n set n.dismissedAt = :now, n.readAt = coalesce(n.readAt, :now), n.deliveredAt = coalesce(n.deliveredAt, :now)
+            where n.userId = :userId and n.dismissedAt is null""")
+    int dismissAll(@Param("userId") UUID userId, @Param("now") Instant now);
 
     @Modifying
     @Query("update Notification n set n.readAt = :now where n.userId = :userId and n.readAt is null")

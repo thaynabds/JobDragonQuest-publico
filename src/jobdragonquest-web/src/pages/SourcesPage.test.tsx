@@ -127,7 +127,7 @@ describe("fontes vigiadas", () => {
       </I18nProvider>,
     );
     await screen.findByText("Busca Java");
-    expect(screen.getAllByText("120 min").length).toBe(2);
+    expect(screen.getAllByText("A cada 2 hora(s)").length).toBe(2);
 
     await user.click(screen.getByRole("checkbox", { name: "Todos" }));
     const bar = screen.getByRole("region", { name: "2 selecionada(s)" });

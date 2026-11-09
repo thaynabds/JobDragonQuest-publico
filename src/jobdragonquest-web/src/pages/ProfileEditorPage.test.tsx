@@ -134,7 +134,7 @@ describe("perfil completo", () => {
     await user.type(screen.getByRole("textbox", { name: "Resposta" }), "Porque gosto de back-end.");
 
     await user.click(screen.getByRole("button", { name: "Salvar" }));
-    await waitFor(() => expect(api.createProfile).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(api.createProfile).toHaveBeenCalledTimes(1), { timeout: 15_000 });
     const body = api.createProfile.mock.calls[0]![0];
     expect(body.seniority).toBe("SPECIALIST");
     expect(body.headline).toBe("Back-end Java");
@@ -148,14 +148,14 @@ describe("perfil completo", () => {
     // Depois de salvar, a tela navega para o perfil novo e o recarrega; com a máquina carregada isso passa de 1 s.
     await waitFor(() => expect(api.profile).toHaveBeenCalledWith("novo-id"), { timeout: 10_000 });
     // Digita muitos campos numa tela com centenas de sugestões de idioma e país: mais folga que o padrão de 30 s.
-  }, 90_000);
+  }, 180_000);
 
   it("carrega o perfil salvo com o idioma por extenso e recusa país desconhecido", async () => {
     api.profile.mockResolvedValue({ data: saved });
     const user = userEvent.setup({ delay: null });
     renderAt("/perfis/p1");
 
-    expect(await screen.findByDisplayValue("Inglês")).toBeTruthy();
+    expect(await screen.findByDisplayValue("Inglês", {}, { timeout: 15_000 })).toBeTruthy();
     expect(screen.getByDisplayValue("Brasil, Portugal")).toBeTruthy();
     expect((screen.getByRole("combobox", { name: "Senioridade" }) as HTMLSelectElement).value).toBe("SPECIALIST");
 

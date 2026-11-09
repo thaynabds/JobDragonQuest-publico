@@ -77,7 +77,8 @@ public final class ProfileDtos {
             @Size(max = 50) List<@NotBlank @Size(max = 80) String> excludeKeywords,
             @Size(max = 20) List<@NotBlank @Size(max = 120) String> industries,
             @Size(max = 50) List<@Valid @NotNull AnswerDto> answers,
-            AutomationMode automationMode) {
+            AutomationMode automationMode,
+            @Valid ProfileOptions options) {
     }
 
     /**
@@ -140,7 +141,7 @@ public final class ProfileDtos {
             Boolean disability, String disabilityDetails, List<String> workAuthorization, Set<EmploymentType> employmentTypes,
             List<String> excludedCompanies, List<String> includeKeywords, List<String> excludeKeywords,
             List<String> industries, List<AnswerDto> answers, Instant createdAt, Instant updatedAt, long version,
-            AutomationMode automationMode) {
+            AutomationMode automationMode, ProfileOptions options) {
 
         static ProfileResponse of(Profile p) {
             Profile.ProfileDetails d = p.getDetails();
@@ -157,7 +158,7 @@ public final class ProfileDtos {
                     d.websiteUrl(), d.coverLetter(), d.disability(), d.disabilityDetails(), d.workAuthorization(),
                     d.employmentTypes(), d.excludedCompanies(), d.includeKeywords(), d.excludeKeywords(), d.industries(),
                     d.answers().stream().map(a -> new AnswerDto(a.getQuestion(), a.getAnswer())).toList(),
-                    p.getCreatedAt(), p.getUpdatedAt(), p.getVersion(), p.getAutomationMode());
+                    p.getCreatedAt(), p.getUpdatedAt(), p.getVersion(), p.getAutomationMode(), d.options());
         }
 
         private static EntryDto entry(ProfileEntry e) {

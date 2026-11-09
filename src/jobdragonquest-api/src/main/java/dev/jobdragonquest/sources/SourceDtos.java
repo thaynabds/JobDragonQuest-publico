@@ -18,7 +18,7 @@ import jakarta.validation.constraints.Size;
 public final class SourceDtos {
 
     static final int MIN_FREQUENCY = 15;
-    static final int MAX_FREQUENCY = 10_080;
+    static final int MAX_FREQUENCY = 525_600;
     static final int DEFAULT_FREQUENCY = 360;
 
     private SourceDtos() {

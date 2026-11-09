@@ -73,7 +73,7 @@ class SourceIntegrationTest extends ApiTestSupport {
 
         postJson(token, "/api/v1/sources/bulk", bulk("\"%s\"".formatted(java), """
                 {"name":"Ok","kind":"LEVER","identifier":"ok"},
-                {"name":"Ataque","kind":"GREENHOUSE","identifier":"../../etc/passwd"}"""))
+                {"name":"Ataque","kind":"GREENHOUSE","identifier":".."}"""))
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("invalid_identifier"));
         postJson(token, "/api/v1/sources/bulk", bulk("\"%s\"".formatted(java), """
                 {"name":"Sem URL","kind":"LINKEDIN"}"""))

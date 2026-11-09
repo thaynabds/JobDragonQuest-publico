@@ -121,12 +121,25 @@ export function Bell() {
                     <button type="button" className="btn" onClick={() => void act(api.snooze(item.id, 60))}>
                       {t("notif.snooze")}
                     </button>
+                    <button type="button" className="btn" onClick={() => void act(api.dismissNotification(item.id))}>
+                      {t("notif.delete")}
+                    </button>
                   </div>
                 </li>
               );
             })}
           </ul>
           <footer className="bell-footer">
+            <button
+              type="button"
+              className="btn"
+              disabled={!items || items.length === 0}
+              onClick={() => {
+                if (window.confirm(t("notif.confirmClear"))) void act(api.dismissAllNotifications());
+              }}
+            >
+              {t("notif.clearAll")}
+            </button>
             <button
               type="button"
               className="btn"

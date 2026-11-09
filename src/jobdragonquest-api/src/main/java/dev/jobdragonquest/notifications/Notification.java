@@ -19,6 +19,20 @@ import jakarta.persistence.Table;
 @Table(name = "notification")
 public class Notification extends AssignedIdEntity {
 
+    /** Preenchido quando a pessoa exclui o aviso: some das listas e o mesmo aviso não é criado de novo. */
+    @Column(name = "dismissed_at")
+    private Instant dismissedAt;
+
+    void dismiss(Instant now) {
+        this.dismissedAt = now;
+        if (readAt == null) {
+            readAt = now;
+        }
+        if (deliveredAt == null) {
+            deliveredAt = now;
+        }
+    }
+
     @Id
     private UUID id;
 

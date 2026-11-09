@@ -5,7 +5,7 @@ público tem o mesmo código e as mesmas tags, mas o GitHub não copia issues ne
 a evidência auditável do processo. Só campos de processo são exportados (sem corpo, comentário ou autor).
 Por que existem dois repositórios: [governanca.md](governanca.md).
 
-Resumo: 69 issues (68 fechadas) e 98 PRs (83 com merge).
+Resumo: 72 issues (71 fechadas) e 103 PRs (88 com merge).
 
 ## Issues
 
@@ -80,6 +80,9 @@ Resumo: 69 issues (68 fechadas) e 98 PRs (83 com merge).
 | 151 | chore(deps): migrar para TypeScript 7, Vite 8, Vitest 5, jsdom 30 e plugin-react 6 | OPEN | 2026-11-07 |  |  | type:chore, priority:medium, status:ready, stack:frontend |
 | 159 | feat: backlog restante da avaliação Week_01 (lint, pre-commit, observabilidade, E2E, p95, release notes, runbook, acessibilidade) | CLOSED | 2026-11-08 | 2026-11-08 | PR 160, PR 163, PR 164 | type:chore, priority:medium, scope:devops |
 | 166 | docs(adr) e test(e2e): um arquivo por ADR e teste ponta a ponta no navegador | CLOSED | 2026-11-08 | 2026-11-08 | PR 167 | type:docs, type:test, priority:medium |
+| 170 | chore(commits): aviso de commit grande no pre-commit e no CI | CLOSED | 2026-11-08 | 2026-11-08 | PR 171 | type:chore, priority:low, scope:devops |
+| 172 | feat: conta completa, opções de busca e currículo, tokens sem validade, frequência livre e aviso de versão | CLOSED | 2026-11-09 | 2026-11-09 | PR 173 | type:feature, priority:high |
+| 174 | feat: leitura de ODT, Excel e Markdown, ajuda nos campos e conversão de moedas | CLOSED | 2026-11-09 | 2026-11-09 | PR 175 | type:feature, priority:high |
 
 ## Pull requests
 
@@ -183,3 +186,8 @@ Resumo: 69 issues (68 fechadas) e 98 PRs (83 com merge).
 | 164 | docs: histórico de issues e PRs depois da v0.5.0 (#159) | MERGED | `docs/issue-159-historico` → `develop` | 2026-11-08 | 2026-11-08 | #159 |
 | 165 | ci: setup-java 6.2.0 (substitui o PR 155 do Dependabot) | MERGED | `chore/issue-150-setup-java` → `develop` | 2026-11-08 | 2026-11-08 | #150 |
 | 167 | docs(adr) e test(e2e): ADRs em arquivos e teste no navegador (#166) | MERGED | `feature/issue-166-adr-e2e` → `develop` | 2026-11-08 | 2026-11-08 | #166 |
+| 168 | release: v0.5.1 | MERGED | `release/0.5.1` → `main` | 2026-11-08 | 2026-11-08 |  |
+| 169 | chore: main (v0.5.1) de volta para develop | MERGED | `chore/main-para-develop-0.5.1` → `develop` | 2026-11-08 | 2026-11-08 |  |
+| 171 | chore(commits): aviso de commit grande (#170) | MERGED | `chore/issue-170-commit-grande` → `develop` | 2026-11-08 | 2026-11-08 | #170 |
+| 173 | feat: conta completa, opções de perfil, tokens sem validade e leitura de currículo (#172) | MERGED | `feature/issue-172-conta-e-opcoes` → `develop` | 2026-11-09 | 2026-11-09 | #172 |
+| 175 | feat: ODT, Excel e Markdown, ajuda nos campos e conversor de moedas (#174) | MERGED | `feature/issue-174-arquivos-ajuda-moedas` → `develop` | 2026-11-09 | 2026-11-09 | #174 |

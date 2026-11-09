@@ -21,7 +21,7 @@ public class BoundedHttpFetcher {
 
     static final int MAX_BYTES = 8 * 1024 * 1024;
     static final Set<String> ALLOWED_HOSTS = Set.of(
-            "boards-api.greenhouse.io", "api.lever.co", "api.smartrecruiters.com", "api.ashbyhq.com");
+            "boards-api.greenhouse.io", "api.lever.co", "api.smartrecruiters.com", "api.ashbyhq.com", "api.github.com", "api.mymemory.translated.net", "open.er-api.com");
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(30);
 

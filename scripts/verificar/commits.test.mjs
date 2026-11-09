@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { MAX_SUBJECT, problems } from "./commits.mjs";
+import { MAX_SUBJECT, problems, sizeWarning } from "./commits.mjs";
 
 test("aceita mensagens no padrão do projeto", () => {
   for (const message of [
@@ -42,4 +42,11 @@ test("recusa crédito a IA no corpo", () => {
   // Montado em partes para o arquivo não conter a frase proibida (a auditoria do repositório recusaria).
   const credit = ["Co-Authored", "-By: ", "Cla", "ude <x@y>"].join("");
   assert.ok(problems(`feat: tela nova (#1)\n\n${credit}`).some((p) => /crédito a IA/.test(p)));
+});
+
+test("avisa commit grande, sem bloquear", () => {
+  assert.equal(sizeWarning(4, 120), null);
+  assert.equal(sizeWarning(30, 800), null);
+  assert.match(sizeWarning(31, 10), /31 arquivos/);
+  assert.match(sizeWarning(2, 801), /801 linhas/);
 });

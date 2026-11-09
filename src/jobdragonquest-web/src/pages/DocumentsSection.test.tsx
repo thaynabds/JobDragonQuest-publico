@@ -53,7 +53,7 @@ describe("documentos e atualização do currículo (#124)", () => {
     const user = userEvent.setup({ delay: null });
     renderSection(onAdded);
 
-    const input = (await screen.findByText("Ler arquivo (PDF, Word, texto ou foto)")).querySelector("input")!;
+    const input = (await screen.findByText("Ler arquivo")).querySelector("input")!;
     await user.upload(input, new File(["%PDF-1.7"], "certificado.pdf", { type: "application/pdf" }));
     expect(await screen.findByDisplayValue("Java e Spring Boot")).toBeTruthy();
     expect(api.appendEntry).not.toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe("documentos e atualização do currículo (#124)", () => {
     await waitFor(() => expect(api.readLinkDocument).toHaveBeenCalledWith("https://ude.my/UC-1234"));
 
     api.readDocument.mockResolvedValue({ data: { ...proposal, type: "PNG", text: "", ocrUnavailable: true } });
-    const input = screen.getByText("Ler arquivo (PDF, Word, texto ou foto)").querySelector("input")!;
+    const input = screen.getByText("Ler arquivo").querySelector("input")!;
     await user.upload(input, new File(["x"], "foto.png", { type: "image/png" }));
     expect(await screen.findByText(/instale o Tesseract/)).toBeTruthy();
 

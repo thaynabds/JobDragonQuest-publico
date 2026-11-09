@@ -3,7 +3,7 @@
 FROM eclipse-temurin:21-jdk-noble AS build
 WORKDIR /src
 COPY .mvn .mvn
-COPY mvnw pom.xml ./
+COPY mvnw pom.xml checkstyle.xml ./
 RUN ./mvnw -q -B -ntp dependency:go-offline
 COPY src src
 RUN ./mvnw -q -B -ntp -DskipTests package && cp target/jobdragonquest-api-*.jar /src/app.jar

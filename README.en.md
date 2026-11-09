@@ -8,17 +8,17 @@
 
 > Language: [Português](README.md) | **English** | [Español](README.es.md)
 
-[![Version](https://img.shields.io/badge/version-0.5.1-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.5.1)
+[![Version](https://img.shields.io/badge/version-0.6.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.6.0)
 [![License](https://img.shields.io/badge/license-all%20rights%20reserved-6b7280)](#license)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-309%20passing-16a34a)](#quality-and-security)
+[![Tests](https://img.shields.io/badge/tests-350%20passing-16a34a)](#quality-and-security)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobdragonquest-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobdragonquest-api)
 [![React](https://img.shields.io/badge/React-19-0891b2)](src/jobdragonquest-web)
 
 **A career management and job application automation platform for jobs and internships, in Brazil and abroad.**
 
-**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.5.1
+**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.6.0
 
 ## Quick install
 
@@ -77,13 +77,15 @@ JobDragonQuest brings it all into one explainable hub:
 
 ## Features
 
-### Implemented (v0.5.1)
+### Implemented (v0.6.0)
 
 | Area | What it does |
 |---|---|
 | Documents | Versioned résumés, cover letters, certificates and application attachments (up to 5 MB, type checked by content, only your account sees them). Update your résumé by sending a PDF certificate, a Word file, a link or a photo: the text is read on your computer (PDF with Apache PDFBox, photo with Tesseract if installed or through your AI) and becomes a proposed item you check before it goes into the profile |
 | Résumé and career | Résumé from the profile, general or tailored to the job (only reorders and highlights, never makes things up), ready to print as PDF from the browser; cover letter per job; interview prep; most requested skills and salary range from the collected jobs. All local and free |
 | Accounts | Sign-up and login with Argon2id, 15-minute sessions renewed by a rotating refresh token (everything is revoked if it is stolen), lockout after failed attempts |
+| Account and help | Show password, stay signed in, change name, e-mail and password, recovery codes, non-expiring tokens, collapsible menu, "i" help on fields and new-version notice |
+| Documents and currencies | Reads PDF, Word, ODT, Excel, ODS, CSV, Markdown and photos, splits the résumé into items to review; résumé and letter in the job language; currency converter |
 | Profiles | Several independent, complete profiles: headline, summary, current title, city, state and country, countries where you can work and visa sponsorship, availability (date, notice period, travel, relocation), employment types (full-time, contractor, internship, trainee, apprenticeship and others), work modes, expected and current salary by period and currency, professional links, keywords and companies to avoid, industries, **seniority from apprentice to executive** (13 levels), **skills with level and time in years, months and days**, **languages typed by full name** (including sign languages) with CEFR level, detailed history (experience, education with degree and status, courses with hours, certifications with credential and expiration, projects, volunteering, awards and publications), a default cover letter and ready answers for application forms. Sensitive data (disability) only if you want |
 | Watched sources | Create and edit **in bulk**, each source linked to **one or more profiles**. **Automatic collection** through the public APIs of Greenhouse, Lever, SmartRecruiters and Ashby, with a background scheduler, backoff after failures, history and one collection at a time. **Reminders** for LinkedIn, Instagram, Facebook, Gupy and other platforms that do not allow automated collection |
 | Jobs | Manual entry or collection, deduplicated by canonical URL and by company, title and location. Technologies mentioned in the description become requirements Favorites and a search for similar jobs (to favorites or to your latest applications), with an adjustable similarity score and explanation. Add a job from its link (reads the page structured data, protected against internal network access) and import your history from CSV without duplicates. |
@@ -204,8 +206,8 @@ Issues and PRs live in the main repository, which is private; the public mirror 
 
 ## Quality and security
 
-- **309 automated tests**: 209 in the API (unit and full-application integration tests), 66 in the dashboard, 18 in the MCP server, 12 in the Congo plugin and 4 in the browser extension. Plus an end-to-end browser test (Playwright) in CI and checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobDragonQuest through MCP, 29 for installation, and the real collection test.
-- **Coverage:** the build fails below 80% line coverage in critical modules. Overall API coverage is 92.3% (lines) today. The p95 of the main reads is at most 103 ms (target: 300 ms).
+- **350 automated tests**: 241 in the API (unit and full-application integration tests), 75 in the dashboard, 18 in the MCP server, 12 in the Congo plugin and 4 in the browser extension. Plus an end-to-end browser test (Playwright) in CI and checks against the real running system: 26 smoke-test checks, 24 for notifications, 15 for an AI using JobDragonQuest through MCP, 29 for installation, and the real collection test.
+- **Coverage:** the build fails below 80% line coverage in critical modules. Overall API coverage is 91.9% (lines) today. The p95 of the main reads is at most 103 ms (target: 300 ms).
 - **CI on every push and PR:** tests for all five parts, dashboard lint, commit message checks and dependency scanning. Each run shows the test totals in its summary, and the test and coverage reports are kept as artifacts for 30 days.
 - **Security** ([details](docs/seguranca.md)):
   - per-user isolation (someone else's resource returns 404);

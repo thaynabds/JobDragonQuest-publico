@@ -8,17 +8,17 @@
 
 > Idioma: [Português](README.md) | [English](README.en.md) | **Español**
 
-[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.5.1-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.5.1)
+[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.6.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.6.0)
 [![Licencia](https://img.shields.io/badge/licencia-todos%20los%20derechos%20reservados-6b7280)](#licencia)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
-[![Pruebas](https://img.shields.io/badge/pruebas-309%20aprobadas-16a34a)](#calidad-y-seguridad)
+[![Pruebas](https://img.shields.io/badge/pruebas-350%20aprobadas-16a34a)](#calidad-y-seguridad)
 [![Java](https://img.shields.io/badge/Java-21-ea580c)](src/jobdragonquest-api)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-16a34a)](src/jobdragonquest-api)
 [![React](https://img.shields.io/badge/React-19-0891b2)](src/jobdragonquest-web)
 
 **Plataforma de gestión de carrera y automatización de postulaciones a empleos y prácticas, en Brasil y en el exterior.**
 
-**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositorio:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versión:** 0.5.1
+**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositorio:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versión:** 0.6.0
 
 ## Instalación rápida
 
@@ -77,13 +77,15 @@ JobDragonQuest lo reúne todo en una central única y explicable:
 
 ## Funcionalidades
 
-### Implementado (v0.5.1)
+### Implementado (v0.6.0)
 
 | Área | Qué hace |
 |---|---|
 | Documentos | Currículums con versión, cartas, certificados y adjuntos de postulación (hasta 5 MB, tipo verificado por el contenido, solo tu cuenta los ve). Actualiza tu currículum enviando un certificado en PDF, un Word, un enlace o una foto: el texto se lee en tu computadora (PDF con Apache PDFBox, foto con Tesseract si está instalado o con tu IA) y se vuelve una propuesta de ítem que revisas antes de que entre al perfil |
 | Currículum y carrera | Currículum del perfil, general o ajustado a la vacante (solo reordena y destaca, nunca inventa), listo para imprimir en PDF desde el navegador; carta por vacante; preparación de entrevista; competencias más pedidas y rango salarial a partir de las vacantes recolectadas. Todo local y gratuito |
 | Cuentas | Registro e inicio de sesión con Argon2id, sesión de 15 minutos renovada por un token rotativo (se revoca todo si lo roban), bloqueo tras intentos fallidos |
+| Cuenta y ayuda | Ver contraseña, mantener la sesión, cambiar nombre, correo y contraseña, códigos de recuperación, tokens sin caducidad, menú plegable, botón "i" en los campos y aviso de versión nueva |
+| Documentos y monedas | Lee PDF, Word, ODT, Excel, ODS, CSV, Markdown y fotos, separa el currículum en elementos para revisar; currículum y carta en el idioma de la vacante; conversor de monedas |
 | Perfiles | Varios perfiles independientes y completos: titular, resumen, cargo actual, ciudad, estado y país, países donde puedes trabajar y patrocinio de visa, disponibilidad (fecha, preaviso, viajes, mudanza), tipos de contrato (formal, contratista, pasantía, trainee, aprendiz y otros), modalidades, pretensión y salario actual por período y moneda, enlaces profesionales, palabras y empresas a evitar, sectores, **seniority de aprendiz a ejecutivo** (13 niveles), **competencias con nivel y tiempo en años, meses y días**, **idiomas escritos por su nombre completo** (incluidas lenguas de señas) con nivel MCER, historial detallado (experiencia, formación con grado y estado, cursos con carga horaria, certificaciones con credencial y vencimiento, proyectos, voluntariado, premios y publicaciones), carta de presentación predeterminada y respuestas listas para formularios. Dato sensible (discapacidad) solo si quieres |
 | Fuentes vigiladas | Alta y edición **en lote**, cada fuente vinculada a **uno o más perfiles**. **Recolección automática** por las APIs públicas de Greenhouse, Lever, SmartRecruiters y Ashby, con planificador en segundo plano, espera progresiva tras fallos, historial y una recolección a la vez. **Recordatorios** para LinkedIn, Instagram, Facebook, Gupy y otras plataformas que no permiten recolección automática |
 | Vacantes | Alta manual o por recolección, sin duplicados por URL canónica y por empresa, cargo y ubicación. Las tecnologías citadas en la descripción se vuelven requisitos Favoritas y búsqueda de vacantes parecidas (a las favoritas o a tus últimas postulaciones), con nota de similitud ajustable y explicación. Alta desde el enlace de la vacante (lee los datos estructurados de la página, con protección contra acceso a la red interna) e importación del historial por CSV sin duplicar. |
@@ -204,8 +206,8 @@ Las issues y los PRs están en el repositorio principal, que es privado; el espe
 
 ## Calidad y seguridad
 
-- **309 pruebas automatizadas**: 209 en la API (unitarias y de integración con la aplicación completa), 66 en el panel, 18 en el servidor MCP, 12 en el plugin de Congo y 4 en la extensión del navegador. Además, una prueba de punta a punta en el navegador (Playwright) en el CI y verificaciones contra el sistema funcionando de verdad: 26 de la prueba de humo, 24 de los avisos, 15 de una IA usando JobDragonQuest por MCP, 29 de la instalación y la recolección real.
-- **Cobertura:** el build falla por debajo del 80% de líneas en los módulos críticos. Hoy la cobertura general de la API es del 92,3% (líneas). El p95 de las lecturas principales es como máximo de 103 ms (meta: 300 ms).
+- **350 pruebas automatizadas**: 241 en la API (unitarias y de integración con la aplicación completa), 75 en el panel, 18 en el servidor MCP, 12 en el plugin de Congo y 4 en la extensión del navegador. Además, una prueba de punta a punta en el navegador (Playwright) en el CI y verificaciones contra el sistema funcionando de verdad: 26 de la prueba de humo, 24 de los avisos, 15 de una IA usando JobDragonQuest por MCP, 29 de la instalación y la recolección real.
+- **Cobertura:** el build falla por debajo del 80% de líneas en los módulos críticos. Hoy la cobertura general de la API es del 91,9% (líneas). El p95 de las lecturas principales es como máximo de 103 ms (meta: 300 ms).
 - **CI en cada push y PR:** pruebas de las cinco partes, lint del panel, revisión de los mensajes de commit y análisis de dependencias. El total de pruebas de cada ejecución aparece en el resumen del CI, y los informes de pruebas y cobertura quedan como artefacto por 30 días.
 - **Seguridad** ([detalles](docs/seguranca.md)):
   - aislamiento por usuario (un recurso ajeno responde 404);

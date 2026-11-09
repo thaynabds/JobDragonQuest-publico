@@ -10,7 +10,7 @@ public interface AtsClient {
     SourceKind kind();
 
     /**
-     * @param identifier board já validado ({@code SourceKind.IDENTIFIER})
+     * @param identifier board já validado (já codificado com {@code AtsPaths} ao montar a URL)
      * @throws CollectionException quando o ATS recusa, não responde ou devolve algo inesperado
      */
     List<CollectedJob> fetch(String identifier);

@@ -30,7 +30,7 @@ public class SmartRecruitersClient implements AtsClient {
 
     @Override
     public List<CollectedJob> fetch(String identifier) {
-        return parse(fetcher.get(URI.create("https://api.smartrecruiters.com/v1/companies/" + identifier + "/postings?limit=100")),
+        return parse(fetcher.get(URI.create("https://api.smartrecruiters.com/v1/companies/" + AtsPaths.segment(identifier) + "/postings?limit=100")),
                 identifier);
     }
 

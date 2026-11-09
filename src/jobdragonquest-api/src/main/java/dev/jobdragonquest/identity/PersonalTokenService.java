@@ -54,7 +54,7 @@ public class PersonalTokenService {
     public record CreatedToken(TokenView token, String value) {
     }
 
-    public record CreateRequest(String name, Integer days) {
+    public record CreateRequest(String name, Integer days, Boolean neverExpires) {
     }
 
     @Transactional
@@ -64,7 +64,8 @@ public class PersonalTokenService {
             throw DomainException.badRequest("invalid_token_name", "Dê um nome de 1 a 80 letras, números, espaço ou . _ ( ) -");
         }
         int days = request.days() == null ? DEFAULT_DAYS : request.days();
-        if (days < MIN_DAYS || days > MAX_DAYS) {
+        boolean forever = Boolean.TRUE.equals(request.neverExpires());
+        if (!forever && (days < MIN_DAYS || days > MAX_DAYS)) {
             throw DomainException.badRequest("invalid_token_days", "Validade de " + MIN_DAYS + " a " + MAX_DAYS + " dias");
         }
         Instant now = clock.instant();
@@ -75,7 +76,7 @@ public class PersonalTokenService {
         random.nextBytes(bytes);
         String value = PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
         PersonalToken token = tokens.save(new PersonalToken(userId, name, TokenService.hash(value),
-                value.substring(0, PREFIX.length() + 6), now, now.plus(Duration.ofDays(days))));
+                value.substring(0, PREFIX.length() + 6), now, forever ? null : now.plus(Duration.ofDays(days))));
         audit.record(userId, "token.created", "personal_token", token.getId(), name);
         return new CreatedToken(view(token, now), value);
     }
