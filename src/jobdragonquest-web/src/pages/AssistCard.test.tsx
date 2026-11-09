@@ -62,3 +62,20 @@ describe("preparar a candidatura (#115)", () => {
     expect(screen.getByText(/A vaga é REMOTE/)).toBeTruthy();
   });
 });
+
+describe("perfil que chega depois (#205)", () => {
+  it("usa o primeiro perfil quando a lista chega depois do primeiro desenho", async () => {
+    api.assistAnswers.mockResolvedValue({ data: [] });
+    const tree = (profiles: { id: string; name: string }[]) => (
+      <I18nProvider initial="pt-BR">
+        <MemoryRouter>
+          <AssistCard jobId="j1" profiles={profiles} />
+        </MemoryRouter>
+      </I18nProvider>
+    );
+    const { rerender } = render(tree([]));
+    rerender(tree([{ id: "p9", name: "Tardio" }]));
+    await userEvent.click(screen.getByRole("button", { name: /Analisar perguntas/ }));
+    await waitFor(() => expect(api.assistAnswers).toHaveBeenCalledWith("j1", "p9"));
+  });
+});

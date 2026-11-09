@@ -14,7 +14,9 @@ const TONE = { OK: "good", WARN: "warn", BLOCK: "bad" } as const;
  */
 export function AssistCard({ jobId, profiles }: { jobId: string; profiles: { id: string; name: string }[] }) {
   const { t, label, errorMessage } = useI18n();
-  const [profileId, setProfileId] = useState(profiles[0]?.id ?? "");
+  const [chosen, setProfileId] = useState("");
+  // A lista de perfis pode chegar depois do primeiro desenho: sem escolha, vale o primeiro perfil disponível.
+  const profileId = profiles.some((p) => p.id === chosen) ? chosen : (profiles[0]?.id ?? "");
   const [answers, setAnswers] = useState<SuggestedAnswer[] | null>(null);
   const [review, setReview] = useState<AssistReview | null>(null);
   const [interview, setInterview] = useState<InterviewQuestion[] | null>(null);

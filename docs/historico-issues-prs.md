@@ -5,7 +5,7 @@ público tem o mesmo código e as mesmas tags, mas o GitHub não copia issues ne
 a evidência auditável do processo. Só campos de processo são exportados (sem corpo, comentário ou autor).
 Por que existem dois repositórios: [governanca.md](governanca.md).
 
-Resumo: 82 issues (76 fechadas) e 117 PRs (102 com merge).
+Resumo: 83 issues (76 fechadas) e 120 PRs (105 com merge).
 
 ## Issues
 
@@ -93,6 +93,7 @@ Resumo: 82 issues (76 fechadas) e 117 PRs (102 com merge).
 | 194 | Painel de avisos alarga a tela | OPEN | 2026-11-09 |  | PR 195 |  |
 | 196 | Usar o AccessAbility Widget mais recente no painel | OPEN | 2026-11-09 |  | PR 197 |  |
 | 198 | Acompanhar e-mails de candidatura pela IA ligada por MCP | OPEN | 2026-11-09 |  | PR 199 |  |
+| 202 | Menu lateral levemente translúcido | OPEN | 2026-11-09 |  | PR 203 |  |
 
 ## Pull requests
 
@@ -215,3 +216,6 @@ Resumo: 82 issues (76 fechadas) e 117 PRs (102 com merge).
 | 195 | Painel de avisos não alarga a tela | MERGED | `fix/issue-194-painel-avisos` → `develop` | 2026-11-09 | 2026-11-09 | #194 |
 | 197 | AccessAbility Widget 2.3.0 no painel | MERGED | `feature/issue-196-widget-acessibilidade` → `develop` | 2026-11-09 | 2026-11-09 | #196 |
 | 199 | Acompanhar e-mails pela IA ligada por MCP | MERGED | `feature/issue-198-email-por-mcp` → `develop` | 2026-11-09 | 2026-11-09 | #198 |
+| 200 | Release 0.7.0 | MERGED | `release/0.7.0` → `main` | 2026-11-09 | 2026-11-09 |  |
+| 201 | chore: main de volta para develop após 0.7.0 | MERGED | `chore/main-para-develop-0.7.0` → `develop` | 2026-11-09 | 2026-11-09 |  |
+| 203 | Menu lateral levemente translúcido | MERGED | `feature/issue-202-menu-translucido` → `develop` | 2026-11-09 | 2026-11-09 | #202 |
