@@ -275,7 +275,7 @@ export const en: Messages = {
   "pending.msg.NO_UPDATE": "No update since {date}",
   "error.generic": "Something went wrong. Please try again.",
   "error.network": "Could not reach the server. Is it running?",
-  "error.invalid_credentials": "Invalid email or password, or account locked for a few minutes.",
+  "error.invalid_credentials": "Invalid e-mail or password.",
   "error.email_taken": "An account with this email already exists.",
   "error.rate_limited": "Too many attempts. Wait a few minutes.",
   "error.validation_failed": "Check the highlighted fields.",
@@ -885,4 +885,9 @@ export const en: Messages = {
   "currency.to": "To",
   "currency.note": "Rate from {date}. Currencies of Portuguese, English and Spanish speaking countries. For reference only: does not include cost of living or taxes.",
   "documents.formats": "Formats I can read: PDF, Word (.docx), OpenDocument (.odt), spreadsheets (.xlsx, .ods, .csv, .tsv), text (.txt), Markdown (.md) and photos (.png, .jpg). Old Word (.doc) and Excel (.xls): save as .docx or .xlsx first.",
+  "auth.attemptsLeft": "You have {count} attempt(s) left before a temporary lock.",
+  "error.account_locked": "Too many wrong attempts. Sign-in locked for {minutes} minute(s). If you forgot your password, use \"Forgot your password?\".",
+  "documentKind.DIPLOMA": "Diploma",
+  "documentKind.TRANSCRIPT": "Transcript",
+  "documentKind.MEDICAL_REPORT": "Medical report",
 };

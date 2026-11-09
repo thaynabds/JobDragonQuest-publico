@@ -5,7 +5,7 @@ público tem o mesmo código e as mesmas tags, mas o GitHub não copia issues ne
 a evidência auditável do processo. Só campos de processo são exportados (sem corpo, comentário ou autor).
 Por que existem dois repositórios: [governanca.md](governanca.md).
 
-Resumo: 74 issues (73 fechadas) e 107 PRs (92 com merge).
+Resumo: 77 issues (76 fechadas) e 110 PRs (95 com merge).
 
 ## Issues
 
@@ -85,6 +85,9 @@ Resumo: 74 issues (73 fechadas) e 107 PRs (92 com merge).
 | 174 | feat: leitura de ODT, Excel e Markdown, ajuda nos campos e conversão de moedas | CLOSED | 2026-11-09 | 2026-11-09 | PR 175 | type:feature, priority:high |
 | 178 | fix: tirar e-mail e endereço do banco do render.yaml | CLOSED | 2026-11-09 | 2026-11-09 | PR 179 | type:security, priority:high |
 | 180 | chore(espelho): publicar por commit limpo e extensão com servidor HTTPS | CLOSED | 2026-11-09 | 2026-11-09 | PR 181 | type:chore, priority:high |
+| 184 | fix(web): responsividade de todas as telas | CLOSED | 2026-11-09 | 2026-11-09 | PR 185 | type:bug, priority:high, stack:frontend |
+| 186 | feat: avisar tentativas restantes no login e bloquear só depois de 5 erros | CLOSED | 2026-11-09 | 2026-11-09 |  | type:feature, priority:high |
+| 187 | feat: anexar laudo, diploma e histórico escolar ao perfil | CLOSED | 2026-11-09 | 2026-11-09 |  | type:feature, priority:high |
 
 ## Pull requests
 
@@ -197,3 +200,6 @@ Resumo: 74 issues (73 fechadas) e 107 PRs (92 com merge).
 | 177 | chore: main (v0.6.0) de volta para develop | MERGED | `chore/main-para-develop-0.6.0` → `develop` | 2026-11-09 | 2026-11-09 |  |
 | 179 | fix(deploy): render.yaml sem dados pessoais (#178) | MERGED | `fix/issue-178-render-sem-dados` → `develop` | 2026-11-09 | 2026-11-09 | #178 |
 | 181 | chore: espelho por commit limpo e extensão com HTTPS (#180) | MERGED | `chore/issue-180-espelho-limpo` → `develop` | 2026-11-09 | 2026-11-09 | #180 |
+| 182 | release: v0.6.1 | MERGED | `release/0.6.1` → `main` | 2026-11-09 | 2026-11-09 |  |
+| 183 | chore: main (v0.6.1) de volta para develop | MERGED | `chore/main-para-develop-0.6.1` → `develop` | 2026-11-09 | 2026-11-09 |  |
+| 185 | fix(web): responsividade de todas as telas (#184) | MERGED | `fix/issue-184-responsividade` → `develop` | 2026-11-09 | 2026-11-09 | #184 |

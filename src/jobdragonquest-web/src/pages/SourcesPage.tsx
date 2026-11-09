@@ -107,7 +107,7 @@ export function SourcesPage() {
 
       <Card title={t("sources.addTitle")}>
         <form onSubmit={create}>
-          <table className="table">
+          <div className="table-scroll"><table className="table">
             <thead>
               <tr>
                 <th>{t("sources.kind")}</th>
@@ -152,7 +152,7 @@ export function SourcesPage() {
                 );
               })}
             </tbody>
-          </table>
+          </table></div>
           <Button onClick={() => setRows([...rows, newRow()])} disabled={rows.length >= 50}>
             {t("sources.addRow")}
           </Button>

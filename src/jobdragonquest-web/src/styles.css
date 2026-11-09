@@ -298,7 +298,7 @@ a:focus-visible {
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
   gap: 0.75rem 1rem;
   margin: 0.75rem 0;
 }
@@ -1116,3 +1116,55 @@ a:focus-visible {
 .info-tip [role="tooltip"] { display: none; position: absolute; z-index: 50; right: 0; top: 1.5rem; width: min(280px, 70vw); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); box-shadow: 0 4px 16px rgb(0 0 0 / 25%); font-size: 0.85rem; font-weight: 400; }
 .info-tip:hover [role="tooltip"], .info-tip:focus-within [role="tooltip"] { display: block; }
 .info-tip.inline { position: relative; display: inline-block; margin-left: 0.35rem; }
+
+/* Responsividade: nada estoura a largura da tela, de 320 px a monitores largos. */
+html { -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { box-sizing: border-box; }
+body { overflow-wrap: anywhere; }
+img, svg, video { max-width: 100%; height: auto; }
+input, select, textarea { max-width: 100%; min-width: 0; }
+.shell, .content, .page, .card, .form-grid > *, .form-row > *, .two-columns > * { min-width: 0; }
+.content { padding: clamp(0.75rem, 2.5vw, 2rem) clamp(0.75rem, 3vw, 2.5rem) 6rem; }
+.page { width: 100%; max-width: 1400px; margin-inline: auto; }
+.update-notice { width: 100%; max-width: 1400px; margin-inline: auto; }
+.table-scroll { max-width: 100%; -webkit-overflow-scrolling: touch; }
+.table { min-width: 100%; }
+.page-header h1 { min-width: 0; }
+.form-row .field, .form-row .field-with-info { flex: 1 1 min(220px, 100%); min-width: 0; }
+.password-input button { white-space: nowrap; flex: none; }
+.bell-panel { max-width: calc(100vw - 16px); max-height: min(80vh, 640px); overflow-y: auto; }
+.info-tip [role="tooltip"] { max-width: calc(100vw - 32px); }
+.topbar-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 860px) {
+  .two-columns { grid-template-columns: minmax(0, 1fr); }
+  .board { scroll-snap-type: x proximity; }
+  .column { flex-basis: min(280px, 82vw); scroll-snap-align: start; }
+}
+
+@media (max-width: 640px) {
+  /* 16 px evita o zoom automático ao focar um campo no celular. */
+  input, select, textarea { font-size: 16px; }
+  .btn, button, select, input:not([type="checkbox"]):not([type="radio"]) { min-height: 44px; }
+  .info-tip button { min-height: 0; width: 1.75rem; height: 1.75rem; }
+  .filters input, .filters select, .filters .btn, .filters label { width: 100%; min-width: 0; }
+  .form-row { flex-direction: column; align-items: stretch; }
+  .form-row .field, .form-row .field-with-info { flex: 1 1 auto; }
+  .page-header { align-items: stretch; }
+  .page-header > .btn { width: 100%; text-align: center; }
+  .password-input { flex-wrap: wrap; }
+  .bell-panel { position: fixed; top: 3.75rem; left: 8px; right: 8px; width: auto; }
+  .frequency-input input { flex: 1 1 5rem; width: auto; }
+  .frequency-input select { flex: 1 1 7rem; }
+  .auth-page { padding: 0.75rem 0.75rem 5rem; }
+  .auth-card { width: 100%; }
+}
+
+@media (min-width: 1600px) {
+  .page, .update-notice { max-width: 1600px; }
+}
+
+.field > select, .field > input:not([type="checkbox"]):not([type="radio"]), .field > textarea, .password-input input { width: 100%; min-width: 0; }
+.btn { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+label.btn, .filters label { position: relative; overflow: hidden; }
+.visually-hidden { left: 0; top: 0; }

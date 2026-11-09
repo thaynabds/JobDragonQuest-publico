@@ -446,7 +446,7 @@ export function ProfileEditorPage() {
       >
         <p className="muted">{t("profiles.skillTimeHint")}</p>
         <div className="table-scroll">
-          <table className="table">
+          <div className="table-scroll"><table className="table">
             <thead>
               <tr>
                 <th>{t("profiles.skillName")}</th>
@@ -483,7 +483,7 @@ export function ProfileEditorPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </div>
       </Card>
 

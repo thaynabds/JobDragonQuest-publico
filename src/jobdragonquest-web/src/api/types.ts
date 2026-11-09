@@ -318,7 +318,7 @@ export interface SkillDemand {
   inProfile: boolean;
 }
 
-export const DOCUMENT_KINDS = ["RESUME", "COVER_LETTER", "CERTIFICATE", "OTHER"] as const;
+export const DOCUMENT_KINDS = ["RESUME", "COVER_LETTER", "CERTIFICATE", "DIPLOMA", "TRANSCRIPT", "MEDICAL_REPORT", "OTHER"] as const;
 export type DocumentKind = (typeof DOCUMENT_KINDS)[number] | "ATTACHMENT";
 
 export interface StoredDocument {

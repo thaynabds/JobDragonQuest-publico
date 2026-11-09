@@ -8,13 +8,17 @@ export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
   readonly errors: string[];
+  readonly attemptsLeft: number | null;
+  readonly retryAfterMinutes: number | null;
 
-  constructor(status: number, code: string, message: string, errors: string[] = []) {
+  constructor(status: number, code: string, message: string, errors: string[] = [], attemptsLeft: number | null = null, retryAfterMinutes: number | null = null) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
     this.errors = errors;
+    this.attemptsLeft = attemptsLeft;
+    this.retryAfterMinutes = retryAfterMinutes;
   }
 }
 
@@ -152,12 +156,14 @@ async function parse<T>(response: Response): Promise<ApiResponse<T>> {
     }
   }
   if (!response.ok) {
-    const problem = (body ?? {}) as { code?: string; detail?: string; errors?: string[] };
+    const problem = (body ?? {}) as { code?: string; detail?: string; errors?: string[]; attemptsLeft?: number; retryAfterMinutes?: number };
     throw new ApiError(
       response.status,
       problem.code ?? `http_${response.status}`,
       problem.detail ?? response.statusText ?? "Erro",
       Array.isArray(problem.errors) ? problem.errors : [],
+      problem.attemptsLeft ?? null,
+      problem.retryAfterMinutes ?? null,
     );
   }
   return { data: body as T, status: response.status, headers: response.headers };

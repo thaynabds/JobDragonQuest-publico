@@ -70,6 +70,7 @@ class DocumentController {
      */
     @GetMapping("/api/v1/documents/{documentId}/download")
     ResponseEntity<byte[]> download(@PathVariable UUID documentId) {
+        requireSessionIfSensitive(documentId);
         Download download = documents.download(currentUser.id(), documentId);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment().filename(download.name(), StandardCharsets.UTF_8).build().toString())
@@ -88,7 +89,14 @@ class DocumentController {
 
     @GetMapping("/api/v1/documents/{documentId}/read")
     Reading readStored(@PathVariable UUID documentId) {
+        requireSessionIfSensitive(documentId);
         return documents.readStored(currentUser.id(), documentId);
+    }
+
+    private void requireSessionIfSensitive(UUID documentId) {
+        if (documents.isSensitive(currentUser.id(), documentId)) {
+            currentUser.requireSession();
+        }
     }
 
     /** Lê um arquivo sem guardar e devolve o texto e a proposta para o perfil. */

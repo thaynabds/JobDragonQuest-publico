@@ -6,6 +6,17 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.6.2] - 2026-11-09
+
+### Adicionado
+- Laudo, diploma e histórico escolar como documentos do perfil. O laudo não tem o texto extraído e não abre por token de integração (#187).
+- O login avisa quantas tentativas restam e só bloqueia depois de 5 erros (#186).
+
+### Corrigido
+- Responsividade de todas as telas, de 320 px a telas largas, com teste automático em 5 larguras (#184).
+- Abrir várias páginas em seguida deslogava a pessoa (#184).
+- O aviso de versão não pede mais para recarregar quando o painel já é o mais novo (#184).
+
 ## [0.6.1] - 2026-11-09
 
 ### Adicionado
@@ -162,7 +173,8 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 - Núcleo da API: contas, perfis, vagas, compatibilidade, candidaturas de qualquer origem, Kanban, pendências e auditoria,
   rodando no PostgreSQL local.
 
-[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.6.1...develop
+[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.6.2...develop
+[0.6.2]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.5.0...v0.5.1

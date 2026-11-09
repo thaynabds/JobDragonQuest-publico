@@ -37,6 +37,7 @@ Todo erro, venha do controller, da validação, do filtro de tamanho ou da segur
 | 404 | `not_found` | recurso inexistente **ou de outra conta** (nunca 403, para não revelar que existe) |
 | 409 | `conflict`, `stale_version`, `concurrent_update` e códigos de regra de negócio | conflito com registro existente ou edição concorrente |
 | 413 | `payload_too_large` | corpo acima de 1 MiB (ou do limite das rotas de upload) |
+| 429 | `account_locked` | conta bloqueada por 5 senhas erradas (`retryAfterMinutes`). Antes disso, o 401 traz `attemptsLeft` |
 | 429 | `rate_limited` | tentativas de login ou cadastro em excesso |
 | 500 | `internal_error` | erro inesperado; o detalhe vai só para o log, sem dado pessoal |
 

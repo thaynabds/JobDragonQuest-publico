@@ -96,6 +96,11 @@ public class DocumentService {
     }
 
     @Transactional(readOnly = true)
+    public boolean isSensitive(UUID userId, UUID documentId) {
+        return load(userId, documentId).getKind() == StoredDocument.Kind.MEDICAL_REPORT;
+    }
+
+    @Transactional(readOnly = true)
     public Download download(UUID userId, UUID documentId) {
         StoredDocument document = load(userId, documentId);
         return new Download(document.getName(), document.getContentType(), document.getData());
@@ -156,7 +161,7 @@ public class DocumentService {
             throw DomainException.conflict("document_quota", "Os documentos da conta passariam de 200 MB. Apague alguns antes.");
         }
         DocumentText.Type type = DocumentText.detect(data, fileName);
-        String text = DocumentText.extract(type, data);
+        String text = kind == StoredDocument.Kind.MEDICAL_REPORT ? "" : DocumentText.extract(type, data);
         StoredDocument document = documents.save(new StoredDocument(userId, profileId, applicationId, kind, safeName(fileName, type),
                 type.contentType, data, sha256(data), version, text.isBlank() ? null : text, clock.instant()));
         audit.record(userId, "document.saved", "document", document.getId(), kind.name());

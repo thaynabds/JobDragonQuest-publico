@@ -7,7 +7,7 @@ import { AccountSection } from "../pages/AccountSection";
 import { I18nProvider } from "../i18n/I18nContext";
 import { FrequencyInput, frequencyText } from "./FrequencyInput";
 import { PasswordInput } from "./PasswordInput";
-import { UpdateNotice } from "./UpdateNotice";
+import { isNewer, UpdateNotice } from "./UpdateNotice";
 
 const mocks = vi.hoisted(() => ({
   updateName: vi.fn(),
@@ -45,6 +45,12 @@ beforeEach(() => {
 });
 
 describe("issue 172", () => {
+  it("compara versões por número e ignora o que não é versão", () => {
+    expect(isNewer("0.10.0", "0.9.9")).toBe(true);
+    expect(isNewer("0.6.0", "0.6.1")).toBe(false);
+    expect(isNewer("0.6.1", "dev")).toBe(false);
+  });
+
   it("mostra e esconde a senha", async () => {
     ui(<PasswordInput aria-label="Campo" defaultValue="segredo" />);
     const input = screen.getByLabelText("Campo");

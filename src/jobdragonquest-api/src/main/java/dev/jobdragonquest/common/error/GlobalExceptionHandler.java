@@ -32,6 +32,16 @@ public class GlobalExceptionHandler {
         return problem(HttpStatus.NOT_FOUND, "not_found", ex.getMessage());
     }
 
+    @ExceptionHandler(dev.jobdragonquest.identity.LoginFailedException.class)
+    org.springframework.http.ResponseEntity<ProblemDetail> loginFailed(dev.jobdragonquest.identity.LoginFailedException ex) {
+        ProblemDetail detail = problem(ex.status(), ex.code(), ex.getMessage());
+        detail.setProperty("attemptsLeft", ex.attemptsLeft());
+        if (ex.retryAfterMinutes() != null) {
+            detail.setProperty("retryAfterMinutes", ex.retryAfterMinutes());
+        }
+        return org.springframework.http.ResponseEntity.status(ex.status()).body(detail);
+    }
+
     @ExceptionHandler(DomainException.class)
     ProblemDetail domain(DomainException ex) {
         return problem(ex.status(), ex.code(), ex.getMessage());

@@ -59,7 +59,8 @@ export function I18nProvider({ children, initial }: { children: ReactNode; initi
     const errorMessage = (error: unknown) => {
       if (error instanceof ApiError) {
         const key = `error.${error.code}` as MessageKey;
-        return key in messages ? messages[key] : error.message || messages["error.generic"];
+        const text = key in messages ? format(messages[key], { minutes: error.retryAfterMinutes ?? 0 }) : error.message || messages["error.generic"];
+        return error.code === "invalid_credentials" && error.attemptsLeft ? `${text} ${format(messages["auth.attemptsLeft"], { count: error.attemptsLeft })}` : text;
       }
       if (error instanceof TypeError) {
         return messages["error.network"];

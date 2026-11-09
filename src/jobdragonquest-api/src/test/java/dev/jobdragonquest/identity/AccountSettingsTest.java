@@ -128,4 +128,53 @@ class AccountSettingsTest extends ApiTestSupport {
                 {"email":"%s","password":"%s","rememberMe":true}""".formatted(email, PASSWORD))).andReturn().getResponse().getHeader("Set-Cookie");
         assertThat(kept).contains("Max-Age");
     }
+
+    private org.springframework.test.web.servlet.ResultActions attempt(String email, String password) throws Exception {
+        return mvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON).content("""
+                {"email":"%s","password":"%s"}""".formatted(email, password)));
+    }
+
+    private void countsDownAndLocks(String email) throws Exception {
+        for (int left = 4; left >= 1; left--) {
+            attempt(email, "senha-errada").andExpect(status().isUnauthorized()).andExpect(jsonPath("$.attemptsLeft").value(left));
+        }
+        attempt(email, "senha-errada").andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.code").value("account_locked")).andExpect(jsonPath("$.retryAfterMinutes").value(15));
+    }
+
+    @Test
+    void tellsAttemptsLeftAndLocksOnlyAfterTheFifthError() throws Exception {
+        String email = email();
+        register(email);
+        countsDownAndLocks(email);
+        attempt(email, PASSWORD).andExpect(status().isTooManyRequests());
+    }
+
+    @Test
+    void unknownEmailGetsTheSameAnswer() throws Exception {
+        countsDownAndLocks(email());
+    }
+
+    @Test
+    void successResetsTheCount() throws Exception {
+        String email = email();
+        register(email);
+        attempt(email, "senha-errada").andExpect(jsonPath("$.attemptsLeft").value(4));
+        attempt(email, PASSWORD).andExpect(status().isOk());
+        attempt(email, "senha-errada").andExpect(jsonPath("$.attemptsLeft").value(4));
+    }
+
+    /** Abrir muitas páginas em seguida não pode derrubar a sessão. */
+    @Test
+    void manyRefreshesInARowKeepTheSession() throws Exception {
+        String email = email();
+        register(email);
+        var login = mvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON).content("""
+                {"email":"%s","password":"%s"}""".formatted(email, PASSWORD))).andReturn().getResponse();
+        jakarta.servlet.http.Cookie cookie = login.getCookie(AuthController.REFRESH_COOKIE);
+        for (int i = 0; i < 15; i++) {
+            var refreshed = mvc.perform(post("/api/v1/auth/refresh").cookie(cookie)).andExpect(status().isOk()).andReturn().getResponse();
+            cookie = refreshed.getCookie(AuthController.REFRESH_COOKIE);
+        }
+    }
 }
