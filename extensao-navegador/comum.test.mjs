@@ -7,7 +7,8 @@ import { apiValida, chamar, paginaValida, tokenValido } from "./comum.js";
 test("aceita só API local http sem caminho", () => {
   assert.equal(apiValida("http://127.0.0.1:8080"), "http://127.0.0.1:8080");
   assert.equal(apiValida(" http://localhost:9000/ "), "http://localhost:9000");
-  for (const ruim of ["https://exemplo.com", "http://192.168.0.10:8080", "http://127.0.0.1:8080/api", "http://u:s@127.0.0.1", "javascript:alert(1)", "http://127.0.0.1.evil.test"]) {
+  assert.equal(apiValida("https://meu-site.onrender.com"), "https://meu-site.onrender.com");
+  for (const ruim of ["http://exemplo.com", "http://192.168.0.10:8080", "http://127.0.0.1:8080/api", "http://u:s@127.0.0.1", "javascript:alert(1)", "http://127.0.0.1.evil.test"]) {
     assert.equal(apiValida(ruim), null, ruim);
   }
 });

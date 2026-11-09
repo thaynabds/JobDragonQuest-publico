@@ -6,6 +6,17 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.6.1] - 2026-11-09
+
+### Adicionado
+- Extensão do navegador aceita servidor em HTTPS, com permissão pedida na hora (#180).
+
+### Alterado
+- Espelho público publicado por commit limpo, sem o histórico do principal (#180).
+
+### Corrigido
+- `render.yaml` sem e-mail e sem endereço do banco (#178).
+
 ## [0.6.0] - 2026-11-09
 
 ### Adicionado
@@ -151,7 +162,8 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 - Núcleo da API: contas, perfis, vagas, compatibilidade, candidaturas de qualquer origem, Kanban, pendências e auditoria,
   rodando no PostgreSQL local.
 
-[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.6.0...develop
+[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.6.1...develop
+[0.6.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.2...v0.5.0

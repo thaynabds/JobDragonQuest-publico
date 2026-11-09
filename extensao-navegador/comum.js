@@ -1,13 +1,13 @@
 // Regras compartilhadas pelo popup e pelas opções. Sem dependências e sem servidor de terceiros.
 // O token fica só no armazenamento local da extensão (nunca sincronizado com a conta do navegador).
 
-/** A API precisa ser local: http://127.0.0.1 ou http://localhost, com porta opcional, sem caminho. */
+/** API local (http://127.0.0.1 ou http://localhost) ou servidor em HTTPS, sempre sem caminho. Fora disso, o token iria sem criptografia. */
 export function apiValida(texto) {
   try {
     const url = new URL(String(texto).trim());
     const local = url.hostname === "127.0.0.1" || url.hostname === "localhost";
     const semCaminho = (url.pathname === "/" || url.pathname === "") && !url.search && !url.hash && !url.username && !url.password;
-    return url.protocol === "http:" && local && semCaminho ? url.origin : null;
+    return semCaminho && (url.protocol === "https:" || (url.protocol === "http:" && local)) ? url.origin : null;
   } catch {
     return null;
   }
