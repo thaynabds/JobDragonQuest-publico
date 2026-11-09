@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobDragonQuest: central de candidaturas e vagas de emprego no seu computador</title>
+  <meta name="description" content="JobDragonQuest organiza a procura por emprego e estágio: vigia vagas no Greenhouse, Lever, SmartRecruiters e Ashby, calcula a compatibilidade com o seu perfil, acompanha candidaturas de qualquer origem e avisa o que depende de você. Roda no seu computador, com MCP para IA.">
+  <meta name="keywords" content="gestão de candidaturas, procura de emprego, vagas de emprego, vagas de estágio, compatibilidade de vagas, currículo, ATS, Greenhouse, Lever, MCP, job tracker, job application tracker">
+  <meta name="author" content="Thayná Batista da Silva">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#4c1d95">
+  <link rel="canonical" href="https://thaynabds.github.io/JobDragonQuest-publico/">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="sitemap" type="application/xml" href="https://thaynabds.github.io/JobDragonQuest-publico/sitemap.xml">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="JobDragonQuest">
+  <meta property="og:title" content="JobDragonQuest: queime as etapas da sua procura por vagas">
+  <meta property="og:description" content="Central de candidaturas com vagas vigiadas, compatibilidade explicada, avisos e MCP para IA, rodando no seu computador. Português, inglês e espanhol.">
+  <meta property="og:url" content="https://thaynabds.github.io/JobDragonQuest-publico/">
+  <meta property="og:image" content="https://thaynabds.github.io/JobDragonQuest-publico/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="JobDragonQuest: dragão roxo com notebook e o texto central de candidaturas a vagas no seu computador">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JobDragonQuest: queime as etapas da sua procura por vagas">
+  <meta name="twitter:description" content="Vagas vigiadas, compatibilidade explicada, candidaturas e avisos num só lugar, no seu computador.">
+  <meta name="twitter:image" content="https://thaynabds.github.io/JobDragonQuest-publico/og-image.png">
+  <meta name="twitter:image:alt" content="JobDragonQuest: central de candidaturas a vagas no seu computador">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://thaynabds.github.io/JobDragonQuest-publico/#app",
+        "name": "JobDragonQuest",
+        "description": "Plataforma de gestão de carreira e automação de candidaturas a vagas de emprego e estágio: vigia fontes de vagas, calcula a compatibilidade com cada perfil, acompanha candidaturas e avisa o que depende da pessoa. Roda no próprio computador.",
+        "url": "https://thaynabds.github.io/JobDragonQuest-publico/",
+        "image": "https://thaynabds.github.io/JobDragonQuest-publico/og-image.png",
+        "applicationCategory": "BusinessApplication",
+        "applicationSubCategory": "Gestão de candidaturas a vagas",
+        "operatingSystem": "Linux, macOS, Windows (Java 21, Node 20 e PostgreSQL)",
+        "softwareVersion": "0.7.0",
+        "inLanguage": ["pt-BR", "en", "es"],
+        "license": "https://github.com/thaynabds/JobDragonQuest-publico/blob/main/LICENSE",
+        "featureList": "Fontes de vagas vigiadas (Greenhouse, Lever, SmartRecruiters, Ashby), compatibilidade de 0 a 100 explicada, central de candidaturas com 19 etapas, avisos e lembretes, vários perfis, currículo e carta por vaga, concursos, servidor MCP para IA, extensão do navegador, central de acessibilidade",
+        "author": { "@type": "Person", "name": "Thayná Batista da Silva", "url": "https://github.com/thaynabds" }
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "name": "JobDragonQuest",
+        "codeRepository": "https://github.com/thaynabds/JobDragonQuest-publico",
+        "programmingLanguage": ["Java", "TypeScript"],
+        "runtimePlatform": "Java 21, Node.js 20, PostgreSQL",
+        "license": "https://github.com/thaynabds/JobDragonQuest-publico/blob/main/LICENSE",
+        "targetProduct": { "@id": "https://thaynabds.github.io/JobDragonQuest-publico/#app" },
+        "author": { "@type": "Person", "name": "Thayná Batista da Silva", "url": "https://github.com/thaynabds" }
+      }
+    ]
+  }
+  </script>
+  <style>
+    :root { --roxo: #5b21b6; --roxo-escuro: #2e1065; --texto: #1f1a2e; --suave: #4b4560; --fundo: #f7f5fc; --borda: #ddd6f3; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; color: var(--texto); background: var(--fundo); line-height: 1.6; }
+    a { color: var(--roxo); }
+    .pular { position: absolute; left: -9999px; top: 0; background: #fff; padding: 8px 12px; z-index: 10; }
+    .pular:focus { left: 8px; }
+    header { background: linear-gradient(135deg, #4c1d95, var(--roxo-escuro)); color: #fff; padding: 48px 20px 40px; text-align: center; }
+    header img { width: 128px; height: 128px; border-radius: 28px; background: #fff; padding: 6px; }
+    header h1 { font-size: clamp(1.9rem, 5vw, 2.8rem); margin: 16px 0 8px; }
+    header p { margin: 0 auto; max-width: 680px; font-size: 1.1rem; color: #ede9fe; }
+    .acoes { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .botao { display: inline-block; padding: 12px 22px; border-radius: 10px; background: #fff; color: var(--roxo-escuro); font-weight: 700; text-decoration: none; }
+    .botao.sec { background: transparent; color: #fff; border: 2px solid #fff; }
+    .botao:focus-visible { outline: 3px solid #fde047; outline-offset: 3px; }
+    main { max-width: 920px; margin: 0 auto; padding: 40px 20px; }
+    section { margin-bottom: 44px; }
+    h2 { font-size: 1.45rem; color: var(--roxo-escuro); border-left: 5px solid var(--roxo); padding-left: 12px; }
+    .grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .cartao { background: #fff; border: 1px solid var(--borda); border-radius: 12px; padding: 18px 20px; }
+    .cartao h3 { margin: 0 0 6px; font-size: 1.1rem; }
+    .cartao p { margin: 0; color: var(--suave); }
+    ul.passos { padding-left: 22px; }
+    pre { background: #1e1336; color: #ede9fe; padding: 16px; border-radius: 10px; overflow-x: auto; }
+    footer { text-align: center; padding: 28px 20px; color: var(--suave); border-top: 1px solid var(--borda); background: #fff; font-size: .95rem; }
+  </style>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <header>
+    <img src="logo.png" alt="Logo do JobDragonQuest: dragão roxo com fone e notebook acompanhando candidaturas" width="128" height="128">
+    <h1>JobDragonQuest</h1>
+    <p>Queime as etapas da sua procura por vagas. Uma central única e explicável para vagas de emprego e estágio, no Brasil e no exterior, rodando no seu computador.</p>
+    <div class="acoes">
+      <a class="botao" href="https://github.com/thaynabds/JobDragonQuest-publico#instalação-rápida">Ver a instalação rápida</a>
+      <a class="botao sec" href="https://github.com/thaynabds/JobDragonQuest-publico">Código no GitHub</a>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section aria-labelledby="problema">
+      <h2 id="problema">O problema</h2>
+      <p>Quem procura emprego em tecnologia se candidata por muitos canais ao mesmo tempo: LinkedIn, Gupy, Greenhouse, sites de empresas, redes sociais, e-mail e indicação. Cada canal avisa o andamento de um jeito, ou não avisa. Vaga compatível passa despercebida, processo é esquecido e candidatura é feita sem entender os requisitos.</p>
+      <p>O JobDragonQuest junta tudo num lugar só:</p>
+      <ul class="passos">
+        <li><strong>vigia</strong> sites, ATS e redes sociais, vários de uma vez e para vários perfis;</li>
+        <li><strong>analisa</strong> a compatibilidade de cada vaga com cada perfil, mostrando o motivo de cada requisito;</li>
+        <li><strong>acompanha</strong> todas as candidaturas, de qualquer origem, pela evidência;</li>
+        <li><strong>mostra</strong> o que depende de você.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="recursos">
+      <h2 id="recursos">O que ele faz</h2>
+      <div class="grade">
+        <article class="cartao">
+          <h3>Fontes de vagas vigiadas</h3>
+          <p>Coleta automática pelas APIs públicas do Greenhouse, Lever, SmartRecruiters e Ashby, e lembretes para LinkedIn, Gupy e outras plataformas.</p>
+        </article>
+        <article class="cartao">
+          <h3>Compatibilidade explicada</h3>
+          <p>Nota de 0 a 100 com o motivo de cada requisito, e impedimentos como modalidade, cidade, idioma e senioridade separados da nota.</p>
+        </article>
+        <article class="cartao">
+          <h3>Central de candidaturas</h3>
+          <p>Candidaturas de qualquer origem em 19 etapas, cada mudança com origem e evidência. Silêncio nunca vira reprovação e nada é enviado sozinho.</p>
+        </article>
+        <article class="cartao">
+          <h3>Avisos e lembretes</h3>
+          <p>Pop-up, notificação do sistema e som para entrevistas, prazos, testes técnicos e vagas novas, com horário de silêncio.</p>
+        </article>
+        <article class="cartao">
+          <h3>Currículo e carreira</h3>
+          <p>Vários perfis completos, currículo e carta por vaga, preparação de entrevista e acompanhamento de concursos.</p>
+        </article>
+        <article class="cartao">
+          <h3>IA pelo MCP</h3>
+          <p>Servidor MCP para Claude, Cursor e outras IAs consultarem vagas, candidaturas e avisos, sem exclusão de dados e com token pessoal.</p>
+        </article>
+        <article class="cartao">
+          <h3>Acessibilidade</h3>
+          <p>Temas de alto contraste, filtros de daltonismo, fonte para dislexia, leitura em voz alta e atalho Alt+A.</p>
+        </article>
+        <article class="cartao">
+          <h3>Três idiomas</h3>
+          <p>Painel em português, inglês e espanhol, com o idioma do navegador detectado no primeiro acesso.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="instalar">
+      <h2 id="instalar">Como rodar</h2>
+      <p>Roda no seu computador, só em 127.0.0.1. Requisitos: Java 21, Node 20.19 ou mais novo e PostgreSQL 14 ou mais novo.</p>
+      <pre><code>git clone https://github.com/thaynabds/JobDragonQuest-publico.git JobDragonQuest
+cd JobDragonQuest
+scripts/instalar.sh</code></pre>
+      <p>Depois abra http://127.0.0.1:5173 no navegador. O passo a passo completo está no <a href="https://github.com/thaynabds/JobDragonQuest-publico#readme">README</a>, também em <a href="https://github.com/thaynabds/JobDragonQuest-publico/blob/main/README.en.md">inglês</a> e <a href="https://github.com/thaynabds/JobDragonQuest-publico/blob/main/README.es.md">espanhol</a>.</p>
+    </section>
+  </main>
+
+  <footer>
+    Feito por <a href="https://github.com/thaynabds">Thayná Batista da Silva</a> ·
+    <a href="https://github.com/thaynabds/JobDragonQuest-publico">GitHub</a> ·
+    Código público para consulta, todos os direitos reservados (<a href="https://github.com/thaynabds/JobDragonQuest-publico/blob/main/LICENSE">licença</a>)
+  </footer>
+</body>
+</html>
