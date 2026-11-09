@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { apiValida, chamar, paginaValida, tokenValido } from "./comum.js";
+import { campoDoPerfil, apiValida, chamar, paginaValida, tokenValido } from "./comum.js";
 
 test("aceita só API local http sem caminho", () => {
   assert.equal(apiValida("http://127.0.0.1:8080"), "http://127.0.0.1:8080");
@@ -39,4 +39,13 @@ test("chamada usa o token no cabeçalho, sem cookies e sem seguir redirecionamen
   assert.equal(pedido.opcoes.headers.Authorization, "Bearer jdq_" + "b".repeat(43));
   globalThis.fetch = async () => new Response(JSON.stringify({ code: "link_blocked", detail: "Bloqueado" }), { status: 400 });
   await assert.rejects(() => chamar({ api: "http://127.0.0.1:8080", token: "t" }, "/x", {}), (erro) => erro.code === "link_blocked");
+});
+
+test("preenchimento nunca usa senha, CPF ou cartão e reconhece os campos comuns", () => {
+  assert.equal(campoDoPerfil("Senha"), null);
+  assert.equal(campoDoPerfil("CPF do candidato"), null);
+  assert.equal(campoDoPerfil("Número do cartão"), null);
+  assert.equal(campoDoPerfil("Your LinkedIn profile"), "linkedin");
+  assert.equal(campoDoPerfil("E-mail"), "email");
+  assert.equal(campoDoPerfil("Celular"), "telefone");
 });

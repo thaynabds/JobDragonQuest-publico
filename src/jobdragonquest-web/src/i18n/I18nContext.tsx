@@ -35,6 +35,7 @@ export function I18nProvider({ children, initial }: { children: ReactNode; initi
 
   useEffect(() => {
     document.documentElement.lang = locale;
+    document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
   }, [locale]);
 
   const setLocale = useCallback((next: Locale) => {

@@ -29,7 +29,8 @@ import { isLocale, LOCALE_NAMES, LOCALES, type Locale, type MessageKey } from ".
 import { countryCode, countryName, countryOptions, languageName, languageOptions } from "../utils/places";
 import { splitList } from "../utils/safe";
 import { DocumentsSection } from "./DocumentsSection";
-import { ProfileOptionsSection } from "./ProfileOptionsSection";
+import { ResumeBuilder } from "../components/ResumeBuilder";
+import { ExtraLinksEditor, ProfileOptionsSection } from "./ProfileOptionsSection";
 
 /** Campos de lista editados como texto separado por vírgula. */
 const LIST_FIELDS = ["desiredTitles", "locations", "industries", "includeKeywords", "excludeKeywords", "excludedCompanies"] as const;
@@ -110,7 +111,7 @@ export function toInput(profile: Profile, locale: string): ProfileInput {
   return {
     ...rest,
     skills: skills.map(({ totalYears: _t, ...skill }) => skill),
-    languages: languages.map((language) => ({ name: languageName(language.code, locale), level: language.level })),
+    languages: languages.map((language) => ({ name: languageName(language.code, locale), level: language.level, showInResume: language.showInResume })),
   };
 }
 
@@ -195,7 +196,8 @@ export function ProfileEditorPage() {
       workAuthorization: [...new Set(authorization.map((item) => item.code as string))],
       skills: form.skills.filter((skill) => skill.name.trim() !== ""),
       languages: form.languages.filter((language) => language.name.trim() !== "").map((language) => ({ ...language, name: language.name.trim() })),
-      entries: form.entries.filter((entry) => entry.title.trim() !== ""),
+      entries: form.entries.filter((entry) => entry.title.trim() !== "").map((entry) => ({ ...entry, extraUrls: (entry.extraUrls ?? []).filter((url) => url.trim() !== "") })),
+      options: form.options ? { ...form.options, diversityOther: (form.options.diversityOther ?? []).map((item) => item.trim()).filter(Boolean), extraLinks: (form.options.extraLinks ?? []).filter((link) => link.url.trim() !== "" && link.label.trim() !== "") } : form.options,
       answers: form.answers.filter((answer) => answer.question.trim() !== "" && answer.answer.trim() !== ""),
     };
     try {
@@ -426,6 +428,7 @@ export function ProfileEditorPage() {
             <input type="url" value={form[field] ?? ""} maxLength={2048} placeholder="https://" onChange={(e) => patch({ [field]: blank(e.target.value) })} />
           </Field>
         ))}
+        <ExtraLinksEditor value={form.options} onChange={(options) => patch({ options })} />
       </Section>
 
       <Section title={t("profiles.section.search")}>
@@ -623,6 +626,15 @@ export function ProfileEditorPage() {
               <Field label={t("profiles.link")}>
                 <input type="url" value={entry.url ?? ""} maxLength={2048} onChange={(e) => setEntry(index, { url: blank(e.target.value) })} />
               </Field>
+              {(entry.extraUrls ?? []).map((url, position) => (
+                <div className="form-row field" key={position}>
+                  <input type="url" aria-label={t("profiles.link")} value={url} maxLength={2048} placeholder="https://" onChange={(e) => setEntry(index, { extraUrls: (entry.extraUrls ?? []).map((v, i) => (i === position ? e.target.value : v)) })} />
+                  <Button variant="ghost" onClick={() => setEntry(index, { extraUrls: (entry.extraUrls ?? []).filter((_, i) => i !== position) })}>{t("common.remove")}</Button>
+                </div>
+              ))}
+              <div className="field">
+                <Button disabled={(entry.extraUrls ?? []).length >= 50} onClick={() => setEntry(index, { extraUrls: [...(entry.extraUrls ?? []), ""] })}>{t("options.addLink")}</Button>
+              </div>
               <Field label={t("jobs.description")} wide>
                 <textarea rows={2} maxLength={4000} value={entry.description ?? ""} onChange={(e) => setEntry(index, { description: blank(e.target.value) })} />
               </Field>
@@ -637,6 +649,7 @@ export function ProfileEditorPage() {
       </Card>
 
       <ProfileOptionsSection value={form.options} onChange={(options) => patch({ options })} />
+      <ResumeBuilder form={form} onPatch={patch} />
 
       <Section title={t("profiles.coverLetter")}>
         <Field label={t("profiles.coverLetter")} hint={t("profiles.coverLetterHint")} wide>

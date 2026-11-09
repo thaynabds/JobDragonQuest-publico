@@ -17,6 +17,10 @@ const NAV = [
   { to: "/fontes", key: "nav.sources" },
   { to: "/perfis", key: "nav.profiles" },
   { to: "/carreira", key: "nav.career" },
+  { to: "/assistentes", key: "nav.assistants" },
+  { to: "/triagem", key: "nav.screening" },
+  { to: "/concursos", key: "nav.contests" },
+  { to: "/ajuda", key: "nav.help" },
   { to: "/configuracoes", key: "nav.settings" },
 ] as const;
 

@@ -6,6 +6,24 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.7.0] - 2026-11-09
+
+### Adicionado
+- Currículo com escolha por dado, prévia em tempo real e download em Word; vários links e campo aberto de diversidade (#190).
+- Busca e filtros equivalentes em português, inglês e espanhol, com nível deduzido do título (#190).
+- Assistentes de carreira executados pela IA ligada por MCP, sem custo (#192).
+- Assistente que acompanha e-mails de candidatura pelo conector da própria IA, só leitura (#198).
+- Acompanhamento de concursos, com leitura de páginas e PDFs oficiais (#192).
+- Base de perguntas de triagem, central de ajuda, exportação CSV, exclusão de conta, filtro por idioma da vaga e preenchimento de formulário pela extensão (#192).
+- Francês, italiano, chinês, japonês, hindi, árabe, bengali, russo e indonésio nas telas principais; o restante aparece em inglês (#192).
+
+### Alterado
+- O painel de acessibilidade próprio deu lugar ao AccessAbility Widget 2.3.0; as preferências ficam neste navegador (#196).
+
+### Corrigido
+- O painel de avisos não alarga mais a tela (#194).
+- Método HTTP não aceito responde 405 em vez de 500 (#190).
+
 ## [0.6.2] - 2026-11-09
 
 ### Adicionado

@@ -1,8 +1,10 @@
+import { AssistantsPage } from "./pages/AssistantsPage";
+import { ContestsPage } from "./pages/ContestsPage";
+import { HelpPage } from "./pages/HelpPage";
+import { ScreeningPage } from "./pages/ScreeningPage";
 import { BrowserRouter, Route, Routes } from "react-router";
 
-import { A11yAccountSync } from "./a11y/A11yAccountSync";
-import { A11yProvider } from "./a11y/A11yContext";
-import { A11yPanel } from "./a11y/A11yPanel";
+import { AccessAbilityWidget } from "@thaynabds/accessability-widget/react";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { Layout } from "./components/Layout";
 import { Loading } from "./components/ui";
@@ -44,6 +46,10 @@ function Routed() {
         <Route path="perfis/:id" element={<ProfileEditorPage />} />
         <Route path="perfis/:id/curriculo" element={<ResumePage />} />
         <Route path="carreira" element={<CareerPage />} />
+        <Route path="assistentes" element={<AssistantsPage />} />
+        <Route path="triagem" element={<ScreeningPage />} />
+        <Route path="concursos" element={<ContestsPage />} />
+        <Route path="ajuda" element={<HelpPage />} />
         <Route path="configuracoes" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
@@ -54,15 +60,14 @@ function Routed() {
 export function App() {
   return (
     <I18nProvider>
-      <A11yProvider>
+      <>
         <AuthProvider>
-          <A11yAccountSync />
           <BrowserRouter>
             <Routed />
           </BrowserRouter>
         </AuthProvider>
-        <A11yPanel />
-      </A11yProvider>
+        <AccessAbilityWidget />
+      </>
     </I18nProvider>
   );
 }

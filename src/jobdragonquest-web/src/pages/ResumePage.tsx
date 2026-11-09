@@ -20,6 +20,9 @@ function headings(language?: string) {
   return { summary: "Resumo", skills: "Competências", experience: "Experiência", education: "Formação", other: "Cursos, projetos e certificações", languages: "Idiomas" };
 }
 
+/** Dados que só existem na lista extra devolvida pela API. */
+const EXTRA_ONLY = new Set(["GENDER", "BIRTH_DATE", "GPA", "NATIONALITY", "POSTAL_CODE", "MILITARY"]);
+
 export function ResumePage() {
   const { id = "" } = useParams();
   const [search] = useSearchParams();
@@ -37,6 +40,7 @@ export function ResumePage() {
   const r = resume.data;
   const heading = headings(r.language);
   const options = profile.data?.options;
+  const hide = (field: NonNullable<NonNullable<typeof options>["resumeHidden"]>[number]) => options?.resumeHidden?.includes(field) === true;
   const show = (section: NonNullable<NonNullable<typeof options>["resumeVisible"]>[number]) => options?.resumeVisible?.includes(section) === true;
   const letterText = editedLetter ?? letter.data?.text ?? "";
   const period = (e: ResumeEntry) =>
@@ -77,10 +81,10 @@ export function ResumePage() {
       )}
       <article className="resume" aria-label={t("resume.title")}>
         <header>
-          <h1>{options?.socialName ?? user?.displayName}</h1>
+          <h1>{(show("SOCIAL_NAME") ? options?.socialName : null) ?? user?.displayName}</h1>
           {(r.headline || r.currentTitle) && <p className="resume-headline">{r.headline ?? r.currentTitle}</p>}
           <p className="small">
-            {[show("CONTACT") ? options?.contactEmail ?? user?.email : user?.email, show("CONTACT") ? [options?.phoneCountryCode, options?.phone].filter(Boolean).join(" ") : null, show("CONTACT") ? options?.secondaryPhone : null, r.location, ...r.links]
+            {[hide("EMAIL") ? null : show("CONTACT") ? options?.contactEmail ?? user?.email : user?.email, show("CONTACT") && !hide("PHONE") ? [options?.phoneCountryCode, options?.phone].filter(Boolean).join(" ") : null, show("CONTACT") && !hide("SECONDARY_PHONE") ? options?.secondaryPhone : null, r.location, ...r.links]
               .filter(Boolean)
               .join(" · ")}
           </p>
@@ -119,6 +123,12 @@ export function ResumePage() {
             <p>{r.languages.join(" · ")}</p>
           </section>
         )}
+        {(r.extras ?? []).filter((extra) => EXTRA_ONLY.has(extra.section)).map((extra) => (
+          <section className="resume-section" key={extra.section}>
+            <h2>{t(`options.section.${extra.section}` as MessageKey)}</h2>
+            <p>{extra.values.join(" · ")}</p>
+          </section>
+        ))}
         {show("SOFT_SKILLS") && (options?.softSkills?.length ?? 0) > 0 && (
           <section className="resume-section">
             <h2>{t("options.softSkills")}</h2>
@@ -137,10 +147,10 @@ export function ResumePage() {
             <p>{[options?.salaryMin, options?.salaryMax].filter((v) => v != null).join(" – ")}</p>
           </section>
         )}
-        {show("DIVERSITY") && (options?.diversity?.length ?? 0) > 0 && (
+        {show("DIVERSITY") && ((options?.diversity?.length ?? 0) > 0 || (options?.diversityOther?.length ?? 0) > 0) && (
           <section className="resume-section">
             <h2>{t("options.diversity")}</h2>
-            <p>{options?.diversity?.map((d) => t(`options.diversity.${d}` as MessageKey)).join(" · ")}</p>
+            <p>{[...(options?.diversity ?? []).map((d) => t(`options.diversity.${d}` as MessageKey)), ...(options?.diversityOther ?? [])].join(" · ")}</p>
           </section>
         )}
         {show("CONTACT_HOURS") && (options?.contactHours?.length ?? 0) > 0 && (

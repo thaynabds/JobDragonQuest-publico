@@ -128,6 +128,14 @@ class AuthController {
         return MeResponse.of(auth.changeEmail(id, request));
     }
 
+    @org.springframework.web.bind.annotation.PostMapping("/me/delete")
+    @org.springframework.web.bind.annotation.ResponseStatus(HttpStatus.NO_CONTENT)
+    void deleteAccount(@Valid @RequestBody CurrentPasswordRequest body, HttpServletRequest http) {
+        UUID id = currentUser.id();
+        limit("password", http, id.toString());
+        auth.deleteAccount(id, body.currentPassword());
+    }
+
     @PutMapping("/me/password")
     ResponseEntity<TokenResponse> changePassword(@Valid @RequestBody ChangePasswordRequest request, HttpServletRequest http) {
         UUID id = currentUser.requireSession();

@@ -5,7 +5,7 @@ público tem o mesmo código e as mesmas tags, mas o GitHub não copia issues ne
 a evidência auditável do processo. Só campos de processo são exportados (sem corpo, comentário ou autor).
 Por que existem dois repositórios: [governanca.md](governanca.md).
 
-Resumo: 77 issues (76 fechadas) e 110 PRs (95 com merge).
+Resumo: 82 issues (76 fechadas) e 117 PRs (102 com merge).
 
 ## Issues
 
@@ -88,6 +88,11 @@ Resumo: 77 issues (76 fechadas) e 110 PRs (95 com merge).
 | 184 | fix(web): responsividade de todas as telas | CLOSED | 2026-11-09 | 2026-11-09 | PR 185 | type:bug, priority:high, stack:frontend |
 | 186 | feat: avisar tentativas restantes no login e bloquear só depois de 5 erros | CLOSED | 2026-11-09 | 2026-11-09 |  | type:feature, priority:high |
 | 187 | feat: anexar laudo, diploma e histórico escolar ao perfil | CLOSED | 2026-11-09 | 2026-11-09 |  | type:feature, priority:high |
+| 190 | Currículo com escolha por dado, Word e prévia; diversidade aberta; vários links; busca multilíngue | OPEN | 2026-11-09 |  | PR 191 |  |
+| 192 | Paridade gratuita com ferramentas de carreira, assistentes por MCP, idiomas e concursos | OPEN | 2026-11-09 |  | PR 193 |  |
+| 194 | Painel de avisos alarga a tela | OPEN | 2026-11-09 |  | PR 195 |  |
+| 196 | Usar o AccessAbility Widget mais recente no painel | OPEN | 2026-11-09 |  | PR 197 |  |
+| 198 | Acompanhar e-mails de candidatura pela IA ligada por MCP | OPEN | 2026-11-09 |  | PR 199 |  |
 
 ## Pull requests
 
@@ -203,3 +208,10 @@ Resumo: 77 issues (76 fechadas) e 110 PRs (95 com merge).
 | 182 | release: v0.6.1 | MERGED | `release/0.6.1` → `main` | 2026-11-09 | 2026-11-09 |  |
 | 183 | chore: main (v0.6.1) de volta para develop | MERGED | `chore/main-para-develop-0.6.1` → `develop` | 2026-11-09 | 2026-11-09 |  |
 | 185 | fix(web): responsividade de todas as telas (#184) | MERGED | `fix/issue-184-responsividade` → `develop` | 2026-11-09 | 2026-11-09 | #184 |
+| 188 | release: v0.6.2 | MERGED | `release/0.6.2` → `main` | 2026-11-09 | 2026-11-09 |  |
+| 189 | chore: main (v0.6.2) de volta para develop | MERGED | `chore/main-para-develop-0.6.2` → `develop` | 2026-11-09 | 2026-11-09 |  |
+| 191 | Currículo por dado, Word, prévia, links e busca multilíngue | MERGED | `feature/issue-190-curriculo-word-multilingue` → `develop` | 2026-11-09 | 2026-11-09 | #190 |
+| 193 | Assistentes por MCP, triagem, concursos, ajuda e idiomas | MERGED | `feature/issue-192-paridade-assistentes-concursos` → `develop` | 2026-11-09 | 2026-11-09 | #192 |
+| 195 | Painel de avisos não alarga a tela | MERGED | `fix/issue-194-painel-avisos` → `develop` | 2026-11-09 | 2026-11-09 | #194 |
+| 197 | AccessAbility Widget 2.3.0 no painel | MERGED | `feature/issue-196-widget-acessibilidade` → `develop` | 2026-11-09 | 2026-11-09 | #196 |
+| 199 | Acompanhar e-mails pela IA ligada por MCP | MERGED | `feature/issue-198-email-por-mcp` → `develop` | 2026-11-09 | 2026-11-09 | #198 |

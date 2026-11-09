@@ -21,12 +21,24 @@ public class ProfileLanguage {
     @Column(nullable = false, length = 10)
     private LanguageLevel level;
 
+    @Column(name = "show_in_resume", nullable = false)
+    private boolean showInResume = true;
+
     protected ProfileLanguage() {
     }
 
     public ProfileLanguage(String code, LanguageLevel level) {
         this.code = code;
         this.level = level;
+    }
+
+    ProfileLanguage showInResume(Boolean show) {
+        this.showInResume = !Boolean.FALSE.equals(show);
+        return this;
+    }
+
+    public boolean isShowInResume() {
+        return showInResume;
     }
 
     public String getCode() {

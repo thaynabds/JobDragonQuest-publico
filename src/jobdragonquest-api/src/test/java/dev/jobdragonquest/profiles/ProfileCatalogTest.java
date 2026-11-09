@@ -44,7 +44,7 @@ class ProfileCatalogTest {
 
     @Test
     void decimalYearsBecomeYearsAndMonths() {
-        var skill = ProfileService.toSkill(new ProfileDtos.SkillDto("Java", 3, new java.math.BigDecimal("2.99"), null, null));
+        var skill = ProfileService.toSkill(new ProfileDtos.SkillDto("Java", 3, new java.math.BigDecimal("2.99"), null, null, null));
         assertThat(skill.getExpYears()).isEqualTo(3);
         assertThat(skill.getExpMonths()).isZero();
         assertThat(ProfileSkill.totalYears(null, null, null)).isNull();

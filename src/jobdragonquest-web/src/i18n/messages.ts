@@ -3,15 +3,29 @@
 // scripts/novo-idioma.mjs; depois registre o arquivo em LOCALES e LOCALE_NAMES.
 import { en } from "./locales/en";
 import { es } from "./locales/es";
+import { ar, bn, fr, hi, id, it, ja, ru, zh } from "./locales/parciais";
 import { ptBR } from "./locales/pt-BR";
 
 export type { MessageKey, Messages } from "./locales/pt-BR";
 
-export const LOCALES = { "pt-BR": ptBR, en, es } as const;
+export const LOCALES = {
+  "pt-BR": ptBR,
+  en,
+  es,
+  fr: { ...en, ...fr },
+  it: { ...en, ...it },
+  zh: { ...en, ...zh },
+  ja: { ...en, ...ja },
+  hi: { ...en, ...hi },
+  ar: { ...en, ...ar },
+  bn: { ...en, ...bn },
+  ru: { ...en, ...ru },
+  id: { ...en, ...id },
+} as const;
 export type Locale = keyof typeof LOCALES;
 
 /** Nome de cada idioma escrito nele mesmo, para o seletor. */
-export const LOCALE_NAMES: Record<Locale, string> = { "pt-BR": "Português", en: "English", es: "Español" };
+export const LOCALE_NAMES: Record<Locale, string> = { "pt-BR": "Português", en: "English", es: "Español", fr: "Français", it: "Italiano", zh: "中文", ja: "日本語", hi: "हिन्दी", ar: "العربية", bn: "বাংলা", ru: "Русский", id: "Bahasa Indonesia" };
 
 export function isLocale(value: unknown): value is Locale {
   return typeof value === "string" && Object.prototype.hasOwnProperty.call(LOCALES, value);

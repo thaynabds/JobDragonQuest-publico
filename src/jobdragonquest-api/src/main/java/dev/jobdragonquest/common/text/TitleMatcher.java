@@ -15,7 +15,7 @@ public final class TitleMatcher {
 
     private static final int MIN_STEM_LENGTH = 5;
     private static final Set<String> STOP_WORDS = Set.of("de", "da", "do", "das", "dos", "em", "e", "para", "com", "a", "o",
-            "of", "the", "and", "in", "for", "-", "/");
+            "of", "the", "and", "in", "for", "-", "/", "el", "la", "los", "las", "del", "y", "en", "con", "al");
 
     private TitleMatcher() {
     }
@@ -41,13 +41,13 @@ public final class TitleMatcher {
     }
 
     static List<String> words(String text) {
-        return Arrays.stream(TextNormalizer.normalize(text).split(" "))
+        return Arrays.stream(MultilingualTerms.joinCompounds(TextNormalizer.normalize(text)).split(" "))
                 .filter(word -> !word.isBlank() && !STOP_WORDS.contains(word))
                 .toList();
     }
 
     static boolean sameWord(String a, String b) {
-        if (a.equals(b)) {
+        if (a.equals(b) || MultilingualTerms.equivalent(a, b)) {
             return true;
         }
         if (a.length() < MIN_STEM_LENGTH || b.length() < MIN_STEM_LENGTH) {

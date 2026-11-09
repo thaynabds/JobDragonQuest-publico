@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { api } from "../api/endpoints";
-import { APPLICATION_STATES, ORIGINS, type ApplicationState, type CreateApplicationInput, type Origin } from "../api/types";
+import { APPLICATION_STATES, ORIGINS, type ApplicationState, type BoardColumn, type CreateApplicationInput, type Origin } from "../api/types";
 import { Badge, Button, Card, Field, Loading, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { localInputToIso, newIdempotencyKey } from "../utils/safe";
@@ -18,6 +18,24 @@ const readText = (file: File) =>
     reader.onerror = () => reject(reader.error ?? new Error("leitura"));
     reader.readAsText(file);
   });
+
+/** Célula de CSV sem abrir brecha para fórmula na planilha. */
+export function csvCell(value: string | null | undefined): string {
+  const text = String(value ?? "");
+  const safe = /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
+  return `"${safe.replace(/"/g, '""')}"`;
+}
+
+function exportCsv(columns: BoardColumn[]) {
+  const header = "empresa,cargo,link,plataforma,data,etapa,notas";
+  const rows = columns.flatMap((c) => c.cards.map((a: BoardColumn["cards"][number]) => [a.company, a.title, a.url, a.platform, a.appliedAt, a.state, ""].map(csvCell).join(",")));
+  const url = URL.createObjectURL(new Blob([[header, ...rows].join("\n")], { type: "text/csv;charset=utf-8" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "candidaturas.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 export function BoardPage() {
   const { t, label, formatDate, errorMessage } = useI18n();
@@ -160,6 +178,7 @@ export function BoardPage() {
       <div className="page-header">
         <h1>{t("board.title")}</h1>
         <div className="row-actions">
+          <Button onClick={() => exportCsv(board.data ?? [])}>{t("board.exportCsv")}</Button>
           <label className="btn btn-secondary">
             {t("board.importCsv")}
             <input type="file" accept=".csv,text/csv" className="visually-hidden" onChange={(e) => void importFile(e.target.files?.[0])} />

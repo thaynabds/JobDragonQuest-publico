@@ -27,6 +27,11 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    ProblemDetail methodNotAllowed() {
+        return problem(HttpStatus.METHOD_NOT_ALLOWED, "method_not_allowed", "Método não aceito neste endereço");
+    }
+
     @ExceptionHandler(NotFoundException.class)
     ProblemDetail notFound(NotFoundException ex) {
         return problem(HttpStatus.NOT_FOUND, "not_found", ex.getMessage());

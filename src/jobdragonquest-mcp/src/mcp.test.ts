@@ -379,3 +379,27 @@ describe("servidor MCP de ponta a ponta (em memória)", () => {
     await client.close();
   });
 });
+
+describe("assistentes por MCP", () => {
+  it("devolve roteiro com as regras e não chama a API", async () => {
+    const ferramenta = TOOLS.find((t) => t.name === "jobdragonquest_assistente");
+    expect(ferramenta).toBeDefined();
+    const resultado = (await ferramenta!.run(undefined as never, { assistente: "entrevista", dados: { cargo: "Dev" } } as never)) as { regras: string[]; dadosInformados: Record<string, string> };
+    expect(resultado.regras.join(" ")).toContain("Nunca invente");
+    expect(resultado.dadosInformados.cargo).toBe("Dev");
+  });
+
+  it("recusa assistente desconhecido", () => {
+    const ferramenta = TOOLS.find((t) => t.name === "jobdragonquest_assistente");
+    expect(ferramenta!.schema.safeParse({ assistente: "apagar_tudo" }).success).toBe(false);
+  });
+});
+
+describe("e-mail pela IA", () => {
+  it("o roteiro proíbe apagar e enviar", async () => {
+    const ferramenta = TOOLS.find((t) => t.name === "jobdragonquest_assistente");
+    const r = (await ferramenta!.run(undefined as never, { assistente: "acompanhar_email" } as never)) as { objetivo: string };
+    expect(r.objetivo).toContain("nunca apague");
+    expect(r.objetivo).toContain("Só leia");
+  });
+});

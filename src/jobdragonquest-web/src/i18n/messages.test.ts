@@ -45,7 +45,7 @@ describe("traduções", () => {
     expect(detectLocale(["pt-PT"])).toBe("pt-BR");
     expect(detectLocale(["pt-br"])).toBe("pt-BR");
     expect(detectLocale(["de-DE", "en-GB"])).toBe("en");
-    expect(detectLocale(["ja"])).toBe("en");
+    expect(detectLocale(["ko"])).toBe("en");
     expect(detectLocale(undefined)).toBe("en");
   });
 

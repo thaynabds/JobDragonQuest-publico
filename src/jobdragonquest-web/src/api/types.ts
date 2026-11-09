@@ -90,6 +90,7 @@ export interface Skill {
   years: number | null;
   months: number | null;
   days: number | null;
+  showInResume?: boolean | null;
 }
 
 export interface SkillView extends Skill {
@@ -100,11 +101,13 @@ export interface SkillView extends Skill {
 export interface LanguageInput {
   name: string;
   level: LanguageLevel;
+  showInResume?: boolean | null;
 }
 
 export interface Language {
   code: string;
   level: LanguageLevel;
+  showInResume?: boolean | null;
 }
 
 export interface Entry {
@@ -125,11 +128,15 @@ export interface Entry {
   expirationDate: string | null;
   hours: number | null;
   skills: string | null;
+  showInResume?: boolean | null;
+  extraUrls?: string[] | null;
 }
 
 export interface Answer {
   question: string;
   answer: string;
+  category?: string | null;
+  updatedOn?: string | null;
 }
 
 /** Campos do perfil que não dependem do formato de idioma (iguais na edição e na resposta). */
@@ -280,6 +287,7 @@ export interface Resume {
   location: string | null;
   summary: string | null;
   links: string[];
+  extras?: { section: string; values: string[] }[];
   skills: ResumeSkill[];
   experience: ResumeEntry[];
   education: ResumeEntry[];
@@ -814,7 +822,8 @@ export interface SystemVersion {
 }
 
 export const DIVERSITY_OPTIONS = ["LGBTQIA", "WOMAN", "DISABILITY", "BLACK", "BROWN", "INDIGENOUS"] as const;
-export const RESUME_SECTIONS = ["CONTACT", "SOFT_SKILLS", "DIVERSITY", "CONTACT_HOURS", "WORK_PREFERENCES", "SALARY"] as const;
+export const RESUME_SECTIONS = ["CONTACT", "SOFT_SKILLS", "DIVERSITY", "CONTACT_HOURS", "WORK_PREFERENCES", "SALARY", "SOCIAL_NAME", "GENDER", "BIRTH_DATE", "GPA", "NATIONALITY", "POSTAL_CODE", "MILITARY"] as const;
+export const RESUME_FIELDS = ["HEADLINE", "CURRENT_TITLE", "LOCATION", "SUMMARY", "LINKEDIN", "GITHUB", "PORTFOLIO", "WEBSITE", "PHONE", "SECONDARY_PHONE", "EMAIL"] as const;
 export const CONTACT_DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"] as const;
 
 export interface ProfileOptions {
@@ -849,11 +858,46 @@ export interface ProfileOptions {
   gpa?: string | null;
   military?: "YES" | "NO" | "PREFER_NOT_TO_SAY" | null;
   diversity?: (typeof DIVERSITY_OPTIONS)[number][] | null;
+  diversityOther?: string[] | null;
+  drivingLicense?: string | null;
+  securityClearance?: string | null;
+  resumeHidden?: (typeof RESUME_FIELDS)[number][] | null;
   softSkills?: string[] | null;
   contactHours?: { day: string; slots: { start: string; end: string }[] }[] | null;
   resumeVisible?: (typeof RESUME_SECTIONS)[number][] | null;
-  extraLinks?: { label: string; url: string }[] | null;
+  extraLinks?: { label: string; url: string; showInResume?: boolean | null }[] | null;
   documentsInJobLanguage?: boolean | null;
   autoTranslate?: boolean | null;
   translations?: { language: string; headline: string | null; summary: string | null; coverLetter: string | null }[] | null;
+}
+
+export interface ContestStage {
+  title: string;
+  date: string | null;
+  deadline: string | null;
+  status: "PLANNED" | "OPEN" | "DONE" | "MISSED" | "NOT_APPLICABLE";
+  url: string | null;
+  note: string | null;
+}
+
+export interface ContestInput {
+  name: string;
+  organ: string | null;
+  board: string | null;
+  notice: string | null;
+  roleName: string | null;
+  stateCode?: string | null;
+  city?: string | null;
+  registration: string | null;
+  searchName: string | null;
+  validUntil: string | null;
+  notes: string | null;
+  stages: ContestStage[];
+}
+
+export interface Contest extends ContestInput {
+  id: string;
+  watches: { id: string; url: string; label: string | null; status: string; lastCheckedAt: string | null }[];
+  documents: { url: string; status: string; readAt: string }[];
+  matches: { url: string; kind: string; confidence: "HIGH" | "MEDIUM"; line: string; foundAt: string }[];
 }

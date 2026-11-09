@@ -74,6 +74,8 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Auditoria das dependências de produção
         run: npm audit --omit=dev --audit-level=high
+      - name: Aviso de versão do widget de acessibilidade
+        run: node ../../scripts/verificar/widget-atualizado.mjs
       - name: Lint, tipos, testes e build
         run: npm run verify
       - name: Resumo dos testes

@@ -30,7 +30,7 @@ import dev.jobdragonquest.common.error.DomainException;
  * pessoa e sem serviço pago: PDF com Apache PDFBox (até 20 páginas), ODT, ODS e planilhas .xlsx, Word .docx lendo o XML de dentro do arquivo (com
  * limite contra zip-bomba), texto puro e imagem com o Tesseract, se ele estiver instalado.
  */
-final class DocumentText {
+public final class DocumentText {
 
     static final int MAX_TEXT = 100_000;
     static final int MAX_PDF_PAGES = 20;
@@ -113,6 +113,11 @@ final class DocumentText {
             case PNG, JPEG -> ocr(data, type);
         };
         return clean(text);
+    }
+
+    /** Texto de um PDF, com os mesmos limites do envio de documentos. */
+    public static String pdfText(byte[] data) {
+        return pdf(data);
     }
 
     private static String pdf(byte[] data) {

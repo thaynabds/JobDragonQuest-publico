@@ -72,3 +72,7 @@ O plugin `integrations/congo/jobdragonquest.py` roda dentro do bot de Discord do
 
 Testes: `python3 -m unittest discover -s integrations/congo -p 'test_*.py'` (o teste do `setup()` com o discord.py roda com o Python do ambiente do Congo).
 
+
+## E-mail pela IA ligada por MCP
+
+O JobDragonQuest não recebe acesso ao e-mail. A IA da pessoa usa o conector de e-mail dela, roda o assistente `acompanhar_email` e registra as novidades pelas ferramentas do JobDragonQuest, depois da aprovação da pessoa. O roteiro só permite leitura: nunca apaga, arquiva, responde ou envia.

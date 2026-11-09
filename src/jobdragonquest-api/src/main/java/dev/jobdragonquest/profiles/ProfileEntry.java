@@ -45,6 +45,12 @@ public class ProfileEntry {
     @Column(nullable = false, length = 20)
     private Kind kind;
 
+    @Column(name = "show_in_resume", nullable = false)
+    private boolean showInResume = true;
+
+    @Column(name = "extra_urls", columnDefinition = "text")
+    private String extraUrls;
+
     @Column(nullable = false, length = 200)
     private String title;
 
@@ -149,6 +155,20 @@ public class ProfileEntry {
 
     public String getUrl() {
         return url;
+    }
+
+    ProfileEntry withResume(Boolean show, java.util.List<String> urls) {
+        this.showInResume = !Boolean.FALSE.equals(show);
+        this.extraUrls = urls == null || urls.isEmpty() ? null : String.join("\n", urls);
+        return this;
+    }
+
+    public boolean isShowInResume() {
+        return showInResume;
+    }
+
+    public java.util.List<String> getExtraUrls() {
+        return extraUrls == null ? java.util.List.of() : java.util.List.of(extraUrls.split("\n"));
     }
 
     public Details getDetails() {

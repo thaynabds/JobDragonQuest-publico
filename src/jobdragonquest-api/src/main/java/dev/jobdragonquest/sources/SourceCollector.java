@@ -24,6 +24,7 @@ import dev.jobdragonquest.applications.ApplicationState;
 import dev.jobdragonquest.common.error.DomainException;
 import dev.jobdragonquest.common.error.NotFoundException;
 import dev.jobdragonquest.common.text.TitleMatcher;
+import dev.jobdragonquest.common.text.TitleSeniority;
 import dev.jobdragonquest.jobs.JobDtos.JobCreated;
 import dev.jobdragonquest.jobs.JobDtos.JobRequest;
 import dev.jobdragonquest.jobs.JobDtos.RequirementDto;
@@ -239,7 +240,7 @@ public class SourceCollector {
                 .map(skill -> new RequirementDto(JobRequirement.Kind.DESIRED, "Mencionado na descrição: " + skill, skill, null))
                 .toList();
         return new JobRequest(plan.kind().name(), job.url(), plan.companyName(), job.title(), job.location(), job.country(),
-                job.workMode(), null, job.description(), null, null, null, null, requirements, List.of());
+                job.workMode(), TitleSeniority.infer(job.title()), job.description(), null, null, null, null, requirements, List.of());
     }
 
     private RunResponse finish(UUID sourceId, Trigger trigger, RunStatus status, int found, int created, int recommended,

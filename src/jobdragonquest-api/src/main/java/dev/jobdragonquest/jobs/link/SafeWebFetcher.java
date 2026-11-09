@@ -44,12 +44,21 @@ public class SafeWebFetcher {
             .build();
 
     public String fetchHtml(URI start) {
+        return new String(fetch(start, MAX_BYTES, "text/html,application/xhtml+xml"), StandardCharsets.UTF_8);
+    }
+
+    /** Baixa um documento público (HTML ou PDF) com as mesmas proteções e o limite informado. */
+    public byte[] fetchBytes(URI start, int maxBytes) {
+        return fetch(start, maxBytes, "text/html,application/pdf,text/plain");
+    }
+
+    private byte[] fetch(URI start, int maxBytes, String accept) {
         URI current = start;
         for (int hop = 0; hop <= MAX_REDIRECTS; hop++) {
             checkDestination(current);
             HttpRequest request = HttpRequest.newBuilder(current)
                     .timeout(TIMEOUT)
-                    .header("Accept", "text/html,application/xhtml+xml")
+                    .header("Accept", accept)
                     .header("User-Agent", "JobDragonQuest (leitura de vaga a pedido da pessoa)")
                     .GET()
                     .build();
@@ -66,11 +75,11 @@ public class SafeWebFetcher {
                     if (status < 200 || status >= 300) {
                         throw DomainException.badRequest("link_unreadable", "A página respondeu com status " + status + ".");
                     }
-                    byte[] bytes = body.readNBytes(MAX_BYTES + 1);
-                    if (bytes.length > MAX_BYTES) {
-                        throw DomainException.badRequest("link_too_large", "A página passa de 2 MiB.");
+                    byte[] bytes = body.readNBytes(maxBytes + 1);
+                    if (bytes.length > maxBytes) {
+                        throw DomainException.badRequest("link_too_large", "O conteúdo é grande demais.");
                     }
-                    return new String(bytes, StandardCharsets.UTF_8);
+                    return bytes;
                 }
             } catch (IOException ex) {
                 throw DomainException.badRequest("link_unreadable", "Não foi possível abrir a página.");
@@ -82,7 +91,7 @@ public class SafeWebFetcher {
         throw DomainException.badRequest("link_unreadable", "Redirecionamentos demais.");
     }
 
-    static void checkDestination(URI uri) {
+    public static void checkDestination(URI uri) {
         String scheme = uri.getScheme() == null ? "" : uri.getScheme().toLowerCase(Locale.ROOT);
         boolean defaultPort = uri.getPort() == -1 || (uri.getPort() == 443 && scheme.equals("https"))
                 || (uri.getPort() == 80 && scheme.equals("http"));

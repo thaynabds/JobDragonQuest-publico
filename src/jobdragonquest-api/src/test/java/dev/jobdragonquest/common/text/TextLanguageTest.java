@@ -1,4 +1,4 @@
-package dev.jobdragonquest.career;
+package dev.jobdragonquest.common.text;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

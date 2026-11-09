@@ -54,6 +54,7 @@ import type {
   TransitionResult,
   SystemVersion,
 } from "./types";
+import type { Contest, ContestInput } from "./types";
 
 const id = (value: string) => encodeURIComponent(value);
 
@@ -224,6 +225,14 @@ export const api = {
     request<TokenResponse>("/api/v1/me/password", { method: "PUT", body: { currentPassword, newPassword } }),
   recoverAccount: (body: { email: string; code: string; newPassword: string }) =>
     request<void>("/api/v1/auth/recover", { method: "POST", body, anonymous: true }),
+  deleteAccount: (currentPassword: string) => request<void>("/api/v1/me/delete", { method: "POST", body: { currentPassword } }),
+  contests: () => request<Contest[]>("/api/v1/contests"),
+  createContest: (body: ContestInput) => request<Contest>("/api/v1/contests", { method: "POST", body }),
+  updateContest: (contestId: string, body: ContestInput) => request<Contest>(`/api/v1/contests/${id(contestId)}`, { method: "PUT", body }),
+  deleteContest: (contestId: string) => request<void>(`/api/v1/contests/${id(contestId)}`, { method: "DELETE" }),
+  addContestWatch: (contestId: string, url: string) => request<Contest>(`/api/v1/contests/${id(contestId)}/watches`, { method: "POST", body: { url } }),
+  deleteContestWatch: (contestId: string, watchId: string) => request<void>(`/api/v1/contests/${id(contestId)}/watches/${id(watchId)}`, { method: "DELETE" }),
+  scanContest: (contestId: string) => request<unknown>(`/api/v1/contests/${id(contestId)}/scan`, { method: "POST", body: {} }),
   recoveryStatus: () => request<{ remaining: number }>("/api/v1/me/recovery-codes"),
   newRecoveryCodes: (currentPassword: string) => request<{ codes: string[] }>("/api/v1/me/recovery-codes", { method: "POST", body: { currentPassword } }),
   currencyRates: () => request<{ base: string; updatedAt: string; rates: Record<string, number> }>("/api/v1/currency/rates"),

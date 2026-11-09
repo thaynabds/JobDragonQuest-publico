@@ -1,11 +1,11 @@
-package dev.jobdragonquest.career;
+package dev.jobdragonquest.common.text;
 
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 /** Idioma provável de um texto de vaga (pt, en ou es), pela contagem de palavras muito comuns. Sem certeza, devolve null. */
-final class TextLanguage {
+public final class TextLanguage {
 
     private static final Map<String, Set<String>> WORDS = Map.of(
             "pt", Set.of("de", "para", "com", "uma", "você", "não", "em", "os", "as", "experiência", "vaga", "conhecimento", "são", "ao", "dos", "das"),
@@ -15,7 +15,7 @@ final class TextLanguage {
     private TextLanguage() {
     }
 
-    static String guess(String text) {
+    public static String guess(String text) {
         if (text == null || text.isBlank()) {
             return null;
         }

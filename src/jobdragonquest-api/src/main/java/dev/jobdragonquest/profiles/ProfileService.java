@@ -155,7 +155,7 @@ public class ProfileService {
         Set<EmploymentType> types = r.employmentTypes() == null || r.employmentTypes().isEmpty()
                 ? EnumSet.noneOf(EmploymentType.class) : EnumSet.copyOf(r.employmentTypes());
         List<ProfileAnswer> answers = nullToEmpty(r.answers()).stream()
-                .map(a -> new ProfileAnswer(a.question().strip(), a.answer().strip())).toList();
+                .map(a -> new ProfileAnswer(a.question().strip(), a.answer().strip()).details(blankToNull(a.category()), a.updatedOn())).toList();
         boolean disability = Boolean.TRUE.equals(r.disability());
         if (r.options() != null && r.options().extraLinks() != null) {
             r.options().extraLinks().forEach(extra -> link(extra.url()));
@@ -200,7 +200,7 @@ public class ProfileService {
                 months = extra;
             }
         }
-        return new ProfileSkill(name, SkillNormalizer.normalize(name), dto.level(), years, months, days);
+        return new ProfileSkill(name, SkillNormalizer.normalize(name), dto.level(), years, months, days).showInResume(dto.showInResume());
     }
 
     private static ProfileLanguage toLanguage(LanguageDto dto) {
@@ -210,7 +210,7 @@ public class ProfileService {
         }
         String code = LanguageCatalog.resolve(typed).orElseThrow(() -> DomainException.badRequest("unknown_language",
                 "Idioma não reconhecido: " + typed.strip()));
-        return new ProfileLanguage(code, dto.level());
+        return new ProfileLanguage(code, dto.level()).showInResume(dto.showInResume());
     }
 
     private static ProfileEntry toEntry(EntryDto dto) {
@@ -225,7 +225,8 @@ public class ProfileService {
                 current ? Boolean.TRUE : dto.current(), dto.degree(), blankToNull(dto.fieldOfStudy()), dto.status(),
                 blankToNull(dto.credentialId()), dto.expirationDate(), dto.hours(), blankToNull(dto.skills()));
         return new ProfileEntry(dto.kind(), dto.title().strip(), blankToNull(dto.organization()), dto.startDate(),
-                current ? null : dto.endDate(), blankToNull(dto.description()), UrlCanonicalizer.optional(dto.url()), details);
+                current ? null : dto.endDate(), blankToNull(dto.description()), UrlCanonicalizer.optional(dto.url()), details)
+                .withResume(dto.showInResume(), strip(dto.extraUrls()).stream().map(ProfileService::link).toList());
     }
 
     private static void rejectDuplicates(List<String> values, String code, String message) {

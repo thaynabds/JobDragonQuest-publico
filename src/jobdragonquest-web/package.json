@@ -1,7 +1,7 @@
 {
   "name": "jobdragonquest-web",
   "private": true,
-  "version": "0.6.2",
+  "version": "0.7.0",
   "type": "module",
   "description": "Painel web do JobDragonQuest: perfis, fontes vigiadas, vagas, candidaturas e pendências.",
   "engines": {
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@fontsource/opendyslexic": "5.3.0",
+    "@thaynabds/accessability-widget": "2.3.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-router": "7.18.5"

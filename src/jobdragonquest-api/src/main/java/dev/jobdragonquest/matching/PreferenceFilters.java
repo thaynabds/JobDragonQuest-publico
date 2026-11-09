@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import dev.jobdragonquest.common.domain.WorkMode;
+import dev.jobdragonquest.common.text.MultilingualTerms;
+import dev.jobdragonquest.common.text.TextLanguage;
 import dev.jobdragonquest.common.text.TextNormalizer;
 import dev.jobdragonquest.jobs.JobSnapshot;
 import dev.jobdragonquest.matching.MatchResult.Blocker;
@@ -63,6 +65,10 @@ public final class PreferenceFilters {
                 .filter(keyword -> containsWords(text, keyword))
                 .findFirst()
                 .ifPresent(keyword -> blockers.add(new Blocker("EXCLUDED_KEYWORD", "A vaga menciona \"" + keyword + "\", uma palavra excluída")));
+        String language = filters.jobLanguages().isEmpty() ? null : TextLanguage.guess(nullToEmpty(title) + " " + nullToEmpty(description));
+        if (language != null && !filters.jobLanguages().contains(language)) {
+            blockers.add(new Blocker("JOB_LANGUAGE", "A vaga está em um idioma fora dos escolhidos no perfil: " + language));
+        }
         if (!filters.includeKeywords().isEmpty() && filters.includeKeywords().stream().noneMatch(keyword -> containsWords(text, keyword))) {
             blockers.add(new Blocker("MISSING_KEYWORD", "A vaga não menciona nenhuma das palavras obrigatórias: "
                     + String.join(", ", filters.includeKeywords())));
@@ -197,6 +203,13 @@ public final class PreferenceFilters {
         if (needle.isEmpty()) {
             return false;
         }
+        if (MultilingualTerms.equivalents(needle).size() > 1) {
+            return MultilingualTerms.equivalents(needle).stream().anyMatch(term -> literalWords(normalizedText, term));
+        }
+        return literalWords(normalizedText, needle);
+    }
+
+    private static boolean literalWords(String normalizedText, String needle) {
         return Pattern.compile("(?<![\\p{L}\\p{N}])" + Pattern.quote(needle) + "(?![\\p{L}\\p{N}])").matcher(normalizedText).find();
     }
 

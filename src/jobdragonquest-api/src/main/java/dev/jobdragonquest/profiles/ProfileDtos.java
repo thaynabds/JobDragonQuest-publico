@@ -76,7 +76,7 @@ public final class ProfileDtos {
             @Size(max = 50) List<@NotBlank @Size(max = 80) String> includeKeywords,
             @Size(max = 50) List<@NotBlank @Size(max = 80) String> excludeKeywords,
             @Size(max = 20) List<@NotBlank @Size(max = 120) String> industries,
-            @Size(max = 50) List<@Valid @NotNull AnswerDto> answers,
+            @Size(max = 500) List<@Valid @NotNull AnswerDto> answers,
             AutomationMode automationMode,
             @Valid ProfileOptions options) {
     }
@@ -90,14 +90,16 @@ public final class ProfileDtos {
             @Min(1) @Max(5) int level,
             @DecimalMin("0.0") @DecimalMax("60.0") BigDecimal years,
             @Min(0) @Max(11) Integer months,
-            @Min(0) @Max(30) Integer days) {
+            @Min(0) @Max(30) Integer days,
+            Boolean showInResume) {
     }
 
     /** Idioma pelo nome por extenso ({@code name}: "Inglês", "English", "Inglés") ou pelo código ISO ({@code code}). */
     public record LanguageDto(
             @Size(max = 8) String code,
             @Size(max = 60) String name,
-            @NotNull LanguageLevel level) {
+            @NotNull LanguageLevel level,
+            Boolean showInResume) {
     }
 
     public record EntryDto(
@@ -117,16 +119,19 @@ public final class ProfileDtos {
             @Size(max = 120) String credentialId,
             LocalDate expirationDate,
             @Min(0) @Max(100000) Integer hours,
-            @Size(max = 500) String skills) {
+            @Size(max = 500) String skills,
+            Boolean showInResume,
+            @Size(max = 50) List<@NotBlank @Size(max = 2048) String> extraUrls) {
     }
 
-    public record AnswerDto(@NotBlank @Size(max = 500) String question, @NotBlank @Size(max = 4000) String answer) {
+    public record AnswerDto(@NotBlank @Size(max = 500) String question, @NotBlank @Size(max = 4000) String answer,
+            @Size(max = 60) String category, LocalDate updatedOn) {
     }
 
-    public record SkillView(String name, int level, Integer years, Integer months, Integer days, BigDecimal totalYears) {
+    public record SkillView(String name, int level, Integer years, Integer months, Integer days, BigDecimal totalYears, boolean showInResume) {
     }
 
-    public record LanguageView(String code, LanguageLevel level) {
+    public record LanguageView(String code, LanguageLevel level, boolean showInResume) {
     }
 
     public record ProfileResponse(
@@ -149,15 +154,15 @@ public final class ProfileDtos {
                     p.getSalaryExpectation(), p.getSalaryCurrency(), p.getAvailability(), p.getRestrictions(),
                     p.getPreferredLanguage(), p.getDesiredTitles(), p.getLocations(), p.getWorkModes(),
                     p.getSkills().stream().map(s -> new SkillView(s.getName(), s.getLevel(), s.getExpYears(),
-                            s.getExpMonths(), s.getExpDays(), s.getYears())).toList(),
-                    p.getLanguages().stream().map(l -> new LanguageView(l.getCode(), l.getLevel())).toList(),
+                            s.getExpMonths(), s.getExpDays(), s.getYears(), s.isShowInResume())).toList(),
+                    p.getLanguages().stream().map(l -> new LanguageView(l.getCode(), l.getLevel(), l.isShowInResume())).toList(),
                     p.getEntries().stream().map(ProfileResponse::entry).toList(),
                     d.headline(), d.summary(), d.currentTitle(), d.city(), d.stateRegion(), d.country(),
                     d.requiresSponsorship(), d.willingToRelocate(), d.travelAvailability(), d.noticePeriodDays(),
                     d.availableFrom(), d.currentSalary(), d.salaryPeriod(), d.linkedinUrl(), d.githubUrl(), d.portfolioUrl(),
                     d.websiteUrl(), d.coverLetter(), d.disability(), d.disabilityDetails(), d.workAuthorization(),
                     d.employmentTypes(), d.excludedCompanies(), d.includeKeywords(), d.excludeKeywords(), d.industries(),
-                    d.answers().stream().map(a -> new AnswerDto(a.getQuestion(), a.getAnswer())).toList(),
+                    d.answers().stream().map(a -> new AnswerDto(a.getQuestion(), a.getAnswer(), a.getCategory(), a.getUpdatedOn())).toList(),
                     p.getCreatedAt(), p.getUpdatedAt(), p.getVersion(), p.getAutomationMode(), d.options());
         }
 
@@ -165,7 +170,7 @@ public final class ProfileDtos {
             ProfileEntry.Details x = e.getDetails();
             return new EntryDto(e.getKind(), e.getTitle(), e.getOrganization(), e.getStartDate(), e.getEndDate(),
                     e.getDescription(), e.getUrl(), x.location(), x.employmentType(), x.current(), x.degree(),
-                    x.fieldOfStudy(), x.status(), x.credentialId(), x.expirationDate(), x.hours(), x.skills());
+                    x.fieldOfStudy(), x.status(), x.credentialId(), x.expirationDate(), x.hours(), x.skills(), e.isShowInResume(), e.getExtraUrls());
         }
     }
 
