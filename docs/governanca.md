@@ -24,8 +24,7 @@ O GitHub não copia issues nem PRs entre repositórios. A evidência fica no pr�
 
 - **Issues e PRs:** [historico-issues-prs.md](historico-issues-prs.md), exportado do principal a cada release, com
   número, título, estado, datas, branch de origem e destino e a issue que cada PR fecha.
-- **Commits de merge:** cada merge na `develop` e na `main` traz o texto `Merge pull request #NN from thaynabds/<branch>`;
-  o número é o do PR no principal e aparece na tabela acima.
+- **Commits do espelho:** a partir da v0.6.0, cada publicação é um commit novo com o conteúdo auditado, sem o histórico do principal. Os commits anteriores continuam como estavam.
 - **Commits:** Conventional Commits citando a issue (`feat(sources): ... (#9)`), conferidos no CI de cada PR por
   `scripts/verificar/commits.mjs`.
 - **Versões:** tags anotadas SemVer, uma página de Release por versão nos dois repositórios e o [CHANGELOG](../CHANGELOG.md).

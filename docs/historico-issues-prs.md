@@ -5,7 +5,7 @@ público tem o mesmo código e as mesmas tags, mas o GitHub não copia issues ne
 a evidência auditável do processo. Só campos de processo são exportados (sem corpo, comentário ou autor).
 Por que existem dois repositórios: [governanca.md](governanca.md).
 
-Resumo: 72 issues (71 fechadas) e 103 PRs (88 com merge).
+Resumo: 74 issues (73 fechadas) e 107 PRs (92 com merge).
 
 ## Issues
 
@@ -83,6 +83,8 @@ Resumo: 72 issues (71 fechadas) e 103 PRs (88 com merge).
 | 170 | chore(commits): aviso de commit grande no pre-commit e no CI | CLOSED | 2026-11-08 | 2026-11-08 | PR 171 | type:chore, priority:low, scope:devops |
 | 172 | feat: conta completa, opções de busca e currículo, tokens sem validade, frequência livre e aviso de versão | CLOSED | 2026-11-09 | 2026-11-09 | PR 173 | type:feature, priority:high |
 | 174 | feat: leitura de ODT, Excel e Markdown, ajuda nos campos e conversão de moedas | CLOSED | 2026-11-09 | 2026-11-09 | PR 175 | type:feature, priority:high |
+| 178 | fix: tirar e-mail e endereço do banco do render.yaml | CLOSED | 2026-11-09 | 2026-11-09 | PR 179 | type:security, priority:high |
+| 180 | chore(espelho): publicar por commit limpo e extensão com servidor HTTPS | CLOSED | 2026-11-09 | 2026-11-09 | PR 181 | type:chore, priority:high |
 
 ## Pull requests
 
@@ -191,3 +193,7 @@ Resumo: 72 issues (71 fechadas) e 103 PRs (88 com merge).
 | 171 | chore(commits): aviso de commit grande (#170) | MERGED | `chore/issue-170-commit-grande` → `develop` | 2026-11-08 | 2026-11-08 | #170 |
 | 173 | feat: conta completa, opções de perfil, tokens sem validade e leitura de currículo (#172) | MERGED | `feature/issue-172-conta-e-opcoes` → `develop` | 2026-11-09 | 2026-11-09 | #172 |
 | 175 | feat: ODT, Excel e Markdown, ajuda nos campos e conversor de moedas (#174) | MERGED | `feature/issue-174-arquivos-ajuda-moedas` → `develop` | 2026-11-09 | 2026-11-09 | #174 |
+| 176 | release: v0.6.0 | MERGED | `release/0.6.0` → `main` | 2026-11-09 | 2026-11-09 |  |
+| 177 | chore: main (v0.6.0) de volta para develop | MERGED | `chore/main-para-develop-0.6.0` → `develop` | 2026-11-09 | 2026-11-09 |  |
+| 179 | fix(deploy): render.yaml sem dados pessoais (#178) | MERGED | `fix/issue-178-render-sem-dados` → `develop` | 2026-11-09 | 2026-11-09 | #178 |
+| 181 | chore: espelho por commit limpo e extensão com HTTPS (#180) | MERGED | `chore/issue-180-espelho-limpo` → `develop` | 2026-11-09 | 2026-11-09 | #180 |
