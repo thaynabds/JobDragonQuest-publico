@@ -32,7 +32,8 @@ class PersonalToken extends AssignedIdEntity {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @Column(name = "expires_at", nullable = false)
+    /** Nulo: sem validade (vale até ser revogado). */
+    @Column(name = "expires_at")
     private Instant expiresAt;
 
     @Column(name = "last_used_at")
@@ -55,7 +56,7 @@ class PersonalToken extends AssignedIdEntity {
     }
 
     boolean isActive(Instant now) {
-        return revokedAt == null && expiresAt.isAfter(now);
+        return revokedAt == null && (expiresAt == null || expiresAt.isAfter(now));
     }
 
     void revoke(Instant now) {

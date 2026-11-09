@@ -17,6 +17,6 @@ interface PersonalTokenRepository extends JpaRepository<PersonalToken, UUID> {
 
     List<PersonalToken> findByUserIdOrderByCreatedAtDesc(UUID userId);
 
-    @Query("select count(t) from PersonalToken t where t.userId = :userId and t.revokedAt is null and t.expiresAt > :now")
+    @Query("select count(t) from PersonalToken t where t.userId = :userId and t.revokedAt is null and (t.expiresAt is null or t.expiresAt > :now)")
     long countActive(@Param("userId") UUID userId, @Param("now") Instant now);
 }

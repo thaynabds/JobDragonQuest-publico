@@ -54,6 +54,25 @@ Nenhuma resposta de erro traz stack trace, SQL, nome de classe ou o motivo exato
 
 O cookie `jobdragonquest_rt` é `HttpOnly`, `SameSite=Strict`, `Secure` (configurável) e tem `Path=/api/v1/auth`. O token de acesso dura 15 minutos e deve ficar só em memória no front.
 
+## Conta
+
+| Rota | O que faz |
+|---|---|
+| `PUT /me` | Altera o nome (`{displayName}`). Só com sessão do painel |
+| `PUT /me/email` | Altera o e-mail de login (`{email, currentPassword}`) |
+| `PUT /me/password` | Troca a senha (`{currentPassword, newPassword}`), encerra as outras sessões e devolve um token novo |
+| `GET /me/recovery-codes` | Quantos códigos de recuperação restam |
+| `POST /me/recovery-codes` | Gera 8 códigos novos (`{currentPassword}`) e invalida os anteriores. Só aparecem nesta resposta |
+| `POST /auth/recover` | "Esqueci a senha" (`{email, code, newPassword}`). Cada código vale uma vez |
+| `POST /auth/login` | Aceita `rememberMe`: `false` faz a sessão acabar ao fechar o navegador |
+
+## Sistema
+
+| Rota | O que faz |
+|---|---|
+| `GET /system/version` | Versão em execução, última publicada e `updateAvailable` |
+| `GET /currency/rates` | Cotações (base USD) das moedas de países de língua portuguesa, inglesa e espanhola |
+
 ## Perfis
 
 | Rota | Descrição |

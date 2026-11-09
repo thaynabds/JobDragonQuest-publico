@@ -35,7 +35,7 @@ public class DocumentService {
     static final int MAX_PER_APPLICATION = 10;
 
     /** Resultado da leitura de um arquivo ou link: texto extraído e proposta de item para o perfil. */
-    public record Reading(String type, String text, boolean ocrUnavailable, CertificateParser.Proposal proposal) {
+    public record Reading(String type, String text, boolean ocrUnavailable, CertificateParser.Proposal proposal, ResumeParser.Proposal resume) {
     }
 
     /** Conteúdo para download, com o tipo identificado pelo próprio arquivo. */
@@ -141,12 +141,12 @@ public class DocumentService {
             proposal = new CertificateParser.Proposal(proposal.kind(), proposal.title(), proposal.organization(), proposal.date(),
                     proposal.hours(), proposal.credentialId(), uri.toString(), proposal.skills());
         }
-        return new Reading("LINK", text, false, proposal);
+        return new Reading("LINK", text, false, proposal, null);
     }
 
     private Reading reading(DocumentText.Type type, String text) {
         boolean ocrUnavailable = type.isImage() && text.isBlank();
-        return new Reading(type.name(), text, ocrUnavailable, CertificateParser.parse(text, List.copyOf(skills.detect(text))));
+        return new Reading(type.name(), text, ocrUnavailable, CertificateParser.parse(text, List.copyOf(skills.detect(text))), ResumeParser.parse(text));
     }
 
     private DocumentView save(UUID userId, UUID profileId, UUID applicationId, StoredDocument.Kind kind, String fileName, byte[] data,
@@ -191,6 +191,9 @@ public class DocumentService {
         String extension = switch (type) {
             case PDF -> ".pdf";
             case DOCX -> ".docx";
+            case ODT -> ".odt";
+            case XLSX -> ".xlsx";
+            case ODS -> ".ods";
             case TEXT -> ".txt";
             case PNG -> ".png";
             case JPEG -> ".jpg";

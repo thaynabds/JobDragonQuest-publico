@@ -26,7 +26,7 @@ public class AshbyClient implements AtsClient {
 
     @Override
     public List<CollectedJob> fetch(String identifier) {
-        return parse(fetcher.get(URI.create("https://api.ashbyhq.com/posting-api/job-board/" + identifier)));
+        return parse(fetcher.get(URI.create("https://api.ashbyhq.com/posting-api/job-board/" + AtsPaths.segment(identifier))));
     }
 
     static List<CollectedJob> parse(byte[] body) {

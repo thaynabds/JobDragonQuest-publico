@@ -1,14 +1,14 @@
 import { useState } from "react";
 
 import { api } from "../api/endpoints";
-import { DOCUMENT_KINDS, type DocumentKind, type DocumentReading, type Profile, type StoredDocument } from "../api/types";
+import { DOCUMENT_KINDS, type DocumentKind, type DocumentReading, type ResumeItem, type Profile, type StoredDocument } from "../api/types";
 import { Button, Card, Field, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { useAsync } from "../utils/useAsync";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ACCEPT =
-  ".pdf,.docx,.txt,.png,.jpg,.jpeg,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,image/png,image/jpeg";
+  ".pdf,.docx,.odt,.xlsx,.ods,.csv,.tsv,.txt,.md,.markdown,.png,.jpg,.jpeg";
 
 interface Draft {
   kind: "COURSE" | "CERTIFICATION";
@@ -43,6 +43,7 @@ export function DocumentsSection({ profileId, onAdded }: { profileId: string; on
   const [kind, setKind] = useState<DocumentKind>("RESUME");
   const [link, setLink] = useState("");
   const [reading, setReading] = useState<DocumentReading | null>(null);
+  const [resumeItems, setResumeItems] = useState<(ResumeItem & { selected: boolean })[]>([]);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [notice, setNotice] = useState<{ tone: "error" | "success" | "info"; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -69,6 +70,11 @@ export function DocumentsSection({ profileId, onAdded }: { profileId: string; on
 
   const show = (result: DocumentReading) => {
     setReading(result);
+    setResumeItems(result.resume?.items.map((item) => ({ ...item, selected: true })) ?? []);
+    if (result.resume) {
+      setDraft(null);
+      return;
+    }
     const p = result.proposal;
     setDraft({
       kind: p.kind,
@@ -81,6 +87,19 @@ export function DocumentsSection({ profileId, onAdded }: { profileId: string; on
       skills: p.skills.join(", "),
     });
   };
+
+  const addResume = () =>
+    act(async () => {
+      const chosen = resumeItems.filter((item) => item.selected && item.title.trim());
+      let last: Profile | null = null;
+      for (const { selected: _selected, ...item } of chosen) {
+        last = (await api.appendEntry(profileId, { ...item, title: item.title.trim(), status: item.current ? "IN_PROGRESS" : "COMPLETED" })).data;
+      }
+      if (last) onAdded(last);
+      setReading(null);
+      setResumeItems([]);
+      setNotice({ tone: "success", text: t("documents.resumeAdded", { count: chosen.length }) });
+    });
 
   const add = () =>
     act(async () => {
@@ -105,6 +124,7 @@ export function DocumentsSection({ profileId, onAdded }: { profileId: string; on
   return (
     <Card title={t("documents.title")}>
       <p className="muted small">{t("documents.intro")}</p>
+      <p className="small"><strong>{t("documents.formats")}</strong></p>
       {notice && (
         <Notice tone={notice.tone} onClose={() => setNotice(null)}>
           {notice.text}
@@ -184,6 +204,47 @@ export function DocumentsSection({ profileId, onAdded }: { profileId: string; on
               <p className="prewrap small">{reading.text.slice(0, 5000)}</p>
             </details>
           )}
+        </form>
+      )}
+
+      {reading?.resume && (
+        <form
+          aria-label={t("documents.resumeTitle")}
+          onSubmit={(e) => {
+            e.preventDefault();
+            void addResume();
+          }}
+        >
+          <h3>{t("documents.resumeTitle")}</h3>
+          <p className="muted small">{t("documents.resumeIntro", { count: resumeItems.length })}</p>
+          {reading.resume.summary && <p className="small prewrap">{reading.resume.summary}</p>}
+          <ul className="resume-reading">
+            {resumeItems.map((item, index) => (
+              <li key={index}>
+                <input
+                  type="checkbox"
+                  aria-label={item.title}
+                  checked={item.selected}
+                  onChange={(e) => setResumeItems(resumeItems.map((x, i) => (i === index ? { ...x, selected: e.target.checked } : x)))}
+                />
+                <span className="small muted">{label("entryKind", item.kind)}</span>
+                <input
+                  aria-label={t("documents.entryTitle")}
+                  maxLength={200}
+                  value={item.title}
+                  onChange={(e) => setResumeItems(resumeItems.map((x, i) => (i === index ? { ...x, title: e.target.value } : x)))}
+                />
+                <span className="small muted">{[item.organization, item.startDate, item.current ? t("resume.current") : item.endDate].filter(Boolean).join(" · ")}</span>
+              </li>
+            ))}
+          </ul>
+          <Button type="submit" variant="primary" disabled={busy || !resumeItems.some((x) => x.selected)}>
+            {t("documents.resumeAdd")}
+          </Button>
+          <details>
+            <summary>{t("documents.text")}</summary>
+            <p className="prewrap small">{reading.text.slice(0, 5000)}</p>
+          </details>
         </form>
       )}
 

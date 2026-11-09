@@ -178,6 +178,7 @@ export interface ProfileFields {
   excludeKeywords: string[];
   industries: string[];
   answers: Answer[];
+  options?: ProfileOptions | null;
 }
 
 export interface ProfileInput extends ProfileFields {
@@ -272,6 +273,8 @@ export interface ResumeEntry {
 }
 
 export interface Resume {
+  language?: string;
+  needsTranslation?: boolean;
   headline: string | null;
   currentTitle: string | null;
   location: string | null;
@@ -289,6 +292,8 @@ export interface Resume {
 export interface CoverLetter {
   text: string;
   missing: string[];
+  language?: string;
+  needsTranslation?: boolean;
 }
 
 export interface InterviewQuestion {
@@ -339,11 +344,31 @@ export interface EntryProposal {
   skills: string[];
 }
 
+export interface ResumeItem {
+  kind: EntryKind;
+  title: string;
+  organization: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  current: boolean;
+  description: string | null;
+}
+
+export interface ResumeReading {
+  email: string | null;
+  phone: string | null;
+  summary: string | null;
+  skillLines: string[];
+  languages: string[];
+  items: ResumeItem[];
+}
+
 export interface DocumentReading {
   type: string;
   text: string;
   ocrUnavailable: boolean;
   proposal: EntryProposal;
+  resume?: ResumeReading | null;
 }
 
 export interface LinkDraft {
@@ -671,7 +696,7 @@ export interface PersonalToken {
   name: string;
   prefix: string;
   createdAt: string;
-  expiresAt: string;
+  expiresAt: string | null;
   lastUsedAt: string | null;
   revokedAt: string | null;
   active: boolean;
@@ -779,4 +804,56 @@ export interface PreferencesView {
   settings: NotificationSettings;
   timeZone: string;
   preferences: PreferenceView[];
+}
+
+export interface SystemVersion {
+  current: string | null;
+  latest: string | null;
+  updateAvailable: boolean;
+  releaseUrl: string | null;
+}
+
+export const DIVERSITY_OPTIONS = ["LGBTQIA", "WOMAN", "DISABILITY", "BLACK", "BROWN", "INDIGENOUS"] as const;
+export const RESUME_SECTIONS = ["CONTACT", "SOFT_SKILLS", "DIVERSITY", "CONTACT_HOURS", "WORK_PREFERENCES", "SALARY"] as const;
+export const CONTACT_DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"] as const;
+
+export interface ProfileOptions {
+  targetSeniorities?: Seniority[] | null;
+  timeZones?: string[] | null;
+  jobLanguages?: string[] | null;
+  locationRadiusKm?: number | null;
+  coverLetterMode?: "GENERATED" | "OWN" | null;
+  writingStyle?: string | null;
+  phoneCountryCode?: string | null;
+  phone?: string | null;
+  phoneWhatsapp?: boolean | null;
+  secondaryPhone?: string | null;
+  secondaryPhoneWhatsapp?: boolean | null;
+  contactEmail?: string | null;
+  contactPermission?: boolean | null;
+  postalCode?: string | null;
+  nationalities?: string[] | null;
+  expectedYearlySalary?: number | null;
+  currentHourlySalary?: number | null;
+  expectedHourlySalary?: number | null;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  salaryConsiderFrom?: number | null;
+  transportAid?: boolean | null;
+  practicalExperience?: boolean | null;
+  workload?: string | null;
+  socialName?: string | null;
+  genderIdentity?: string | null;
+  birthDate?: string | null;
+  over18?: boolean | null;
+  gpa?: string | null;
+  military?: "YES" | "NO" | "PREFER_NOT_TO_SAY" | null;
+  diversity?: (typeof DIVERSITY_OPTIONS)[number][] | null;
+  softSkills?: string[] | null;
+  contactHours?: { day: string; slots: { start: string; end: string }[] }[] | null;
+  resumeVisible?: (typeof RESUME_SECTIONS)[number][] | null;
+  extraLinks?: { label: string; url: string }[] | null;
+  documentsInJobLanguage?: boolean | null;
+  autoTranslate?: boolean | null;
+  translations?: { language: string; headline: string | null; summary: string | null; coverLetter: string | null }[] | null;
 }

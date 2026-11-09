@@ -264,10 +264,10 @@ public class SourceService {
     static String openUrl(WatchedSource source) {
         String id = source.getIdentifier();
         return switch (source.getKind()) {
-            case GREENHOUSE -> "https://boards.greenhouse.io/" + id;
-            case LEVER -> "https://jobs.lever.co/" + id;
-            case SMARTRECRUITERS -> "https://careers.smartrecruiters.com/" + id;
-            case ASHBY -> "https://jobs.ashbyhq.com/" + id;
+            case GREENHOUSE -> "https://boards.greenhouse.io/" + dev.jobdragonquest.sources.collect.AtsPaths.segment(id);
+            case LEVER -> "https://jobs.lever.co/" + dev.jobdragonquest.sources.collect.AtsPaths.segment(id);
+            case SMARTRECRUITERS -> "https://careers.smartrecruiters.com/" + dev.jobdragonquest.sources.collect.AtsPaths.segment(id);
+            case ASHBY -> "https://jobs.ashbyhq.com/" + dev.jobdragonquest.sources.collect.AtsPaths.segment(id);
             default -> source.getUrl();
         };
     }
@@ -288,17 +288,24 @@ public class SourceService {
     static Target target(SourceKind kind, String identifier, String url) {
         if (kind.mode() == CollectionMode.AUTOMATIC) {
             String id = identifier == null ? "" : identifier.strip();
-            if (!SourceKind.IDENTIFIER.matcher(id).matches()) {
+            if (!SourceKind.validIdentifier(id)) {
                 throw DomainException.badRequest("invalid_identifier",
-                        "Informe o identificador do board no " + kind.label() + " (letras, números, ponto, hífen ou sublinhado)");
+                        "Informe o identificador do board no " + kind.label() + " (até 100 caracteres)");
             }
             return new Target(id, null, dedupKey(kind, id.toLowerCase(Locale.ROOT)));
         }
         if (url == null || url.isBlank()) {
             throw DomainException.badRequest("url_required", "Informe o endereço a vigiar no " + kind.label());
         }
-        String canonical = UrlCanonicalizer.canonicalize(url);
-        return new Target(null, canonical, dedupKey(kind, canonical));
+        // O endereço fica como a pessoa colou: em busca, a query e o fragmento são os próprios filtros. A forma canônica
+        // (que também valida http ou https) só serve para achar repetidas.
+        String kept = url.strip();
+        // Para achar repetidas: sem o currentJobId, que só diz qual vaga estava aberta na busca, e com o fragmento, que
+        // em alguns sites guarda os filtros.
+        int hash = kept.indexOf('#');
+        String fragment = hash < 0 ? "" : kept.substring(hash);
+        String canonical = UrlCanonicalizer.canonicalize(kept.replaceAll("([?&])currentJobId=[^&#]*&?", "$1"));
+        return new Target(null, kept, dedupKey(kind, canonical + fragment));
     }
 
     private static String dedupKey(SourceKind kind, String value) {

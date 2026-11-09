@@ -6,6 +6,21 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.6.0] - 2026-11-09
+
+### Adicionado
+- Conta: ver senha, permanecer conectado, alterar nome, e-mail e senha, e códigos de recuperação para quem esquecer a senha (#172).
+- Perfil: níveis aceitos, fusos, idiomas, raio, telefones, nacionalidades, faixa salarial, nome social, diversidade, horários de contato, competências comportamentais, links extras e escolha do que aparece no currículo (#172).
+- Currículo e carta no idioma da vaga, com tradução automática opcional e textos editáveis (#172).
+- Tokens de acesso sem validade, frequência das fontes em horas ou dias, identificador do board com qualquer caractere (#172).
+- Excluir um aviso ou todos, aviso de nova versão dentro do painel e menu recolhido que abre de qualquer página (#172).
+- Leitura de currículo em itens separados e de arquivos ODT, ODS, Excel (.xlsx), CSV e Markdown, com os formatos informados na tela (#172, #174).
+- Botão "i" com explicação nos campos e conversor de moedas de países de língua portuguesa, inglesa e espanhola (#174).
+
+### Corrigido
+- Word gerado por outros programas (prefixo diferente no XML) virava uma linha só, e PDF com colunas saía embaralhado (#172).
+- A busca do LinkedIn salva como fonte perdia as palavras-chave, e os filtros de outros sites eram cortados (#172).
+
 ### Adicionado
 - Aviso de commit grande (mais de 30 arquivos ou 800 linhas) no hook de pre-commit e nos PRs do CI, sem bloquear (#170).
 
@@ -136,7 +151,8 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 - Núcleo da API: contas, perfis, vagas, compatibilidade, candidaturas de qualquer origem, Kanban, pendências e auditoria,
   rodando no PostgreSQL local.
 
-[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.5.1...develop
+[Não lançado]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.6.0...develop
+[0.6.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/thaynabds/JobDragonQuest-publico/compare/v0.4.1...v0.4.2

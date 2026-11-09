@@ -9,7 +9,7 @@ async function criarConta(page: Page, nome: string) {
   await page.getByRole("button", { name: "Não tem conta? Crie uma." }).click();
   await page.getByLabel("Seu nome").fill(nome);
   await page.getByLabel("E-mail").fill(`e2e-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@teste.dev`);
-  await page.getByLabel("Senha").fill(SENHA);
+  await page.locator("input[autocomplete=\"new-password\"]").fill(SENHA);
   await page.getByRole("button", { name: "Criar conta" }).click();
   await expect(page.getByRole("heading", { name: "Visão geral" })).toBeVisible();
 }

@@ -26,7 +26,7 @@ public class GreenhouseClient implements AtsClient {
 
     @Override
     public List<CollectedJob> fetch(String identifier) {
-        return parse(fetcher.get(URI.create("https://boards-api.greenhouse.io/v1/boards/" + identifier + "/jobs?content=true")));
+        return parse(fetcher.get(URI.create("https://boards-api.greenhouse.io/v1/boards/" + AtsPaths.segment(identifier) + "/jobs?content=true")));
     }
 
     static List<CollectedJob> parse(byte[] body) {

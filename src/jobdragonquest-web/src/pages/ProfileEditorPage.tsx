@@ -29,6 +29,7 @@ import { isLocale, LOCALE_NAMES, LOCALES, type Locale, type MessageKey } from ".
 import { countryCode, countryName, countryOptions, languageName, languageOptions } from "../utils/places";
 import { splitList } from "../utils/safe";
 import { DocumentsSection } from "./DocumentsSection";
+import { ProfileOptionsSection } from "./ProfileOptionsSection";
 
 /** Campos de lista editados como texto separado por vírgula. */
 const LIST_FIELDS = ["desiredTitles", "locations", "industries", "includeKeywords", "excludeKeywords", "excludedCompanies"] as const;
@@ -279,10 +280,10 @@ export function ProfileEditorPage() {
       </datalist>
 
       <Section title={t("profiles.section.identity")}>
-        <Field label={t("profiles.name")} hint={t("profiles.nameHint")}>
+        <Field label={t("profiles.name")} info={t("help.profiles.name")} hint={t("profiles.nameHint")}>
           <input value={form.name} onChange={(e) => patch({ name: e.target.value })} required maxLength={120} />
         </Field>
-        <Field label={t("profiles.seniority")}>
+        <Field label={t("profiles.seniority")} info={t("help.profiles.seniority")}>
           <select value={form.seniority} onChange={(e) => patch({ seniority: e.target.value as ProfileInput["seniority"] })}>
             {SENIORITIES.map((s) => (
               <option key={s} value={s}>
@@ -291,16 +292,16 @@ export function ProfileEditorPage() {
             ))}
           </select>
         </Field>
-        <Field label={t("profiles.headline")} hint={t("profiles.headlineHint")} wide>
+        <Field label={t("profiles.headline")} info={t("help.profiles.headline")} hint={t("profiles.headlineHint")} wide>
           <input value={form.headline ?? ""} maxLength={220} onChange={(e) => patch({ headline: blank(e.target.value) })} />
         </Field>
         <Field label={t("profiles.currentTitle")}>
           <input value={form.currentTitle ?? ""} maxLength={160} onChange={(e) => patch({ currentTitle: blank(e.target.value) })} />
         </Field>
-        <Field label={t("profiles.minMatch")}>
+        <Field label={t("profiles.minMatch")} info={t("help.profiles.minMatch")}>
           <input type="number" min={0} max={100} value={form.minMatchScore} onChange={(e) => patch({ minMatchScore: Number(e.target.value) })} />
         </Field>
-        <Field label={t("profiles.automationMode")} hint={t(`profiles.automationHint.${form.automationMode}`)}>
+        <Field label={t("profiles.automationMode")} info={t("help.profiles.automationMode")} hint={t(`profiles.automationHint.${form.automationMode}`)}>
           <select value={form.automationMode} onChange={(e) => patch({ automationMode: e.target.value as AutomationMode })}>
             {AUTOMATION_MODES.map((mode) => (
               <option key={mode} value={mode}>
@@ -309,7 +310,7 @@ export function ProfileEditorPage() {
             ))}
           </select>
         </Field>
-        <Field label={t("profiles.preferredLanguage")}>
+        <Field label={t("profiles.preferredLanguage")} info={t("help.profiles.preferredLanguage")}>
           <select value={form.preferredLanguage} onChange={(e) => patch({ preferredLanguage: e.target.value })}>
             {(Object.keys(LOCALES) as Locale[]).map((code) => (
               <option key={code} value={code}>
@@ -319,10 +320,10 @@ export function ProfileEditorPage() {
             {!isLocale(form.preferredLanguage) && <option value={form.preferredLanguage}>{form.preferredLanguage}</option>}
           </select>
         </Field>
-        <Field label={t("profiles.summary")} hint={t("profiles.summaryHint")} wide>
+        <Field label={t("profiles.summary")} info={t("help.profiles.summary")} hint={t("profiles.summaryHint")} wide>
           <textarea rows={4} maxLength={4000} value={form.summary ?? ""} onChange={(e) => patch({ summary: blank(e.target.value) })} />
         </Field>
-        <Field label={t("profiles.objective")} wide>
+        <Field label={t("profiles.objective")} info={t("help.profiles.objective")} wide>
           <textarea rows={2} maxLength={4000} value={form.objective ?? ""} onChange={(e) => patch({ objective: blank(e.target.value) })} />
         </Field>
       </Section>
@@ -337,24 +338,24 @@ export function ProfileEditorPage() {
         <Field label={t("profiles.country")}>
           <input list="country-options" value={countryText} onChange={(e) => setCountryText(e.target.value)} />
         </Field>
-        <Field label={t("profiles.workAuthorization")} hint={t("profiles.workAuthorizationHint")} wide>
+        <Field label={t("profiles.workAuthorization")} info={t("help.profiles.workAuthorization")} hint={t("profiles.workAuthorizationHint")} wide>
           <input value={authorizationText} onChange={(e) => setAuthorizationText(e.target.value)} />
         </Field>
-        <Field label={t("profiles.requiresSponsorship")}>
+        <Field label={t("profiles.requiresSponsorship")} info={t("help.profiles.requiresSponsorship")}>
           <select value={yesNo(form.requiresSponsorship)} onChange={(e) => patch({ requiresSponsorship: fromYesNo(e.target.value) })}>
             <option value="">{t("common.none")}</option>
             <option value="yes">{t("common.yes")}</option>
             <option value="no">{t("common.no")}</option>
           </select>
         </Field>
-        <Field label={t("profiles.willingToRelocate")}>
+        <Field label={t("profiles.willingToRelocate")} info={t("help.profiles.willingToRelocate")}>
           <select value={yesNo(form.willingToRelocate)} onChange={(e) => patch({ willingToRelocate: fromYesNo(e.target.value) })}>
             <option value="">{t("common.none")}</option>
             <option value="yes">{t("common.yes")}</option>
             <option value="no">{t("common.no")}</option>
           </select>
         </Field>
-        <Field label={t("profiles.travel")}>
+        <Field label={t("profiles.travel")} info={t("help.profiles.travel")}>
           <select value={form.travelAvailability ?? ""} onChange={(e) => patch({ travelAvailability: (e.target.value || null) as ProfileInput["travelAvailability"] })}>
             <option value="">{t("common.none")}</option>
             {TRAVEL_AVAILABILITIES.map((value) => (
@@ -364,13 +365,13 @@ export function ProfileEditorPage() {
             ))}
           </select>
         </Field>
-        <Field label={t("profiles.availableFrom")}>
+        <Field label={t("profiles.availableFrom")} info={t("help.profiles.availableFrom")}>
           <input type="date" value={form.availableFrom ?? ""} onChange={(e) => patch({ availableFrom: e.target.value || null })} />
         </Field>
-        <Field label={t("profiles.noticePeriodDays")}>
+        <Field label={t("profiles.noticePeriodDays")} info={t("help.profiles.noticePeriodDays")}>
           <input type="number" min={0} max={365} value={form.noticePeriodDays ?? ""} onChange={(e) => patch({ noticePeriodDays: number(e.target.value) })} />
         </Field>
-        <Field label={t("profiles.availability")} wide>
+        <Field label={t("profiles.availability")} info={t("help.profiles.availability")} wide>
           <input value={form.availability ?? ""} maxLength={500} onChange={(e) => patch({ availability: blank(e.target.value) })} />
         </Field>
         <fieldset className="field field-wide">
@@ -398,7 +399,7 @@ export function ProfileEditorPage() {
       </Section>
 
       <Section title={t("profiles.section.salary")}>
-        <Field label={t("profiles.salary")}>
+        <Field label={t("profiles.salary")} info={t("help.profiles.salary")}>
           <input type="number" min={0} step="0.01" value={form.salaryExpectation ?? ""} onChange={(e) => patch({ salaryExpectation: number(e.target.value) })} />
         </Field>
         <Field label={t("profiles.salaryPeriod")}>
@@ -414,7 +415,7 @@ export function ProfileEditorPage() {
         <Field label={t("profiles.currency")}>
           <input value={form.salaryCurrency ?? ""} maxLength={3} onChange={(e) => patch({ salaryCurrency: blank(e.target.value.toUpperCase()) })} />
         </Field>
-        <Field label={t("profiles.currentSalary")} hint={t("common.optional")}>
+        <Field label={t("profiles.currentSalary")} info={t("help.profiles.currentSalary")} hint={t("common.optional")}>
           <input type="number" min={0} step="0.01" value={form.currentSalary ?? ""} onChange={(e) => patch({ currentSalary: number(e.target.value) })} />
         </Field>
       </Section>
@@ -434,7 +435,7 @@ export function ProfileEditorPage() {
         {listField("includeKeywords", "profiles.includeKeywords", "profiles.keywordsHint")}
         {listField("excludeKeywords", "profiles.excludeKeywords", "profiles.keywordsHint")}
         {listField("excludedCompanies", "profiles.excludedCompanies")}
-        <Field label={t("profiles.restrictions")} wide>
+        <Field label={t("profiles.restrictions")} info={t("help.profiles.restrictions")} wide>
           <input value={form.restrictions ?? ""} maxLength={2000} onChange={(e) => patch({ restrictions: blank(e.target.value) })} />
         </Field>
       </Section>
@@ -635,6 +636,8 @@ export function ProfileEditorPage() {
         })}
       </Card>
 
+      <ProfileOptionsSection value={form.options} onChange={(options) => patch({ options })} />
+
       <Section title={t("profiles.coverLetter")}>
         <Field label={t("profiles.coverLetter")} hint={t("profiles.coverLetterHint")} wide>
           <textarea rows={8} maxLength={8000} value={form.coverLetter ?? ""} onChange={(e) => patch({ coverLetter: blank(e.target.value) })} />
@@ -662,7 +665,7 @@ export function ProfileEditorPage() {
 
       <Section title={t("profiles.section.sensitive")}>
         <p className="muted field-wide">{t("profiles.sensitiveHint")}</p>
-        <Field label={t("profiles.disability")}>
+        <Field label={t("profiles.disability")} info={t("help.profiles.disability")}>
           <select value={yesNo(form.disability)} onChange={(e) => patch({ disability: fromYesNo(e.target.value), disabilityDetails: e.target.value === "yes" ? form.disabilityDetails : null })}>
             <option value="">{t("profiles.preferNotToSay")}</option>
             <option value="yes">{t("common.yes")}</option>

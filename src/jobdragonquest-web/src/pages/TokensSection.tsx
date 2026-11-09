@@ -24,7 +24,7 @@ export function TokensSection() {
     setBusy(true);
     setMessage(null);
     try {
-      setCreated((await api.createToken({ name: name.trim(), days })).data);
+      setCreated((await api.createToken(days === 0 ? { name: name.trim(), neverExpires: true } : { name: name.trim(), days })).data);
       setCopied(false);
       setName("");
       tokens.reload();
@@ -78,16 +78,17 @@ export function TokensSection() {
         </Notice>
       )}
       <form className="form-row" onSubmit={(event) => void submit(event)}>
-        <Field label={t("tokens.name")}>
+        <Field label={t("tokens.name")} info={t("help.tokens.name")}>
           <input value={name} onChange={(event) => setName(event.target.value)} maxLength={80} required placeholder={t("tokens.namePlaceholder")} />
         </Field>
-        <Field label={t("tokens.days")}>
+        <Field label={t("tokens.days")} info={t("help.tokens.days")}>
           <select value={days} onChange={(event) => setDays(Number(event.target.value))}>
             {DAY_OPTIONS.map((option) => (
               <option key={option} value={option}>
                 {t("tokens.daysOption", { days: option })}
               </option>
             ))}
+            <option value={0}>{t("tokens.never")}</option>
           </select>
         </Field>
         <Button type="submit" variant="primary" disabled={busy || !name.trim()}>
@@ -119,7 +120,7 @@ export function TokensSection() {
                     <code>{token.prefix}</code>
                   </td>
                   <td>{formatDate(token.createdAt)}</td>
-                  <td>{formatDate(token.expiresAt)}</td>
+                  <td>{token.expiresAt ? formatDate(token.expiresAt) : t("tokens.never")}</td>
                   <td>{formatDate(token.lastUsedAt, true)}</td>
                   <td>{token.active ? <Badge tone="good">{t("tokens.active")}</Badge> : <Badge>{t("tokens.inactive")}</Badge>}</td>
                   <td>

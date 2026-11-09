@@ -1,7 +1,5 @@
 package dev.jobdragonquest.sources;
 
-import java.util.regex.Pattern;
-
 /**
  * Tipos de fonte vigiada. O modo de coleta vem da realidade de cada plataforma (docs/04-integracoes.md):
  * <ul>
@@ -31,10 +29,14 @@ public enum SourceKind {
     }
 
     /**
-     * Identificador do board no ATS (ex.: "nubank" em boards.greenhouse.io/nubank). Só letras, números, ponto, hífen
-     * e sublinhado: ele entra no caminho de uma URL de host fixo, então não pode carregar barra, "..", "?" nem "@".
+     * Identificador do board no ATS (ex.: "nubank" em boards.greenhouse.io/nubank). Aceita qualquer caractere, inclusive
+     * emojis. Fica de fora só o que não é texto (caractere de controle). Ele vai sempre codificado como um único segmento
+     * de caminho de um host fixo ({@code AtsPaths}), então não muda o destino da requisição.
      */
-    static final Pattern IDENTIFIER = Pattern.compile("[A-Za-z0-9][A-Za-z0-9._-]{0,99}");
+    static boolean validIdentifier(String id) {
+        return !id.isEmpty() && id.length() <= 100 && !id.equals(".") && !id.equals("..")
+                && id.chars().noneMatch(Character::isISOControl);
+    }
 
     private final CollectionMode mode;
     private final String label;

@@ -252,4 +252,19 @@ class NotificationIntegrationTest extends ApiTestSupport {
         getJson(owner, "/api/v1/notifications").andExpect(jsonPath("$.unreadCount").value(1));
         getJson(null, "/api/v1/notifications").andExpect(status().isUnauthorized());
     }
+
+    /** Issue #172: excluir um aviso ou todos; só os próprios, e o aviso excluído some das listas. */
+    @Test
+    void dismissesOneOrAllAndOnlyOwn() throws Exception {
+        String token = newUser();
+        String first = read(postJson(token, "/api/v1/notifications/test", "").andExpect(status().is2xxSuccessful()), "$.id");
+        postJson(token, "/api/v1/notifications/test", "").andExpect(status().is2xxSuccessful());
+        deleteJson(newUser(), "/api/v1/notifications/" + first).andExpect(status().isNotFound());
+        long total = com.jayway.jsonpath.JsonPath.<Integer>read(getJson(token, "/api/v1/notifications?size=50").andReturn().getResponse().getContentAsString(), "$.totalItems");
+        deleteJson(token, "/api/v1/notifications/" + first).andExpect(status().isNoContent());
+        getJson(token, "/api/v1/notifications?size=50").andExpect(jsonPath("$.totalItems").value(total - 1));
+        deleteJson(token, "/api/v1/notifications").andExpect(status().isOk());
+        getJson(token, "/api/v1/notifications?size=50").andExpect(jsonPath("$.totalItems").value(0)).andExpect(jsonPath("$.unreadCount").value(0));
+        getJson(token, "/api/v1/notifications/due").andExpect(jsonPath("$.length()").value(0));
+    }
 }

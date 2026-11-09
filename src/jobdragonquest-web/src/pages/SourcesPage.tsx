@@ -3,12 +3,12 @@ import { useMemo, useState, type FormEvent } from "react";
 import { api } from "../api/endpoints";
 import type { CatalogEntry, ProfileSummary, Source, SourceInput, SourceKind, SourceRun } from "../api/types";
 import { Badge, Button, Card, Empty, ExternalLink, Field, Loading, Notice } from "../components/ui";
+import { FrequencyInput, frequencyText } from "../components/FrequencyInput";
 import { useI18n } from "../i18n/I18nContext";
 import type { MessageKey } from "../i18n/messages";
 import { splitList } from "../utils/safe";
 import { useAsync } from "../utils/useAsync";
 
-export const FREQUENCIES = [60, 360, 720, 1440, 10080] as const;
 
 export interface DraftRow {
   name: string;
@@ -91,8 +91,7 @@ export function SourcesPage() {
     }
   };
 
-  const frequencyLabel = (minutes: number) =>
-    (FREQUENCIES as readonly number[]).includes(minutes) ? t(`frequency.${minutes}` as MessageKey) : `${minutes} min`;
+  const frequencyLabel = (minutes: number) => frequencyText(minutes, t);
   const toggle = (id: string) => setSelected((current) => (current.includes(id) ? current.filter((x) => x !== id) : [...current, id]));
   const all = sources.data ?? [];
 
@@ -113,7 +112,7 @@ export function SourcesPage() {
               <tr>
                 <th>{t("sources.kind")}</th>
                 <th>{t("sources.name")}</th>
-                <th>{t("sources.target")}</th>
+                <th>{t("sources.target")} <span className="info-tip inline"><button type="button" aria-label={t("help.sources.target")}>i</button><span role="tooltip">{t("help.sources.target")}</span></span></th>
                 <th />
               </tr>
             </thead>
@@ -176,16 +175,10 @@ export function SourcesPage() {
                 {profiles.data?.length === 0 && <span className="muted">{t("jobs.noProfiles")}</span>}
               </div>
             </fieldset>
-            <Field label={t("sources.frequency")}>
-              <select value={frequency} onChange={(e) => setFrequency(Number(e.target.value))}>
-                {FREQUENCIES.map((minutes) => (
-                  <option key={minutes} value={minutes}>
-                    {t(`frequency.${minutes}` as MessageKey)}
-                  </option>
-                ))}
-              </select>
+            <Field label={t("sources.frequency")} info={t("help.sources.frequency")}>
+              <FrequencyInput value={frequency} onChange={setFrequency} label={t("sources.frequency")} />
             </Field>
-            <Field label={t("sources.keywords")} hint={t("sources.keywordsHint")} wide>
+            <Field label={t("sources.keywords")} info={t("help.sources.keywords")} hint={t("sources.keywordsHint")} wide>
               <input value={keywords} onChange={(e) => setKeywords(e.target.value)} />
             </Field>
           </div>
@@ -201,13 +194,7 @@ export function SourcesPage() {
             <strong>{t("sources.selected", { count: selected.length })}</strong>
             <Button onClick={() => void bulk({ sourceIds: selected, enabled: false }, t("common.saved"))}>{t("sources.pause")}</Button>
             <Button onClick={() => void bulk({ sourceIds: selected, enabled: true }, t("common.saved"))}>{t("sources.resume")}</Button>
-            <select aria-label={t("sources.frequency")} value={bulkFrequency} onChange={(e) => setBulkFrequency(Number(e.target.value))}>
-              {FREQUENCIES.map((minutes) => (
-                <option key={minutes} value={minutes}>
-                  {t(`frequency.${minutes}` as MessageKey)}
-                </option>
-              ))}
-            </select>
+            <FrequencyInput value={bulkFrequency} onChange={setBulkFrequency} label={t("sources.frequency")} />
             <Button onClick={() => void bulk({ sourceIds: selected, frequencyMinutes: bulkFrequency }, t("common.saved"))}>
               {t("sources.setFrequency")}
             </Button>

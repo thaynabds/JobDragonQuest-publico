@@ -69,6 +69,21 @@ public class UserAccount extends AssignedIdEntity {
         this.updatedAt = now;
     }
 
+    void rename(String newName, Instant now) {
+        this.displayName = newName;
+        this.updatedAt = now;
+    }
+
+    void changeEmail(String newEmail, Instant now) {
+        this.email = newEmail;
+        this.updatedAt = now;
+    }
+
+    void changePassword(String newHash, Instant now) {
+        this.passwordHash = newHash;
+        this.updatedAt = now;
+    }
+
     boolean isLocked(Instant now) {
         return lockedUntil != null && lockedUntil.isAfter(now);
     }

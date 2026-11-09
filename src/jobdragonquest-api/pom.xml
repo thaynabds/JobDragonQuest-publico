@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.jobdragonquest</groupId>
 	<artifactId>jobdragonquest-api</artifactId>
-	<version>0.5.1</version>
+	<version>0.6.0</version>
 	<name>jobdragonquest-api</name>
 	<description>API do JobDragonQuest: perfis, vagas, compatibilidade e candidaturas.</description>
 
@@ -139,6 +139,11 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals><goal>build-info</goal></goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

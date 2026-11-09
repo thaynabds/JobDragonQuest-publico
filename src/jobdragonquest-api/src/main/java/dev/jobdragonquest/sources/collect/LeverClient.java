@@ -27,7 +27,7 @@ public class LeverClient implements AtsClient {
 
     @Override
     public List<CollectedJob> fetch(String identifier) {
-        return parse(fetcher.get(URI.create("https://api.lever.co/v0/postings/" + identifier + "?mode=json")));
+        return parse(fetcher.get(URI.create("https://api.lever.co/v0/postings/" + AtsPaths.segment(identifier) + "?mode=json")));
     }
 
     static List<CollectedJob> parse(byte[] body) {

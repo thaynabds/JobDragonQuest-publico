@@ -69,7 +69,9 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     console.error(`Faixa inválida: ${range}`);
     process.exit(2);
   }
-  const log = git(["log", "--no-merges", "--format=%H%x1f%B%x1e", range]);
+  // O que já está publicado na main não é deste PR (acontece quando a main volta para a develop).
+  const hasMain = spawnSync("git", ["rev-parse", "--verify", "-q", "origin/main"]).status === 0;
+  const log = git(["log", "--no-merges", "--format=%H%x1f%B%x1e", range, ...(hasMain && !range.includes("origin/main") ? ["^origin/main"] : [])]);
   const commits = log.split("\x1e").map((entry) => entry.trim()).filter(Boolean).map((entry) => entry.split("\x1f"));
   let bad = 0;
   for (const [sha, message] of commits) {

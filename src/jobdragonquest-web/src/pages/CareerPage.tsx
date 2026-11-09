@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { api } from "../api/endpoints";
+import { CurrencyConverter } from "../components/CurrencyConverter";
 import { Badge, Card, Field, Loading, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { useAsync } from "../utils/useAsync";
@@ -64,6 +65,8 @@ export function CareerPage() {
           ))}
         </ul>
       </Card>
+
+      <CurrencyConverter />
 
       <Card title={t("career.salary")}>
         {salary.error ? <Notice tone="error">{errorMessage(salary.error)}</Notice> : null}

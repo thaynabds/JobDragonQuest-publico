@@ -7,9 +7,10 @@ import type { Me } from "../api/types";
 interface Auth {
   user: Me | null;
   ready: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
   register: (displayName: string, email: string, password: string, locale: string) => Promise<void>;
   logout: () => Promise<void>;
+  reloadUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<Auth | null>(null);
@@ -49,8 +50,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       ready,
-      login: async (email, password) => {
-        const { data } = await api.login({ email, password });
+      login: async (email, password, rememberMe = true) => {
+        const { data } = await api.login({ email, password, rememberMe });
         setAccessToken(data.accessToken);
         await loadMe();
       },
@@ -60,6 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setAccessToken(data.accessToken);
         await loadMe();
       },
+      reloadUser: loadMe,
       logout: async () => {
         try {
           await api.logout();

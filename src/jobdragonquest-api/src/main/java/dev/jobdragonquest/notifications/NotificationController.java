@@ -3,6 +3,8 @@ package dev.jobdragonquest.notifications;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,6 +69,17 @@ class NotificationController {
     @PostMapping("/read-all")
     CountResponse readAll() {
         return new CountResponse(notifications.markAllRead(currentUser.id()));
+    }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<Void> dismiss(@PathVariable UUID id) {
+        notifications.dismiss(currentUser.id(), id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    CountResponse dismissAll() {
+        return new CountResponse(notifications.dismissAll(currentUser.id()));
     }
 
     @PostMapping("/{id}/snooze")

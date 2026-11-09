@@ -157,13 +157,16 @@ public class ProfileService {
         List<ProfileAnswer> answers = nullToEmpty(r.answers()).stream()
                 .map(a -> new ProfileAnswer(a.question().strip(), a.answer().strip())).toList();
         boolean disability = Boolean.TRUE.equals(r.disability());
+        if (r.options() != null && r.options().extraLinks() != null) {
+            r.options().extraLinks().forEach(extra -> link(extra.url()));
+        }
         return new ProfileDetails(blankToNull(r.headline()), blankToNull(r.summary()), blankToNull(r.currentTitle()),
                 blankToNull(r.city()), blankToNull(r.stateRegion()), r.country(), r.requiresSponsorship(),
                 r.willingToRelocate(), r.travelAvailability(), r.noticePeriodDays(), r.availableFrom(), r.currentSalary(),
                 r.salaryPeriod(), link(r.linkedinUrl()), link(r.githubUrl()), link(r.portfolioUrl()), link(r.websiteUrl()),
                 blankToNull(r.coverLetter()), r.disability(), disability ? blankToNull(r.disabilityDetails()) : null,
                 strip(r.workAuthorization()), types, strip(r.excludedCompanies()), strip(r.includeKeywords()),
-                strip(r.excludeKeywords()), strip(r.industries()), answers);
+                strip(r.excludeKeywords()), strip(r.industries()), answers, r.options());
     }
 
     /** Link do perfil: só http ou https (nada de javascript:, data: ou file:). */

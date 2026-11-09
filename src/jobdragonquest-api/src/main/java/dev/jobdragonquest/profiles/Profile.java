@@ -39,6 +39,8 @@ import jakarta.persistence.Version;
 @Table(name = "profile")
 public class Profile extends AssignedIdEntity {
 
+    private static final tools.jackson.databind.json.JsonMapper JSON = tools.jackson.databind.json.JsonMapper.builder().build();
+
     @Id
     private UUID id;
 
@@ -136,6 +138,10 @@ public class Profile extends AssignedIdEntity {
 
     @Column(name = "cover_letter", length = 8000)
     private String coverLetter;
+
+    /** Opções de busca, candidatura e currículo ({@link ProfileOptions}) em JSON validado. */
+    @Column(columnDefinition = "text")
+    private String options;
 
     /** Opcional e sensível (LGPD): só é guardado se a pessoa quiser informar. */
     private Boolean disability;
@@ -275,6 +281,7 @@ public class Profile extends AssignedIdEntity {
         this.portfolioUrl = d.portfolioUrl();
         this.websiteUrl = d.websiteUrl();
         this.coverLetter = d.coverLetter();
+        this.options = d.options() == null ? null : JSON.writeValueAsString(d.options());
         this.disability = d.disability();
         this.disabilityDetails = Boolean.TRUE.equals(d.disability()) ? d.disabilityDetails() : null;
         replace(workAuthorization, d.workAuthorization());
@@ -308,7 +315,7 @@ public class Profile extends AssignedIdEntity {
             String linkedinUrl, String githubUrl, String portfolioUrl, String websiteUrl, String coverLetter,
             Boolean disability, String disabilityDetails, List<String> workAuthorization,
             Set<EmploymentType> employmentTypes, List<String> excludedCompanies, List<String> includeKeywords,
-            List<String> excludeKeywords, List<String> industries, List<ProfileAnswer> answers) {
+            List<String> excludeKeywords, List<String> industries, List<ProfileAnswer> answers, ProfileOptions options) {
     }
 
     /** Acrescenta um item confirmado pela pessoa (vindo de um certificado ou documento). */
@@ -326,7 +333,8 @@ public class Profile extends AssignedIdEntity {
                 willingToRelocate, travelAvailability, noticePeriodDays, availableFrom, currentSalary, salaryPeriod,
                 linkedinUrl, githubUrl, portfolioUrl, websiteUrl, coverLetter, disability, disabilityDetails,
                 List.copyOf(workAuthorization), Set.copyOf(employmentTypes), List.copyOf(excludedCompanies),
-                List.copyOf(includeKeywords), List.copyOf(excludeKeywords), List.copyOf(industries), List.copyOf(answers));
+                List.copyOf(includeKeywords), List.copyOf(excludeKeywords), List.copyOf(industries), List.copyOf(answers),
+                options == null ? null : JSON.readValue(options, ProfileOptions.class));
     }
 
     public UUID getId() {

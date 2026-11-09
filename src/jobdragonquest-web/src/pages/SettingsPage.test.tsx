@@ -9,6 +9,7 @@ import { parseLeads } from "./NotificationSettingsSection";
 import { SettingsPage } from "./SettingsPage";
 
 const mocks = vi.hoisted(() => ({
+  recoveryStatus: vi.fn(() => Promise.resolve({ data: { remaining: 0 } })),
   notificationsDue: vi.fn(),
   notifications: vi.fn(),
   notificationPreferences: vi.fn(),
@@ -20,6 +21,7 @@ const mocks = vi.hoisted(() => ({
   revokeToken: vi.fn(),
 }));
 vi.mock("../api/endpoints", () => ({ api: mocks }));
+vi.mock("../auth/AuthContext", () => ({ useAuth: () => ({ user: { displayName: "Pessoa", email: "p@teste.dev" }, reloadUser: vi.fn() }) }));
 
 const pref = (topic: string, extra: object = {}) => ({
   topic,

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { UpdateNotice } from "./UpdateNotice";
 import { NavLink, Outlet } from "react-router";
 
 import { useAuth } from "../auth/AuthContext";
@@ -21,24 +23,41 @@ const NAV = [
 export function Layout() {
   const { t } = useI18n();
   const { user, logout } = useAuth();
+  // O menu fica recolhido e abre de qualquer página pelo botão da barra superior.
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
   return (
     <NotificationsProvider>
     <a className="skip-link" href="#conteudo">
       {t("a11y.skip")}
     </a>
     <div className="shell">
-      <aside className="sidebar">
+      <header className="topbar">
+        <button type="button" className="btn btn-ghost" aria-expanded={menuOpen} aria-controls="menu-principal" onClick={() => setMenuOpen(!menuOpen)}>
+          ☰ {t("nav.menu")}
+        </button>
+        <strong className="topbar-name">{t("app.name")}</strong>
+        <Bell />
+      </header>
+      {menuOpen && <div className="menu-backdrop" onClick={() => setMenuOpen(false)} aria-hidden="true" />}
+      <aside id="menu-principal" className={menuOpen ? "sidebar open" : "sidebar"} inert={!menuOpen}>
         <div className="brand">
           <img className="brand-logo" src="/logo.png" alt="" width="44" height="44" />
           <div>
             <strong>{t("app.name")}</strong>
             <span className="brand-tagline">{t("app.tagline")}</span>
           </div>
-          <Bell />
         </div>
         <nav aria-label="JobDragonQuest">
           {NAV.map((item) => (
-            <NavLink key={item.to} to={item.to} end={item.to === "/"} className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>
+            <NavLink key={item.to} to={item.to} end={item.to === "/"} onClick={() => setMenuOpen(false)} className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>
               {t(item.key)}
             </NavLink>
           ))}
@@ -52,6 +71,7 @@ export function Layout() {
         </div>
       </aside>
       <main className="content" id="conteudo" tabIndex={-1}>
+        <UpdateNotice />
         <Outlet />
       </main>
     </div>

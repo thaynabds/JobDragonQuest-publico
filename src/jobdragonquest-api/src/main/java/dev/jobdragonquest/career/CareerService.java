@@ -25,6 +25,7 @@ import dev.jobdragonquest.jobs.JobSnapshot;
 import dev.jobdragonquest.profiles.ProfileDtos.EntryDto;
 import dev.jobdragonquest.profiles.ProfileDtos.ProfileResponse;
 import dev.jobdragonquest.profiles.ProfileDtos.SkillView;
+import dev.jobdragonquest.profiles.ProfileOptions.Translation;
 import dev.jobdragonquest.profiles.ProfileService;
 
 /**
@@ -47,10 +48,10 @@ public class CareerService {
     /** Currículo montado do perfil. {@code jobTitle}/{@code company}: vaga de referência, quando há. */
     public record Resume(String headline, String currentTitle, String location, String summary, List<String> links,
             List<ResumeSkill> skills, List<ResumeEntry> experience, List<ResumeEntry> education, List<ResumeEntry> other,
-            List<String> languages, String jobTitle, String company) {
+            List<String> languages, String jobTitle, String company, String language, boolean needsTranslation) {
     }
 
-    public record CoverLetter(String text, List<String> missing) {
+    public record CoverLetter(String text, List<String> missing, String language, boolean needsTranslation) {
     }
 
     public record InterviewQuestion(String category, String question, String hint) {
@@ -64,10 +65,12 @@ public class CareerService {
 
     private final ProfileService profiles;
     private final JobService jobs;
+    private final TranslationService translator;
 
-    CareerService(ProfileService profiles, JobService jobs) {
+    CareerService(ProfileService profiles, JobService jobs, TranslationService translator) {
         this.profiles = profiles;
         this.jobs = jobs;
+        this.translator = translator;
     }
 
     public Resume resume(UUID userId, UUID profileId, UUID jobId) {
@@ -84,10 +87,14 @@ public class CareerService {
         List<ResumeEntry> experience = new ArrayList<>();
         List<ResumeEntry> education = new ArrayList<>();
         List<ResumeEntry> other = new ArrayList<>();
+        String language = documentLanguage(p, job);
+        Translation translated = translation(p, language);
+        boolean[] untranslated = {false};
+        java.util.function.UnaryOperator<String> auto = text -> automatic(p, language, text, untranslated);
         for (EntryDto e : p.entries()) {
             boolean relevant = !wanted.isEmpty() && mentions(e, wanted);
-            ResumeEntry entry = new ResumeEntry(e.kind().name(), e.title(), e.organization(), e.startDate(), e.endDate(),
-                    Boolean.TRUE.equals(e.current()), e.location(), e.description(), entrySkills(e), relevant);
+            ResumeEntry entry = new ResumeEntry(e.kind().name(), auto.apply(e.title()), e.organization(), e.startDate(), e.endDate(),
+                    Boolean.TRUE.equals(e.current()), e.location(), auto.apply(e.description()), entrySkills(e), relevant);
             switch (e.kind()) {
                 case EXPERIENCE, ACADEMIC_EXPERIENCE -> experience.add(entry);
                 case EDUCATION -> education.add(entry);
@@ -106,9 +113,48 @@ public class CareerService {
                 links.add(link);
             }
         }
+        if (p.options() != null && p.options().extraLinks() != null) {
+            p.options().extraLinks().forEach(extra -> links.add(extra.url()));
+        }
         List<String> languages = p.languages().stream().map(l -> l.code() + " (" + l.level() + ")").toList();
-        return new Resume(p.headline(), p.currentTitle(), join(", ", p.city(), p.stateRegion(), p.country()), p.summary(), links,
-                skills, experience, education, other, languages, job == null ? null : job.title(), job == null ? null : job.company());
+        String headline = translated != null && translated.headline() != null ? translated.headline() : auto.apply(p.headline());
+        String summary = translated != null && translated.summary() != null ? translated.summary() : auto.apply(p.summary());
+        return new Resume(headline, p.currentTitle(), join(", ", p.city(), p.stateRegion(), p.country()), summary, links,
+                skills, experience, education, other, languages, job == null ? null : job.title(), job == null ? null : job.company(),
+                language, untranslated[0]);
+    }
+
+    /** Idioma dos documentos: o da vaga, se a opção estiver ligada e der para reconhecer; senão, português. */
+    private static String documentLanguage(ProfileResponse p, JobResponse job) {
+        if (job == null || p.options() == null || !Boolean.TRUE.equals(p.options().documentsInJobLanguage())) {
+            return "pt";
+        }
+        String guessed = TextLanguage.guess(job.description());
+        return guessed == null ? "pt" : guessed;
+    }
+
+    /** Texto no idioma do documento: traduzido se a opção estiver ligada; senão o original, marcado como não traduzido. */
+    private String automatic(ProfileResponse p, String language, String text, boolean[] untranslated) {
+        if (text == null || text.isBlank() || "pt".equals(language)) {
+            return text;
+        }
+        String result = Boolean.TRUE.equals(p.options().autoTranslate()) ? translator.translate(text, language) : null;
+        if (result == null) {
+            untranslated[0] = true;
+            return text;
+        }
+        return result;
+    }
+
+    private static Translation translation(ProfileResponse p, String language) {
+        if (p.options() == null || p.options().translations() == null) {
+            return null;
+        }
+        return p.options().translations().stream().filter(t -> t.language().equals(language)).findFirst().orElse(null);
+    }
+
+    private static String pick(String language, String pt, String en, String es) {
+        return "en".equals(language) ? en : "es".equals(language) ? es : pt;
     }
 
     /**
@@ -121,42 +167,54 @@ public class CareerService {
         String company = job == null ? null : job.company();
         String title = job == null ? null : job.title();
         List<String> missing = new ArrayList<>();
-        if (p.coverLetter() != null) {
-            String text = p.coverLetter().replace("{empresa}", company == null ? "a empresa" : company)
-                    .replace("{cargo}", title == null ? "a vaga" : title);
-            return new CoverLetter(text, List.of());
+        String language = documentLanguage(p, job);
+        Translation translated = translation(p, language);
+        boolean english = "en".equals(language);
+        boolean[] untranslated = {false};
+        java.util.function.UnaryOperator<String> auto = value -> automatic(p, language, value, untranslated);
+        String own = translated != null && translated.coverLetter() != null ? translated.coverLetter() : auto.apply(p.coverLetter());
+        if (own != null) {
+            String text = own.replace("{empresa}", company == null ? pick(language, "a empresa", "the company", "la empresa") : company)
+                    .replace("{cargo}", title == null ? pick(language, "a vaga", "the position", "el puesto") : title);
+            return new CoverLetter(text, List.of(), language, untranslated[0]);
         }
+        String headline = translated != null && translated.headline() != null ? translated.headline() : auto.apply(p.headline());
+        String summary = translated != null && translated.summary() != null ? translated.summary() : auto.apply(p.summary());
         StringBuilder text = new StringBuilder();
-        text.append(company == null ? "Olá," : "Olá, equipe da " + company + ",").append("\n\n");
-        String role = title == null ? "esta oportunidade" : "a vaga de " + title;
-        String who = p.headline() != null ? p.headline() : p.currentTitle();
+        text.append(company == null ? pick(language, "Olá,", "Hello,", "Hola,")
+                : pick(language, "Olá, equipe da ", "Hello ", "Hola, equipo de ") + company + (english ? " team," : ",")).append("\n\n");
+        String role = title == null ? pick(language, "esta oportunidade", "this opportunity", "esta oportunidad")
+                : pick(language, "a vaga de ", "the ", "el puesto de ") + title + (english ? " position" : "");
+        String who = headline != null ? headline : auto.apply(p.currentTitle());
+        text.append(pick(language, "Quero me candidatar a ", "I would like to apply for ", "Quiero postularme a ")).append(role).append(".");
         if (who != null) {
-            text.append("Quero me candidatar a ").append(role).append(". Sou ").append(who).append(".");
+            text.append(pick(language, " Sou ", " I am ", " Soy ")).append(who).append(".");
         } else {
-            text.append("Quero me candidatar a ").append(role).append(".");
-            missing.add("título profissional");
+            missing.add(pick(language, "título profissional", "professional title", "título profesional"));
         }
-        if (p.summary() != null) {
-            text.append(" ").append(p.summary().strip());
+        if (summary != null) {
+            text.append(" ").append(summary.strip());
         } else {
-            missing.add("resumo profissional");
+            missing.add(pick(language, "resumo profissional", "professional summary", "resumen profesional"));
         }
         text.append("\n\n");
         List<SkillView> matching = matchingSkills(p, job);
         if (!matching.isEmpty()) {
-            text.append(job == null ? "Minhas principais competências: " : "Para esta vaga, destaco: ")
-                    .append(matching.stream().map(s -> s.name() + (time(s) == null ? "" : " (" + time(s) + ")")).collect(Collectors.joining(", ")))
+            text.append(job == null ? pick(language, "Minhas principais competências: ", "My main skills: ", "Mis principales competencias: ")
+                    : pick(language, "Para esta vaga, destaco: ", "For this position, I highlight: ", "Para este puesto, destaco: "))
+                    .append(matching.stream().map(s -> s.name() + ("pt".equals(language) && time(s) != null ? " (" + time(s) + ")" : "")).collect(Collectors.joining(", ")))
                     .append(".\n\n");
         } else {
-            missing.add("competências");
+            missing.add(pick(language, "competências", "skills", "competencias"));
         }
         if (p.availableFrom() != null) {
-            text.append("Posso começar a partir de ").append(p.availableFrom()).append(".\n\n");
+            text.append(pick(language, "Posso começar a partir de ", "I can start from ", "Puedo empezar a partir de ")).append(p.availableFrom()).append(".\n\n");
         } else if (p.noticePeriodDays() != null) {
-            text.append(p.noticePeriodDays() == 0 ? "Tenho disponibilidade imediata.\n\n" : "Meu aviso prévio é de " + p.noticePeriodDays() + " dias.\n\n");
+            text.append(p.noticePeriodDays() == 0 ? pick(language, "Tenho disponibilidade imediata.", "I am available immediately.", "Tengo disponibilidad inmediata.")
+                    : pick(language, "Meu aviso prévio é de ", "My notice period is ", "Mi preaviso es de ") + p.noticePeriodDays() + pick(language, " dias.", " days.", " días.")).append("\n\n");
         }
-        text.append("Agradeço a atenção e fico à disposição para conversar.");
-        return new CoverLetter(text.toString(), List.copyOf(missing));
+        text.append(pick(language, "Agradeço a atenção e fico à disposição para conversar.", "Thank you for your time. I would be glad to talk.", "Gracias por su atención. Quedo a disposición para conversar."));
+        return new CoverLetter(text.toString(), List.copyOf(missing), language, untranslated[0]);
     }
 
     public List<InterviewQuestion> interview(UUID userId, UUID jobId, UUID profileId) {
