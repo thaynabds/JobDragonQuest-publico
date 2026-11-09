@@ -73,6 +73,10 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Candidaturas" })).toBeVisible();
   const menu = await estouros(page);
   if (menu.pagina > menu.largura + 1) problemas.push(`menu aberto: ${menu.pagina}/${menu.largura}`);
+  const fundo = await page.locator(".sidebar").evaluate((el) => getComputedStyle(el).backgroundColor);
+  const casou = /(?:\/|,)\s*([0-9.]+)\s*\)$/.exec(fundo);
+  const alfa = Number(casou?.[1] ?? "1");
+  if (!(alfa >= 0.85 && alfa < 1)) problemas.push(`menu lateral com opacidade ${alfa}`);
   await page.keyboard.press("Escape");
   await expect(page.getByRole("link", { name: "Candidaturas" })).toBeHidden();
 

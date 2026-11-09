@@ -87,6 +87,14 @@ class CareerTest extends ApiTestSupport {
     }
 
     @Test
+    void parametroObrigatorioAusenteResponde400() throws Exception {
+        String token = newUser();
+        String job = job(token, "9", "Dev", "", "Java");
+        getJson(token, "/api/v1/jobs/" + job + "/assist/answers").andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("missing_parameter"));
+    }
+
+    @Test
     void metodoNaoAceitoResponde405() throws Exception {
         String token = newUser();
         String profile = read(postJson(token, "/api/v1/profiles", PROFILE).andExpect(status().isCreated()), "$.id");

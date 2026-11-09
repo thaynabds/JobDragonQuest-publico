@@ -135,7 +135,10 @@ a:focus-visible {
 }
 
 .sidebar {
-  background: var(--surface);
+  /* 90% opaco com desfoque: o conteúdo atrás aparece de leve sem atrapalhar a leitura. */
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   border-right: 1px solid var(--border);
   padding: 1rem;
   display: flex;

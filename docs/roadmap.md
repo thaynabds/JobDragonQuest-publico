@@ -27,6 +27,7 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 | v0.6.1 | 09/11/2026 | render.yaml sem dados pessoais (#178); espelho por commit limpo e extensão com servidor HTTPS (#180) |
 | v0.6.2 | 09/11/2026 | Responsividade de todas as telas com teste em 5 larguras; aviso de tentativas no login; navegar não desloga; laudo, diploma e histórico no perfil (#184, #186, #187) |
 | v0.7.0 | 09/11/2026 | Currículo por dado com Word e prévia; assistentes por MCP; concursos; triagem; novos idiomas |
+| v0.7.1 | 09/11/2026 | Menu lateral levemente translúcido |
 
 Medição da v0.2.0:
 - API: 108 testes, cobertura geral de 94,3%.

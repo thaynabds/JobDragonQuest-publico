@@ -32,6 +32,11 @@ public class GlobalExceptionHandler {
         return problem(HttpStatus.METHOD_NOT_ALLOWED, "method_not_allowed", "Método não aceito neste endereço");
     }
 
+    @ExceptionHandler(org.springframework.web.bind.MissingServletRequestParameterException.class)
+    ProblemDetail missingParameter(org.springframework.web.bind.MissingServletRequestParameterException ex) {
+        return problem(HttpStatus.BAD_REQUEST, "missing_parameter", "Parâmetro obrigatório ausente: " + ex.getParameterName());
+    }
+
     @ExceptionHandler(NotFoundException.class)
     ProblemDetail notFound(NotFoundException ex) {
         return problem(HttpStatus.NOT_FOUND, "not_found", ex.getMessage());

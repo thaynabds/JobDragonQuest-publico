@@ -6,6 +6,14 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.7.1] - 2026-11-09
+
+### Corrigido
+- A análise de perguntas da vaga ia sem o perfil e dava erro interno; parâmetro obrigatório ausente agora responde 400 (#205).
+
+### Alterado
+- Menu lateral 90% opaco com leve desfoque: o conteúdo atrás aparece sem atrapalhar a leitura (#202).
+
 ## [0.7.0] - 2026-11-09
 
 ### Adicionado
