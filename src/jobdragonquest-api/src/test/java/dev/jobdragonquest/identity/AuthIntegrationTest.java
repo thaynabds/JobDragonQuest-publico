@@ -123,10 +123,11 @@ class AuthIntegrationTest extends ApiTestSupport {
     void accountLocksAfterRepeatedFailuresEvenWithCorrectPassword() throws Exception {
         String email = email();
         register(email);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             assertThat(login(email, "senha-errada-123456").getResponse().getStatus()).isEqualTo(401);
         }
-        assertThat(login(email, PASSWORD).getResponse().getStatus()).as("bloqueada").isEqualTo(401);
+        assertThat(login(email, "senha-errada-123456").getResponse().getStatus()).as("quinto erro bloqueia").isEqualTo(429);
+        assertThat(login(email, PASSWORD).getResponse().getStatus()).as("bloqueada").isEqualTo(429);
         assertThat(audit.findAll()).anyMatch(entry -> entry.getAction().equals("auth.login_locked"));
     }
 

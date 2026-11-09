@@ -9,6 +9,19 @@ const KEY = "jdq-update-dismissed";
 const SIX_HOURS = 6 * 60 * 60 * 1000;
 const PANEL_VERSION = __APP_VERSION__;
 
+/** Compara versões número a número. Versão sem números (ambiente de desenvolvimento) nunca é mais nova. */
+export function isNewer(candidate: string, base: string): boolean {
+  const parse = (v: string) => v.split(".").map(Number);
+  const a = parse(candidate);
+  const b = parse(base);
+  if ([...a, ...b].some(Number.isNaN)) return false;
+  for (let i = 0; i < 3; i++) {
+    const difference = (a[i] ?? 0) - (b[i] ?? 0);
+    if (difference !== 0) return difference > 0;
+  }
+  return false;
+}
+
 function dismissed(): string | null {
   try {
     return localStorage.getItem(KEY);
@@ -35,7 +48,8 @@ export function UpdateNotice() {
   }, []);
 
   if (!info) return null;
-  const stale = info.current !== null && info.current !== PANEL_VERSION;
+  // Só a API mais nova que o painel pede recarregar; durante um deploy, o painel pode chegar antes da API.
+  const stale = info.current !== null && isNewer(info.current, PANEL_VERSION);
   const version = stale ? info.current : info.updateAvailable ? info.latest : null;
   if (!version || closed === version) return null;
   const close = () => {

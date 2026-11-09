@@ -275,7 +275,7 @@ export const es: Messages = {
   "pending.msg.NO_UPDATE": "Sin actualización desde {date}",
   "error.generic": "Algo salió mal. Inténtalo de nuevo.",
   "error.network": "No fue posible hablar con el servidor. ¿Está encendido?",
-  "error.invalid_credentials": "Correo o contraseña inválidos, o cuenta bloqueada por unos minutos.",
+  "error.invalid_credentials": "Correo o contraseña inválidos.",
   "error.email_taken": "Ya existe una cuenta con este correo.",
   "error.rate_limited": "Demasiados intentos. Espera unos minutos.",
   "error.validation_failed": "Revisa los campos resaltados.",
@@ -885,4 +885,9 @@ export const es: Messages = {
   "currency.to": "A",
   "currency.note": "Cotización de {date}. Monedas de países de habla portuguesa, inglesa y española. Solo referencia: no considera costo de vida ni impuestos.",
   "documents.formats": "Formatos que puedo leer: PDF, Word (.docx), OpenDocument (.odt), hojas de cálculo (.xlsx, .ods, .csv, .tsv), texto (.txt), Markdown (.md) y fotos (.png, .jpg). Word (.doc) y Excel (.xls) antiguos: guárdalos como .docx o .xlsx antes.",
+  "auth.attemptsLeft": "Te quedan {count} intento(s) antes de un bloqueo temporal.",
+  "error.account_locked": "Demasiados intentos erróneos. Acceso bloqueado por {minutes} minuto(s). Si olvidaste la contraseña, usa \"¿Olvidaste tu contraseña?\".",
+  "documentKind.DIPLOMA": "Diploma",
+  "documentKind.TRANSCRIPT": "Historial académico",
+  "documentKind.MEDICAL_REPORT": "Informe médico",
 };

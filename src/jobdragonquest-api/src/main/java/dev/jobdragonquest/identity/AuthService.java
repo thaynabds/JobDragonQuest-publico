@@ -33,6 +33,7 @@ import dev.jobdragonquest.identity.AuthDtos.Session;
 public class AuthService {
 
     private static final int RECOVERY_CODES = 8;
+    private static final int MAX_TRACKED_UNKNOWN = 10_000;
 
     static final String INVALID_CREDENTIALS = "E-mail ou senha inválidos, ou conta bloqueada temporariamente";
     private static final String DEFAULT_TIME_ZONE = "America/Recife";
@@ -50,6 +51,7 @@ public class AuthService {
     private final RegistrationProperties registration;
     private final RecoveryCodeRepository recoveryCodes;
     private final SecureRandom random = new SecureRandom();
+    private final java.util.Map<String, UnknownAttempts> unknownAttempts = new java.util.concurrent.ConcurrentHashMap<>();
 
     AuthService(UserAccountRepository users, RefreshTokenRepository refreshTokens, TokenService tokens,
             PasswordEncoder passwordEncoder, AuditService audit, SecurityProperties properties, Clock clock,
@@ -88,19 +90,23 @@ public class AuthService {
     public Session login(LoginRequest request) {
         Instant now = clock.instant();
         Optional<UserAccount> found = users.findByEmail(normalizeEmail(request.email()));
+        int limit = properties.login().lockoutAfterFailures();
         if (found.isEmpty()) {
             passwordEncoder.matches(request.password(), dummyHash);
-            throw invalidCredentials();
+            throw unknownEmailFailure(normalizeEmail(request.email()), now, limit);
         }
         UserAccount user = found.get();
         if (user.isLocked(now)) {
             audit.recordIndependently(user.getId(), "auth.login_locked", null);
-            throw invalidCredentials();
+            throw locked(user.getLockedUntil(), now);
         }
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-            user.registerFailedLogin(now, properties.login().lockoutAfterFailures(), properties.login().lockoutDuration());
+            user.registerFailedLogin(now, limit, properties.login().lockoutDuration());
             audit.recordIndependently(user.getId(), "auth.login_failed", null);
-            throw invalidCredentials();
+            if (user.isLocked(now)) {
+                throw locked(user.getLockedUntil(), now);
+            }
+            throw wrongPassword(limit - user.getFailedLogins());
         }
         user.registerSuccessfulLogin(now);
         audit.record(user.getId(), "auth.login", "user", user.getId(), null);
@@ -245,6 +251,37 @@ public class AuthService {
         } catch (DateTimeException ex) {
             throw DomainException.badRequest("invalid_time_zone", "Fuso horário inválido");
         }
+    }
+
+    /** E-mail sem conta segue a mesma contagem: a resposta não pode revelar quem está cadastrado. */
+    private DomainException unknownEmailFailure(String email, Instant now, int limit) {
+        if (unknownAttempts.size() >= MAX_TRACKED_UNKNOWN) {
+            unknownAttempts.clear();
+        }
+        UnknownAttempts current = unknownAttempts.get(email);
+        if (current != null && current.lockedUntil() != null && current.lockedUntil().isAfter(now)) {
+            return locked(current.lockedUntil(), now);
+        }
+        int failures = (current == null || current.lockedUntil() != null ? 0 : current.failures()) + 1;
+        if (failures >= limit) {
+            Instant until = now.plus(properties.login().lockoutDuration());
+            unknownAttempts.put(email, new UnknownAttempts(0, until));
+            return locked(until, now);
+        }
+        unknownAttempts.put(email, new UnknownAttempts(failures, null));
+        return wrongPassword(limit - failures);
+    }
+
+    private record UnknownAttempts(int failures, Instant lockedUntil) {
+    }
+
+    private static DomainException wrongPassword(int attemptsLeft) {
+        return new LoginFailedException(HttpStatus.UNAUTHORIZED, "invalid_credentials", INVALID_CREDENTIALS, attemptsLeft, null);
+    }
+
+    private static DomainException locked(Instant until, Instant now) {
+        long minutes = Math.max(1, (java.time.Duration.between(now, until).getSeconds() + 59) / 60);
+        return new LoginFailedException(HttpStatus.TOO_MANY_REQUESTS, "account_locked", "Conta bloqueada temporariamente", 0, minutes);
     }
 
     private static DomainException invalidCredentials() {

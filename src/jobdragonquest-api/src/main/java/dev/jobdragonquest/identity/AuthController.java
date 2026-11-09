@@ -73,7 +73,7 @@ class AuthController {
             @CookieValue(name = REMEMBER_COOKIE, required = false) String remember,
             @RequestHeader(name = HttpHeaders.ORIGIN, required = false) String origin, HttpServletRequest request) {
         checkOrigin(origin);
-        limit("refresh", request, "");
+        // Sem limite de tentativas: toda abertura de página renova a sessão, e o token tem 256 bits aleatórios.
         if (token == null || token.isBlank()) {
             throw new DomainException(HttpStatus.UNAUTHORIZED, "invalid_session", "Sessão inválida ou expirada");
         }

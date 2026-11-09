@@ -173,7 +173,7 @@ export function JobsPage() {
               </Field>
             </div>
             <h3>{t("jobs.requirements")}</h3>
-            <table className="table">
+            <div className="table-scroll"><table className="table">
               <tbody>
                 {form.requirements.map((requirement, index) => (
                   <tr key={index}>
@@ -244,7 +244,7 @@ export function JobsPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
             <div className="row-actions">
               <Button
                 onClick={() =>

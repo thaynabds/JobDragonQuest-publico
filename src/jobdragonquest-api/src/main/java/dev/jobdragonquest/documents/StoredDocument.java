@@ -26,7 +26,11 @@ public class StoredDocument extends AssignedIdEntity {
         COVER_LETTER,
         CERTIFICATE,
         ATTACHMENT,
-        OTHER
+        OTHER,
+        DIPLOMA,
+        TRANSCRIPT,
+        /** Dado de saúde: o texto não é extraído e token de integração não abre o arquivo. */
+        MEDICAL_REPORT
     }
 
     @Id

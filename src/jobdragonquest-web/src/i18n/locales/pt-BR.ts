@@ -274,7 +274,7 @@ export const ptBR = {
   "pending.msg.NO_UPDATE": "Sem atualização desde {date}",
   "error.generic": "Algo deu errado. Tente de novo.",
   "error.network": "Não foi possível falar com o servidor. Ele está ligado?",
-  "error.invalid_credentials": "E-mail ou senha inválidos, ou conta bloqueada por alguns minutos.",
+  "error.invalid_credentials": "E-mail ou senha inválidos.",
   "error.email_taken": "Já existe uma conta com este e-mail.",
   "error.rate_limited": "Muitas tentativas. Aguarde alguns minutos.",
   "error.validation_failed": "Confira os campos destacados.",
@@ -884,6 +884,11 @@ export const ptBR = {
   "currency.to": "Para",
   "currency.note": "Cotação de {date}. Moedas de países de língua portuguesa, inglesa e espanhola. O valor é só uma referência: não considera custo de vida nem impostos.",
   "documents.formats": "Formatos que consigo ler: PDF, Word (.docx), OpenDocument (.odt), planilhas (.xlsx, .ods, .csv, .tsv), texto (.txt), Markdown (.md) e fotos (.png, .jpg). Word antigo (.doc) e Excel antigo (.xls): salve em .docx ou .xlsx antes.",
+  "auth.attemptsLeft": "Você ainda tem {count} tentativa(s) antes de um bloqueio temporário.",
+  "error.account_locked": "Muitas tentativas erradas. Entrada bloqueada por {minutes} minuto(s). Se esqueceu a senha, use \"Esqueceu sua senha?\".",
+  "documentKind.DIPLOMA": "Diploma",
+  "documentKind.TRANSCRIPT": "Histórico escolar",
+  "documentKind.MEDICAL_REPORT": "Laudo médico",
 };
 
 export type MessageKey = keyof typeof ptBR;

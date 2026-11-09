@@ -84,6 +84,14 @@ public class UserAccount extends AssignedIdEntity {
         this.updatedAt = now;
     }
 
+    int getFailedLogins() {
+        return failedLogins;
+    }
+
+    Instant getLockedUntil() {
+        return lockedUntil;
+    }
+
     boolean isLocked(Instant now) {
         return lockedUntil != null && lockedUntil.isAfter(now);
     }
