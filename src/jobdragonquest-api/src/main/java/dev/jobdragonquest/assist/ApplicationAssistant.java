@@ -116,7 +116,8 @@ public class ApplicationAssistant {
             String skill = SkillNormalizer.normalize(requirement.skill());
             SkillView owned = skills.get(skill);
             // Na pergunta, o nome como a vaga escreveu (o campo skill vem normalizado, em minúsculas).
-            String shown = requirement.text() != null && requirement.text().length() <= 60 ? requirement.text() : requirement.skill();
+            String text = requirement.text() == null ? null : requirement.text().replaceFirst("^Mencionado na descrição:\\s*", "");
+            String shown = text != null && !text.isBlank() && text.length() <= 60 ? text : requirement.skill();
             String question = "Quanto tempo de experiência você tem com " + shown + "?";
             if (owned == null) {
                 list.add(new SuggestedAnswer("experience", question, null, "skills",

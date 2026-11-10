@@ -1,7 +1,7 @@
 {
   "name": "jobdragonquest-web",
   "private": true,
-  "version": "0.7.1",
+  "version": "0.7.2",
   "type": "module",
   "description": "Painel web do JobDragonQuest: perfis, fontes vigiadas, vagas, candidaturas e pendências.",
   "engines": {

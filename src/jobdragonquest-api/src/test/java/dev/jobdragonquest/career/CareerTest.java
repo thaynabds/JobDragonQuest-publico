@@ -95,6 +95,19 @@ class CareerTest extends ApiTestSupport {
     }
 
     @Test
+    void perguntaDeExperienciaNaoMostraPrefixoDoRequisito() throws Exception {
+        String token = newUser();
+        String profile = read(postJson(token, "/api/v1/profiles", PROFILE).andExpect(status().isCreated()), "$.id");
+        String job = read(postJson(token, "/api/v1/jobs", """
+                {"source":"MANUAL","url":"https://carreira.test/prefixo","company":"Empresa P","title":"Dev",
+                 "requirements":[{"kind":"DESIRED","text":"Mencionado na descrição: python","skill":"python"}]}""")
+                .andExpect(status().isCreated()), "$.id");
+        getJson(token, "/api/v1/jobs/" + job + "/assist/answers?profileId=" + profile)
+                .andExpect(jsonPath("$[*].question").value(hasItem("Quanto tempo de experiência você tem com python?")))
+                .andExpect(jsonPath("$[*].question").value(not(hasItem(containsString("Mencionado")))));
+    }
+
+    @Test
     void metodoNaoAceitoResponde405() throws Exception {
         String token = newUser();
         String profile = read(postJson(token, "/api/v1/profiles", PROFILE).andExpect(status().isCreated()), "$.id");
