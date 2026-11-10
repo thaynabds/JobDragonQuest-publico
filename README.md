@@ -8,7 +8,7 @@
 
 > Idioma: **Português** | [English](README.en.md) | [Español](README.es.md)
 
-[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.8.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.0)
+[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.8.1-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.1)
 [![Licença](https://img.shields.io/badge/licen%C3%A7a-todos%20os%20direitos%20reservados-6b7280)](#licença)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
 [![Testes](https://img.shields.io/badge/testes-374%20passando-16a34a)](#qualidade-e-segurança)
@@ -18,7 +18,7 @@
 
 **Plataforma de gestão de carreira e automação de candidaturas a vagas de emprego e estágio, no Brasil e no exterior.**
 
-**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositório:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versão:** 0.8.0
+**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositório:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versão:** 0.8.1
 
 ## Instalação rápida
 
@@ -79,7 +79,7 @@ O JobDragonQuest junta tudo numa central única e explicável:
 
 ## Funcionalidades
 
-### Implementado (v0.8.0)
+### Implementado (v0.8.1)
 
 | Área | O que faz |
 |---|---|

@@ -6,6 +6,13 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.8.1] - 2026-11-10
+
+### Corrigido
+- O menu lateral rola em telas baixas: idioma e "Sair" voltam a ser alcançáveis (#214).
+- As colunas do quadro de candidaturas quebram em linhas em vez de passar da borda da tela; coluna com muitos cartões rola por dentro (#214).
+- O link "Pular para o conteúdo" fica escondido até receber foco do teclado (#214).
+
 ## [0.8.0] - 2026-11-10
 
 ### Adicionado
