@@ -642,7 +642,9 @@ body.aw-themed .link-button {
 }
 
 .column {
-  flex: 0 0 260px;
+  /* Divide a largura do quadro; só rola quando a tela não comporta as colunas com o mínimo. */
+  flex: 1 1 0;
+  min-width: 210px;
   background: var(--surface-2);
   border-radius: var(--radius);
   padding: 0.6rem;
@@ -1197,3 +1199,43 @@ label.btn, .filters label { position: relative; overflow: hidden; }
 .resume-builder-item small { display: block; }
 .resume-builder-item.is-hidden span { opacity: 0.5; text-decoration: line-through; }
 @media print { .resume-builder, .resume-builder-open { display: none; } }
+
+/* Cartões da visão geral: clicáveis (levam à tela certa) e com o "i" de explicação no canto. */
+.stat-wrap { position: relative; }
+.stat-link { display: flex; flex-direction: column; text-decoration: none; color: inherit; cursor: pointer; }
+.stat-link:hover { border-color: var(--primary); }
+.stat-wrap .info-tip { top: 0.4rem; right: 0.4rem; }
+/* Temas do widget de acessibilidade zeram o fundo de todo elemento (transparent !important). Estas superfícies
+   sobrepostas precisam de fundo sólido para o texto ficar legível em qualquer tema. */
+/* Com um tema do widget ligado, ele zera o fundo de todo elemento. As superfícies voltam a usar a cor de superfície
+   do tema escolhido (--aw-surface), com o texto já definido pelo widget (--aw-text), para o texto continuar legível. */
+body.aw-themed .info-tip [role="tooltip"],
+body.aw-themed .toast,
+body.aw-themed .notice,
+body.aw-themed .resume-builder,
+body.aw-themed .card,
+body.aw-themed .column,
+body.aw-themed .kanban-card,
+body.aw-themed .topbar,
+body.aw-themed .board,
+body.aw-themed table,
+body.aw-themed th,
+body.aw-themed td,
+body.aw-themed .btn,
+body.aw-themed .btn-primary,
+body.aw-themed .btn-secondary,
+body.aw-themed .btn-ghost,
+body.aw-themed input,
+body.aw-themed select,
+body.aw-themed textarea,
+body.aw-themed .options-group,
+body.aw-themed .bell-button {
+  background-color: var(--aw-surface, var(--surface)) !important;
+}
+
+/* Menu lateral e avisos: mesma transparência controlada do tema, sem perder o fundo. */
+body.aw-themed .sidebar,
+body.aw-themed .bell-panel {
+  background-color: color-mix(in srgb, var(--aw-surface, var(--surface)) 90%, transparent) !important;
+}
+

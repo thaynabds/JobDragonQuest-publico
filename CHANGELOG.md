@@ -6,6 +6,20 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.7.3] - 2026-11-10
+
+### Adicionado
+- Cartões da visão geral clicáveis, levando à tela certa, com explicação em português, inglês e espanhol (#221).
+- Avisos com endereço para agir e texto completo; o painel conta avaliações comportamentais pendentes como testes (#221).
+
+### Alterado
+- O assistente de e-mail pelo MCP extrai empresa, cargo, link, plataforma, etapa, próxima ação e prazo de cada e-mail, lê o link da vaga para confirmar os dados e registra no JobDragonQuest (#221).
+
+### Corrigido
+- Colunas do quadro de candidaturas dividem a largura da tela; a coluna Reprovada não fica mais cortada (#214).
+- Com um tema do widget de acessibilidade ligado, cartões, tabelas, barra superior e campos voltam a usar a cor de superfície do tema, e o texto continua legível (#220).
+- Dicas do i, alertas e avisos mantêm fundo sólido com um tema do widget de acessibilidade (#216).
+
 ## [0.7.2] - 2026-11-10
 
 ### Alterado

@@ -153,6 +153,34 @@ public class NotificationService {
                 notifications.saveAndFlush(new Notification(userId, draft, true, true, true, false, now))));
     }
 
+    /** Cria um aviso da própria pessoa com onde agir e o texto completo. O endereço aceita só http e https. */
+    public NotificationResponse createManual(UUID userId, NotificationDtos.ManualRequest request) {
+        String url = request.actionUrl() == null || request.actionUrl().isBlank() ? null : request.actionUrl().strip();
+        if (url != null && !isWebAddress(url)) {
+            throw DomainException.badRequest("invalid_action_url", "O endereço para agir precisa começar com http:// ou https://");
+        }
+        Instant now = clock.instant();
+        String topic = NotificationType.ACTION_REQUIRED.name();
+        NotificationDraft draft = new NotificationDraft(topic, NotificationType.ACTION_REQUIRED, NotificationPriority.HIGH,
+                "manual:" + now.toEpochMilli() + ":" + UUID.randomUUID(), null, null, null, request.company(),
+                request.title().strip(), null, request.message().strip(), null, null, null);
+        return independent.execute(status -> {
+            Notification n = new Notification(userId, draft, true, true, true, false, now);
+            n.withAction(url, request.body() == null || request.body().isBlank() ? null : request.body().strip());
+            return NotificationResponse.of(notifications.saveAndFlush(n));
+        });
+    }
+
+    private static boolean isWebAddress(String value) {
+        try {
+            java.net.URI uri = new java.net.URI(value);
+            String scheme = uri.getScheme() == null ? "" : uri.getScheme().toLowerCase(java.util.Locale.ROOT);
+            return (scheme.equals("https") || scheme.equals("http")) && uri.getHost() != null && uri.getRawUserInfo() == null;
+        } catch (java.net.URISyntaxException ex) {
+            return false;
+        }
+    }
+
     @Transactional
     public int purgeOld(UUID userId, Duration retention) {
         return notifications.deleteReadBefore(userId, clock.instant().minus(retention));

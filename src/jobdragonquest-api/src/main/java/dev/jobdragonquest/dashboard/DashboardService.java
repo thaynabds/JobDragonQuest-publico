@@ -86,7 +86,8 @@ public class DashboardService {
         long inProgress = all.stream().filter(app -> app.state().isActive()).count();
         long stale = all.stream().filter(ApplicationResponse::stale).count();
         return new Summary(jobs.count(userId), all.size(), submitted, inProgress,
-                byState.get(ApplicationState.INTERVIEW_SCHEDULED), byState.get(ApplicationState.TECH_TEST_PENDING),
+                byState.get(ApplicationState.INTERVIEW_SCHEDULED),
+                byState.get(ApplicationState.TECH_TEST_PENDING) + byState.get(ApplicationState.BEHAVIORAL_ASSESSMENT),
                 byState.get(ApplicationState.OFFER_RECEIVED), byState.get(ApplicationState.APPROVED),
                 byState.get(ApplicationState.REJECTED), stale, pending(userId, all).size(), sources.count(userId),
                 sources.dueForCheck(userId).size(), Map.copyOf(byState));
@@ -108,6 +109,10 @@ public class DashboardService {
             if (app.state() == ApplicationState.TECH_TEST_PENDING) {
                 items.add(item(PendingType.TECH_TEST, Priority.HIGH, app,
                         app.nextAction() == null ? "Teste técnico pendente" : app.nextAction(), app.nextAction()));
+            }
+            if (app.state() == ApplicationState.BEHAVIORAL_ASSESSMENT) {
+                items.add(item(PendingType.TECH_TEST, Priority.HIGH, app,
+                        app.nextAction() == null ? "Etapa de avaliação pendente" : app.nextAction(), app.nextAction()));
             }
             if (app.nextDueAt() != null && !app.state().isFinal() && app.nextDueAt().isAfter(now)) {
                 if (app.state() == ApplicationState.INTERVIEW_SCHEDULED

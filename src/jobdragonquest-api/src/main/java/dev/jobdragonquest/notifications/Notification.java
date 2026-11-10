@@ -100,6 +100,14 @@ public class Notification extends AssignedIdEntity {
     @Column(name = "snoozed_until")
     private Instant snoozedUntil;
 
+    /** Endereço onde a pessoa deve agir (http ou https). Só avisos criados por ela ou pelo próprio sistema. */
+    @Column(name = "action_url", length = 2048)
+    private String actionUrl;
+
+    /** Texto completo para leitura, por exemplo do e-mail que originou o aviso. */
+    @Column(columnDefinition = "text")
+    private String body;
+
     protected Notification() {
     }
 
@@ -205,6 +213,20 @@ public class Notification extends AssignedIdEntity {
 
     public String getDetail() {
         return detail;
+    }
+
+    public String getActionUrl() {
+        return actionUrl;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    /** Acrescenta o endereço de ação e o texto completo; valores já validados por quem chama. */
+    void withAction(String url, String fullText) {
+        this.actionUrl = url;
+        this.body = fullText;
     }
 
     public String getMessage() {
