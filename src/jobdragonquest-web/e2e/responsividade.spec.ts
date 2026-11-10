@@ -3,6 +3,17 @@ import { expect, test, type Page } from "@playwright/test";
 
 const LARGURAS = [320, 375, 768, 1024, 1440];
 
+/**
+ * Navegação completa com sessão ativa: espera a renovação que a página nova faz ao abrir.
+ * Outra navegação antes disso cancela esse pedido, e o servidor trata a repetição como roubo do refresh token
+ * (revoga a família inteira), o que derruba a sessão de verdade.
+ */
+async function irParaComSessao(page: Page, caminho: string) {
+  const renovou = page.waitForResponse((resposta) => resposta.url().endsWith("/api/v1/auth/refresh"));
+  await page.goto(caminho);
+  await renovou;
+}
+
 async function estouros(page: Page) {
   return page.evaluate(() => {
     const largura = document.documentElement.clientWidth;
@@ -122,13 +133,13 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
 
   // Com um tema do widget ligado, dicas, avisos e menu continuam com fundo legível.
   await page.evaluate((nome) => localStorage.setItem("a11y-widget-v2", JSON.stringify({ theme: nome })), "dark");
-  await page.goto("/perfis/novo");
+  await irParaComSessao(page, "/perfis/novo");
   await expect(page.locator("body.aw-themed")).toHaveCount(1);
   const dicas = await page.locator(".info-tip [role=tooltip]").evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor));
   for (const fundo of dicas) {
     if (fundo === "rgba(0, 0, 0, 0)" || fundo === "transparent") problemas.push(`dica do i transparente com tema: ${fundo}`);
   }
-  await page.goto("/");
+  await irParaComSessao(page, "/");
   await expect(page.locator(".bell-button")).toBeVisible({ timeout: 20000 });
   await page.locator(".bell-button").click();
   const fundoAvisos = await page.locator("#bell-panel").evaluate((el) => getComputedStyle(el).backgroundColor);

@@ -2,7 +2,7 @@
 // de dados pessoais; o README publicado na main já mostra a versão nova.
 import { check, finish, run } from "./lib.mjs";
 
-const VERSION = "v0.7.3";
+const VERSION = "v0.8.0";
 const remote = (name, ref) => (run("git", ["ls-remote", name, ref]).stdout.split("\t")[0] ?? "").trim();
 run("git", ["fetch", "-q", "origin"]);
 run("git", ["fetch", "-q", "publico", "main", "develop"]);

@@ -15,7 +15,13 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["vitest/globals", "node"]
+    "types": ["vitest/globals", "node"],
+    // O chat com a IA usa as mesmas ferramentas do servidor MCP. O zod vem sempre deste pacote: no CI do painel o
+    // node_modules do MCP não existe.
+    "paths": {
+      "@mcp/*": ["../jobdragonquest-mcp/src/*"],
+      "zod": ["./node_modules/zod"]
+    }
   },
   "include": ["src", "vite.config.ts"]
 }

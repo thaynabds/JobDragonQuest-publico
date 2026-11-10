@@ -498,6 +498,24 @@ body.aw-themed .link-button {
   overflow-wrap: anywhere;
 }
 
+.chat-log {
+  max-height: 28rem;
+  overflow-y: auto;
+  margin: 0.75rem 0;
+}
+
+.chat-user,
+.chat-ai {
+  margin: 0.5rem 0;
+}
+
+.chat-confirm {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -1239,3 +1257,29 @@ body.aw-themed .bell-panel {
   background-color: color-mix(in srgb, var(--aw-surface, var(--surface)) 90%, transparent) !important;
 }
 
+
+.quick-actions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.75rem;
+}
+
+.quick-actions a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  height: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.quick-actions a:hover,
+.quick-actions a:focus-visible {
+  border-color: var(--primary);
+}

@@ -1,10 +1,14 @@
 /// <reference types="vitest/config" />
+import { fileURLToPath } from "node:url";
+
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
+import { AI_HOSTS } from "./src/assistant/hosts";
+
 // CSP só no build de produção: o modo de desenvolvimento do Vite injeta um script inline (React Refresh).
 const CSP =
-  "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://cdn.jsdelivr.net; connect-src 'self'; " +
+  "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://cdn.jsdelivr.net; connect-src 'self' " + AI_HOSTS + "; " +
   "base-uri 'self'; form-action 'self'; object-src 'none'";
 // frame-ancestors não vale em <meta>: o navegador ignora. A proteção contra frames fica para o proxy de produção.
 const contentSecurityPolicy: Plugin = {
@@ -25,11 +29,15 @@ const allowedHosts = (process.env.JOBDRAGONQUEST_ALLOWED_HOSTS ?? "")
   .map((host) => host.trim().toLowerCase())
   .filter((host) => /^\.?[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(host));
 
+const mcpSource = fileURLToPath(new URL("../jobdragonquest-mcp/src", import.meta.url));
+const zod = fileURLToPath(new URL("./node_modules/zod", import.meta.url));
+
 export default defineConfig({
   // Versão do painel, comparada com a da API para avisar quando há atualização.
   define: { __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? "dev") },
   plugins: [react(), contentSecurityPolicy],
-  server: { host: "127.0.0.1", port: 5173, strictPort: true, proxy, allowedHosts },
+  resolve: { alias: { "@mcp": mcpSource, zod } },
+  server: { host: "127.0.0.1", port: 5173, strictPort: true, proxy, allowedHosts, fs: { allow: [".", mcpSource] } },
   preview: { host: "127.0.0.1", port: 5173, strictPort: true, proxy, allowedHosts },
   build: { sourcemap: false, target: "es2022" },
   test: {

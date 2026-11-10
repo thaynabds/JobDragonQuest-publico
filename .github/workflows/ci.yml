@@ -143,6 +143,8 @@ jobs:
         run: pip install --no-cache-dir ruff==0.17.1 && ruff check .
       - name: Testes dos scripts e da extensão
         run: node --test scripts/verificar/commits.test.mjs scripts/notas-da-release.test.mjs extensao-navegador/comum.test.mjs
+      - name: Teste do atalho para abrir sem terminal
+        run: bash scripts/verificar/atalho.test.sh
       - name: Testes do plugin sem rede
         run: python -m unittest discover -s integrations/congo -p 'test_*.py' -v
 

@@ -20,7 +20,7 @@ export const ASSISTENTES = {
 
 export type Assistente = keyof typeof ASSISTENTES;
 
-const REGRAS = [
+export const REGRAS = [
   "Pergunte em que idioma a pessoa quer conversar, se ele não foi informado.",
   "Use jobdragonquest_listar_perfis para achar o perfil e leia só os dados necessários.",
   "Nunca invente experiência, certificado, idioma, número ou resultado. Se faltar algo, pergunte.",

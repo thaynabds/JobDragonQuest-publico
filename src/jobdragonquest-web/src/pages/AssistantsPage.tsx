@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { AssistantChat } from "../assistant/AssistantChat";
 import { Button, Card, Field, Notice } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import type { MessageKey } from "../i18n/messages";
@@ -41,6 +42,7 @@ export function AssistantsPage() {
   const [copied, setCopied] = useState(false);
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
+  const [seed, setSeed] = useState({ text: "", n: 0 });
   const k = (key: string) => t(key as MessageKey);
   const fields = ASSISTANTS.find((a) => a.id === selected)?.fields ?? [];
   const request = buildRequest(selected, language, Object.fromEntries(fields.map((f) => [f, values[f] ?? ""])));
@@ -68,8 +70,10 @@ export function AssistantsPage() {
           ))}
         </div>
         <p className="prewrap small"><code>{request}</code></p>
-        <Button variant="primary" onClick={copy}>{copied ? t("assistants.copied") : t("assistants.copy")}</Button>
+        <Button variant="primary" onClick={() => setSeed({ text: request, n: seed.n + 1 })}>{t("assistant.chat.sendHere")}</Button>{" "}
+        <Button onClick={copy}>{copied ? t("assistants.copied") : t("assistants.copy")}</Button>
       </Card>
+      <AssistantChat seed={seed} />
       <Card title={t("assistants.people")}>
         <p className="muted small">{t("assistants.peopleHint")}</p>
         <div className="form-grid">

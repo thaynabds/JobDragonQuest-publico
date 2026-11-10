@@ -3,6 +3,7 @@ import { Card, Loading, Notice, Stat } from "../components/ui";
 import { useI18n } from "../i18n/I18nContext";
 import { useAsync } from "../utils/useAsync";
 import { PendingList } from "./PendingList";
+import { QuickActions } from "./QuickActions";
 
 export function DashboardPage() {
   const { t, errorMessage } = useI18n();
@@ -31,6 +32,9 @@ export function DashboardPage() {
       )}
       <Card title={t("dashboard.pending")}>
         <PendingList onChange={summary.reload} />
+      </Card>
+      <Card title={t("quick.title")}>
+        <QuickActions />
       </Card>
     </div>
   );
