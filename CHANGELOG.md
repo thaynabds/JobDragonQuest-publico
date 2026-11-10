@@ -6,6 +6,13 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+### Alterado
+- Painel de avisos com a mesma transparência do menu lateral (#210).
+
+### Corrigido
+- Pergunta de experiência não mostra mais o prefixo "Mencionado na descrição" (#208).
+- Os links "Esqueceu sua senha?" e "Não tem conta?" voltam a parecer links, também com tema do widget ligado (#210).
+
 ## [0.7.1] - 2026-11-09
 
 ### Corrigido

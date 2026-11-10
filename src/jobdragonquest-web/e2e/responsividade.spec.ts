@@ -36,6 +36,25 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
   };
   await conferir("login");
 
+  // Os links da tela de entrada continuam parecendo links, também com um tema do widget ligado.
+  for (const tema of [null, "dark"]) {
+    if (tema) {
+      await page.evaluate((nome) => localStorage.setItem("a11y-widget-v2", JSON.stringify({ theme: nome })), tema);
+      await page.reload();
+      await expect(page.locator("body.aw-themed")).toHaveCount(1);
+    }
+    const estilos = await page.locator(".link-button").evaluateAll((els) => els.map((el) => {
+      const s = getComputedStyle(el);
+      return { fundo: s.backgroundColor, borda: s.borderTopWidth };
+    }));
+    if (estilos.length === 0) problemas.push("links da tela de entrada não encontrados");
+    for (const estilo of estilos) {
+      if (estilo.fundo !== "rgba(0, 0, 0, 0)" || estilo.borda !== "0px") problemas.push(`link com cara de botão (tema ${tema}): ${JSON.stringify(estilo)}`);
+    }
+  }
+  await page.evaluate(() => localStorage.removeItem("a11y-widget-v2"));
+  await page.reload();
+
   await page.getByRole("button", { name: "Não tem conta? Crie uma." }).click();
   await page.getByLabel("Seu nome").fill("Pessoa Responsiva");
   await page.getByLabel("E-mail").fill(`resp-${Date.now()}@teste.dev`);
@@ -93,6 +112,9 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
     const caixa = await page.locator("#bell-panel").boundingBox();
     const medida = await estouros(page);
     if (!caixa || caixa.x < 0 || caixa.x + caixa.width > medida.largura || medida.pagina > medida.largura + 1) problemas.push(`avisos @${largura}: ${JSON.stringify(caixa)} ${medida.pagina}/${medida.largura}`);
+    const fundoAvisos = await page.locator("#bell-panel").evaluate((el) => getComputedStyle(el).backgroundColor);
+    const alfaAvisos = Number(/(?:\/|,)\s*([0-9.]+)\s*\)$/.exec(fundoAvisos)?.[1] ?? "1");
+    if (!(alfaAvisos >= 0.85 && alfaAvisos < 1)) problemas.push(`painel de avisos com opacidade ${alfaAvisos} @${largura}`);
     await page.locator(".bell-button").click();
     await expect(page.locator("#bell-panel")).toBeHidden();
   }
