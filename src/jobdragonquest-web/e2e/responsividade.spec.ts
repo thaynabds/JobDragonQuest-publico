@@ -88,6 +88,19 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
   await page.keyboard.press("Escape");
   await expect(page.getByRole("link", { name: "Candidaturas", exact: true })).toBeHidden();
 
+  // Menu aberto numa janela baixa: rola por dentro e o botão de sair, no fim, continua alcançável.
+  await page.setViewportSize({ width: 1280, height: 480 });
+  await page.getByRole("button", { name: /Menu/ }).click();
+  const sair = page.locator(".sidebar-footer .btn");
+  await sair.scrollIntoViewIfNeeded();
+  const caixaSair = await sair.boundingBox();
+  if (!caixaSair || caixaSair.y + caixaSair.height > 480) problemas.push(`botão de sair fora do menu: ${JSON.stringify(caixaSair)}`);
+  await page.keyboard.press("Escape");
+
+  // "Pular para o conteúdo" só aparece com foco do teclado.
+  const pular = await page.locator(".skip-link").boundingBox();
+  if (!pular || pular.y + pular.height > 0) problemas.push(`link de pular visível sem foco: ${JSON.stringify(pular)}`);
+
   // Dados para as tabelas, o quadro e o currículo não ficarem vazios, com textos longos de propósito.
   const longo = "Texto-bem-comprido-sem-espacos-".repeat(6);
   const dados = await page.evaluate(async (texto) => {
@@ -109,6 +122,20 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
     await page.locator("h1, h3").first().waitFor();
     await page.waitForTimeout(1200);
     await conferir(rota);
+  }
+
+  // Quadro de candidaturas: as colunas quebram em linhas, sem nenhuma cortada na borda nem rolagem lateral.
+  await page.goto("/candidaturas");
+  await page.locator(".board .column").first().waitFor();
+  for (const largura of LARGURAS) {
+    await page.setViewportSize({ width: largura, height: 800 });
+    await page.waitForTimeout(150);
+    const quadro = await page.locator(".board").evaluate((el) => {
+      const limite = el.getBoundingClientRect().right;
+      const cortadas = [...el.querySelectorAll(".column")].filter((c) => c.getBoundingClientRect().right > limite + 1).length;
+      return { rolagem: el.scrollWidth - el.clientWidth, cortadas };
+    });
+    if (quadro.rolagem > 1 || quadro.cortadas > 0) problemas.push(`quadro @${largura}: ${JSON.stringify(quadro)}`);
   }
 
   // O widget oficial de acessibilidade precisa estar na página.
