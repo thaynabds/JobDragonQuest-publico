@@ -55,7 +55,7 @@ jobs:
 
   web:
     if: github.event_name == 'push' || github.repository == 'thaynabds/JobDragonQuest'
-    name: Painel (Node 20, npm run verify)
+    name: Painel (Node 22, npm run verify)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     defaults:
@@ -67,7 +67,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "20.19"
+          node-version: "22"
           cache: npm
           cache-dependency-path: src/jobdragonquest-web/package-lock.json
       - name: Dependências exatas do lockfile
@@ -93,7 +93,7 @@ jobs:
 
   mcp:
     if: github.event_name == 'push' || github.repository == 'thaynabds/JobDragonQuest'
-    name: Servidor MCP (Node 20, npm run verify)
+    name: Servidor MCP (Node 22, npm run verify)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     defaults:
@@ -105,7 +105,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "20.19"
+          node-version: "22"
           cache: npm
           cache-dependency-path: src/jobdragonquest-mcp/package-lock.json
       - name: Dependências exatas do lockfile
@@ -224,7 +224,7 @@ jobs:
           cache: maven
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "20.19"
+          node-version: "22"
           cache: npm
           cache-dependency-path: src/jobdragonquest-web/package-lock.json
       - name: Build da API

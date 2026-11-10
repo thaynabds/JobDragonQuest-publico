@@ -22,7 +22,7 @@
 
 ## Instalación rápida
 
-Funciona entero en tu computadora, sin deploy y sin nada pago. Requisitos: **Java 21**, **Node 20.19+** y **PostgreSQL 14+** instalados (PostgreSQL solo necesita sus programas: sin configuración ni sudo).
+Funciona entero en tu computadora, sin deploy y sin nada pago. Requisitos: **Java 21**, **Node 22.22.2+** y **PostgreSQL 14+** instalados (PostgreSQL solo necesita sus programas: sin configuración ni sudo).
 
 ```bash
 git clone https://github.com/thaynabds/JobDragonQuest-publico.git JobDragonQuest

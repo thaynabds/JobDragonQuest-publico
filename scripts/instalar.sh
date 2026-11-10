@@ -17,6 +17,17 @@ missing=()
 hint=()
 
 version_major() { sed -E 's/[^0-9]*([0-9]+).*/\1/' <<<"$1"; }
+# Aceita ^22.22.2, ^24.15.0 ou >=26 (versão no formato X.Y.Z, sem o "v").
+node_supported() {
+  local major minor patch
+  IFS=. read -r major minor patch <<<"$1"
+  [[ "$major" =~ ^[0-9]+$ && "$minor" =~ ^[0-9]+$ && "${patch%%[^0-9]*}" =~ ^[0-9]+$ ]] || return 1
+  patch="${patch%%[^0-9]*}"
+  if (( major == 22 )); then (( minor > 22 || (minor == 22 && patch >= 2) ))
+  elif (( major == 24 )); then (( minor >= 15 ))
+  else (( major >= 26 ))
+  fi
+}
 
 if command -v java >/dev/null; then
   java_version="$(java -version 2>&1 | awk -F'"' '/version/ {print $2; exit}')"
@@ -27,13 +38,12 @@ fi
 
 if command -v node >/dev/null; then
   node_version="$(node -v | tr -d v)"
-  node_major="${node_version%%.*}"
-  node_minor="$(cut -d. -f2 <<<"$node_version")"
-  if [[ "$node_major" -lt 20 || ( "$node_major" -eq 20 && "$node_minor" -lt 19 ) ]]; then
-    missing+=("Node.js 20.19 ou mais novo (achei $node_version)"); hint+=("instale pelo nvm: https://github.com/nvm-sh/nvm (nvm install 20)")
+  # Vitest 5 e jsdom 30 pedem ^22.22.2, ^24.15.0 ou >=26.
+  if ! node_supported "$node_version"; then
+    missing+=("Node.js 22.22.2 ou mais novo (achei $node_version)"); hint+=("instale pelo nvm: https://github.com/nvm-sh/nvm (nvm install 22)")
   fi
 else
-  missing+=("Node.js 20.19+"); hint+=("instale pelo nvm: https://github.com/nvm-sh/nvm (nvm install 20)")
+  missing+=("Node.js 22.22.2+"); hint+=("instale pelo nvm: https://github.com/nvm-sh/nvm (nvm install 22)")
 fi
 command -v npm >/dev/null || { missing+=("npm"); hint+=("vem junto com o Node.js"); }
 command -v openssl >/dev/null || { missing+=("openssl"); hint+=("sudo apt install openssl"); }

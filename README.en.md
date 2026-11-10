@@ -22,7 +22,7 @@
 
 ## Quick install
 
-It runs entirely on your computer, with no deployment and nothing paid. Requirements: **Java 21**, **Node 20.19+** and **PostgreSQL 14+** installed (PostgreSQL only needs its programs: no configuration or sudo).
+It runs entirely on your computer, with no deployment and nothing paid. Requirements: **Java 21**, **Node 22.22.2+** and **PostgreSQL 14+** installed (PostgreSQL only needs its programs: no configuration or sudo).
 
 ```bash
 git clone https://github.com/thaynabds/JobDragonQuest-publico.git JobDragonQuest

@@ -16,6 +16,13 @@ for (const script of ["instalar.sh", "conectar-congo.sh", "iniciar.sh", "configu
 const prereq = run("bash", ["scripts/instalar.sh", "--verificar"]);
 check("instalar.sh confere os pré-requisitos", prereq.status === 0 && prereq.stdout.includes("PRE_REQUISITOS_OK"), prereq.stdout + prereq.stderr);
 check("instalar.sh recusa opção desconhecida", run("bash", ["scripts/instalar.sh", "--qualquer"]).status === 1);
+// Versões do Node aceitas pelo Vitest 5 e jsdom 30 (#151): ^22.22.2, ^24.15.0 ou >=26.
+const nodeVersions = { "20.19.0": false, "22.22.1": false, "22.22.2": true, "22.23.3": true, "23.5.0": false, "24.14.0": false, "24.15.0": true, "25.1.0": false, "26.0.0": true, abc: false };
+const helper = readFileSync(join(ROOT, "scripts", "instalar.sh"), "utf8").match(/^node_supported\(\) \{[\s\S]*?^\}$/m)?.[0] ?? "";
+for (const [version, expected] of Object.entries(nodeVersions)) {
+  const accepted = run("bash", ["-c", `${helper}\nnode_supported "$1"`, "teste", version]).status === 0;
+  check(`instalar.sh ${expected ? "aceita" : "recusa"} Node ${version}`, helper !== "" && accepted === expected);
+}
 
 // Conta e token reais para provar que a configuração gerada funciona de ponta a ponta.
 async function call(method, path, token, body) {

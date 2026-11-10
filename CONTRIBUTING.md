@@ -5,7 +5,7 @@ Este guia vale para quem abre issue ou PR e para as ferramentas de IA que trabal
 
 ## Preparar o ambiente
 
-Requisitos: Java 21, Node 20.19+ e PostgreSQL 14+ (o instalador cuida do banco local, sem sudo).
+Requisitos: Java 21, Node 22.22.2+ e PostgreSQL 14+ (o instalador cuida do banco local, sem sudo).
 
 ```bash
 scripts/instalar.sh
