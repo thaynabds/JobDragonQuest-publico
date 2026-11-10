@@ -8,7 +8,7 @@
 
 > Idioma: [Português](README.md) | [English](README.en.md) | **Español**
 
-[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.7.3-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.7.3)
+[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.8.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.0)
 [![Licencia](https://img.shields.io/badge/licencia-todos%20los%20derechos%20reservados-6b7280)](#licencia)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
 [![Pruebas](https://img.shields.io/badge/pruebas-374%20aprobadas-16a34a)](#calidad-y-seguridad)
@@ -18,7 +18,7 @@
 
 **Plataforma de gestión de carrera y automatización de postulaciones a empleos y prácticas, en Brasil y en el exterior.**
 
-**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositorio:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versión:** 0.7.3
+**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositorio:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versión:** 0.8.0
 
 ## Instalación rápida
 
@@ -35,6 +35,8 @@ Funcionó cuando la terminal muestra `INSTALACAO_CONCLUIDA` y **http://127.0.0.1
 El instalador revisa los requisitos (y muestra el comando para instalar lo que falte), crea un PostgreSQL solo tuyo en `data/postgres` (127.0.0.1:5433), guarda `.env` con contraseñas y secreto JWT aleatorios (permiso 600), instala el panel, compila la API y el servidor MCP y levanta todo. Puedes ejecutarlo de nuevo cuando quieras.
 
 Abre **http://127.0.0.1:5173**, crea tu cuenta y empieza por los perfiles y las fuentes vigiladas. Para detener: `scripts/iniciar.sh parar`. Para levantar de nuevo: `scripts/iniciar.sh`.
+
+Para abrirlo después sin terminal, crea el acceso directo en el menú de aplicaciones (Linux) o en Aplicaciones (macOS) una vez: `scripts/instalar-atalho.sh`. El acceso **JobDragonQuest** levanta lo que esté apagado y abre el panel en el navegador.
 
 Conectar tu IA a JobDragonQuest (MCP) y Discord (Congo Grey Parrot):
 
@@ -77,7 +79,7 @@ JobDragonQuest lo reúne todo en una central única y explicable:
 
 ## Funcionalidades
 
-### Implementado (v0.7.3)
+### Implementado (v0.8.0)
 
 | Área | Qué hace |
 |---|---|

@@ -2,9 +2,9 @@
 // - nenhuma ferramenta apaga dados, mexe em tokens ou na conta;
 // - ids só no formato UUID; textos com tamanho máximo; enums fechados;
 // - mudança de etapa sempre como fonte AGENT: passa pela regra de confiança e, se baixa, vira sugestão para a pessoa;
+// - sem dependência do Node: o painel web usa esta mesma lista no chat com a IA (src/jobdragonquest-web/src/assistant);
 // - respostas marcadas como dados não confiáveis (vagas e mensagens vêm de sites externos) e com tamanho limitado.
 import { ASSISTENTES, roteiro, type Assistente } from "./assistentes.js";
-import { randomUUID } from "node:crypto";
 
 import { z } from "zod";
 
@@ -434,7 +434,7 @@ export const TOOLS = [
           profileId: args.perfilId ?? null,
           notes: args.observacoes ?? null,
         },
-        { "Idempotency-Key": `mcp-${randomUUID()}` },
+        { "Idempotency-Key": `mcp-${globalThis.crypto.randomUUID()}` },
       ),
   }),
   tool({

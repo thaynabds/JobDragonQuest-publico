@@ -6,7 +6,17 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.8.0] - 2026-11-10
+
+### Adicionado
+- A visão geral mostra "O que você pode fazer aqui", com atalho para cada função do painel: vagas, candidaturas, fontes, perfil e currículo, preparar candidatura, chat com a IA, mercado, triagem, concursos e revisão (#223).
+- Atalho **JobDragonQuest** no menu de aplicativos (Linux) ou em Aplicativos (macOS), criado por `scripts/instalar-atalho.sh`: liga o que estiver desligado e abre o painel no navegador, sem terminal (#222).
+- Chat com a IA dentro do painel, em Assistentes: a pessoa escolhe Ollama no próprio computador (gratuito), Anthropic ou OpenAI com a chave dela, e a IA usa as mesmas ferramentas do servidor MCP. Toda alteração pede permissão antes; a chave vai direto do navegador ao provedor e o JobDragonQuest não a recebe (#221).
+
 ## [0.7.3] - 2026-11-10
+
+### Corrigido
+- Com um tema do widget de acessibilidade ligado, cartões, tabelas, barra superior e campos voltam a usar a cor de superfície do tema, e o texto continua legível (#220).
 
 ### Adicionado
 - Cartões da visão geral clicáveis, levando à tela certa, com explicação em português, inglês e espanhol (#221).

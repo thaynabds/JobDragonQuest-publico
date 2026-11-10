@@ -8,7 +8,7 @@
 
 > Idioma: **Português** | [English](README.en.md) | [Español](README.es.md)
 
-[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.7.3-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.7.3)
+[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.8.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.0)
 [![Licença](https://img.shields.io/badge/licen%C3%A7a-todos%20os%20direitos%20reservados-6b7280)](#licença)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
 [![Testes](https://img.shields.io/badge/testes-374%20passando-16a34a)](#qualidade-e-segurança)
@@ -18,7 +18,7 @@
 
 **Plataforma de gestão de carreira e automação de candidaturas a vagas de emprego e estágio, no Brasil e no exterior.**
 
-**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositório:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versão:** 0.7.3
+**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositório:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versão:** 0.8.0
 
 ## Instalação rápida
 
@@ -35,6 +35,8 @@ Deu certo quando o terminal mostra `INSTALACAO_CONCLUIDA` e **http://127.0.0.1:5
 O instalador confere os pré-requisitos (e mostra o comando para instalar o que faltar), cria um PostgreSQL só seu em `data/postgres` (127.0.0.1:5433), grava `.env` com senhas e segredo JWT aleatórios (permissão 600), instala o painel, compila a API e o servidor MCP e sobe tudo. Pode rodar de novo quando quiser.
 
 Abra **http://127.0.0.1:5173**, crie sua conta e comece pelos perfis e pelas fontes vigiadas. Para parar: `scripts/iniciar.sh parar`. Para subir de novo: `scripts/iniciar.sh`.
+
+Para abrir depois sem terminal, crie o atalho no menu de aplicativos (Linux) ou em Aplicativos (macOS) uma vez: `scripts/instalar-atalho.sh`. O atalho **JobDragonQuest** liga o que estiver desligado e abre o painel no navegador.
 
 Ligar a sua IA ao JobDragonQuest (MCP) e o Discord (Congo Grey Parrot):
 
@@ -77,11 +79,11 @@ O JobDragonQuest junta tudo numa central única e explicável:
 
 ## Funcionalidades
 
-### Implementado (v0.7.3)
+### Implementado (v0.8.0)
 
 | Área | O que faz |
 |---|---|
-| Currículo e carreira | Prévia em tempo real, escolha do que aparece, download em Word, assistentes de carreira executados pela IA ligada por MCP (gratuito) e base de perguntas de triagem |
+| Currículo e carreira | Prévia em tempo real, escolha do que aparece, download em Word, assistentes de carreira e chat com a IA dentro do painel (Ollama gratuito no seu computador, ou Anthropic/OpenAI com a sua chave), além da IA ligada por MCP e base de perguntas de triagem |
 | Concursos | Etapas e prazos, páginas oficiais vigiadas, leitura de PDFs, possíveis menções por nome e inscrição e aviso quando um documento não pôde ser lido |
 | Idiomas | Busca em português, inglês e espanhol; painel completo nesses três e telas principais em francês, italiano, chinês, japonês, hindi, árabe, bengali, russo e indonésio |
 | Documentos | Currículos com versão, cartas, certificados e anexos de candidatura (até 5 MB, tipo conferido pelo conteúdo, só a sua conta vê). Atualize o currículo mandando um certificado em PDF, um Word, um link ou uma foto: o texto é lido no seu computador (PDF com Apache PDFBox, foto com Tesseract se instalado ou pela sua IA) e vira uma proposta de item que você confere antes de entrar no perfil |

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
+import { forgetSettings } from "../assistant/settings";
 import { onTokenChange, refreshSession, setAccessToken } from "../api/client";
 import { api } from "../api/endpoints";
 import type { Me } from "../api/types";
@@ -66,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           await api.logout();
         } finally {
+          forgetSettings();
           setAccessToken(null);
           setUser(null);
         }
