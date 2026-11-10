@@ -8,7 +8,7 @@
 
 > Language: [Português](README.md) | **English** | [Español](README.es.md)
 
-[![Version](https://img.shields.io/badge/version-0.8.0-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.0)
+[![Version](https://img.shields.io/badge/version-0.8.1-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.1)
 [![License](https://img.shields.io/badge/license-all%20rights%20reserved-6b7280)](#license)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-374%20passing-16a34a)](#quality-and-security)
@@ -18,7 +18,7 @@
 
 **A career management and job application automation platform for jobs and internships, in Brazil and abroad.**
 
-**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.8.0
+**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.8.1
 
 ## Quick install
 
@@ -79,7 +79,7 @@ JobDragonQuest brings it all into one explainable hub:
 
 ## Features
 
-### Implemented (v0.8.0)
+### Implemented (v0.8.1)
 
 | Area | What it does |
 |---|---|
