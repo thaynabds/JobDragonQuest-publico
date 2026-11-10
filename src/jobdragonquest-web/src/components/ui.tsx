@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { Link } from "react-router";
 
 import { useI18n } from "../i18n/I18nContext";
 import { safeUrl } from "../utils/safe";
@@ -97,11 +98,36 @@ export function ExternalLink({ href, children }: { href: string | null | undefin
   );
 }
 
-export function Stat({ label, value, tone }: { label: string; value: number | string; tone?: "warn" | "good" | "bad" }) {
-  return (
-    <div className={`stat${tone ? ` stat-${tone}` : ""}`}>
+export function Stat({
+  label,
+  value,
+  tone,
+  to,
+  info,
+}: {
+  label: string;
+  value: number | string;
+  tone?: "warn" | "good" | "bad";
+  to?: string;
+  info?: string;
+}) {
+  const className = `stat${tone ? ` stat-${tone}` : ""}`;
+  const content = (
+    <>
       <span className="stat-value">{value}</span>
       <span className="stat-label">{label}</span>
+    </>
+  );
+  return (
+    <div className="stat-wrap">
+      {to ? (
+        <Link className={`${className} stat-link`} to={to}>
+          {content}
+        </Link>
+      ) : (
+        <div className={className}>{content}</div>
+      )}
+      {info && <InfoTip text={info} />}
     </div>
   );
 }

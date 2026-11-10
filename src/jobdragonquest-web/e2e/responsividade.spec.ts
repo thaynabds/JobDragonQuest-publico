@@ -55,12 +55,27 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
   await page.evaluate(() => localStorage.removeItem("a11y-widget-v2"));
   await page.reload();
 
+  // Cadastro antes de tudo que exige sessão (menu, avisos, dados).
   await page.getByRole("button", { name: "Não tem conta? Crie uma." }).click();
   await page.getByLabel("Seu nome").fill("Pessoa Responsiva");
   await page.getByLabel("E-mail").fill(`resp-${Date.now()}@teste.dev`);
   await page.locator('input[autocomplete="new-password"]').fill("senha-forte-de-teste-123");
   await page.getByRole("button", { name: "Criar conta" }).click();
   await expect(page.getByRole("heading", { name: "Visão geral" })).toBeVisible();
+
+  // Menu aberto no celular.
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.goto("/");
+  await page.getByRole("button", { name: /Menu/ }).click();
+  await expect(page.getByRole("link", { name: "Candidaturas", exact: true })).toBeVisible();
+  const menu = await estouros(page);
+  if (menu.pagina > menu.largura + 1) problemas.push(`menu aberto: ${menu.pagina}/${menu.largura}`);
+  const fundo = await page.locator(".sidebar").evaluate((el) => getComputedStyle(el).backgroundColor);
+  const casou = /(?:\/|,)\s*([0-9.]+)\s*\)$/.exec(fundo);
+  const alfa = Number(casou?.[1] ?? "1");
+  if (!(alfa >= 0.85 && alfa < 1)) problemas.push(`menu lateral com opacidade ${alfa}`);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("link", { name: "Candidaturas", exact: true })).toBeHidden();
 
   // Dados para as tabelas, o quadro e o currículo não ficarem vazios, com textos longos de propósito.
   const longo = "Texto-bem-comprido-sem-espacos-".repeat(6);
@@ -85,20 +100,6 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
     await conferir(rota);
   }
 
-  // Menu aberto no celular.
-  await page.setViewportSize({ width: 320, height: 700 });
-  await page.goto("/");
-  await page.getByRole("button", { name: /Menu/ }).click();
-  await expect(page.getByRole("link", { name: "Candidaturas" })).toBeVisible();
-  const menu = await estouros(page);
-  if (menu.pagina > menu.largura + 1) problemas.push(`menu aberto: ${menu.pagina}/${menu.largura}`);
-  const fundo = await page.locator(".sidebar").evaluate((el) => getComputedStyle(el).backgroundColor);
-  const casou = /(?:\/|,)\s*([0-9.]+)\s*\)$/.exec(fundo);
-  const alfa = Number(casou?.[1] ?? "1");
-  if (!(alfa >= 0.85 && alfa < 1)) problemas.push(`menu lateral com opacidade ${alfa}`);
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("link", { name: "Candidaturas" })).toBeHidden();
-
   // O widget oficial de acessibilidade precisa estar na página.
   await page.goto("/");
   await expect(page.locator("#a11y-btn")).toBeVisible();
@@ -118,6 +119,23 @@ test("todas as telas cabem em todas as larguras", async ({ page }) => {
     await page.locator(".bell-button").click();
     await expect(page.locator("#bell-panel")).toBeHidden();
   }
+
+  // Com um tema do widget ligado, dicas, avisos e menu continuam com fundo legível.
+  await page.evaluate((nome) => localStorage.setItem("a11y-widget-v2", JSON.stringify({ theme: nome })), "dark");
+  await page.goto("/perfis/novo");
+  await expect(page.locator("body.aw-themed")).toHaveCount(1);
+  const dicas = await page.locator(".info-tip [role=tooltip]").evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor));
+  for (const fundo of dicas) {
+    if (fundo === "rgba(0, 0, 0, 0)" || fundo === "transparent") problemas.push(`dica do i transparente com tema: ${fundo}`);
+  }
+  await page.goto("/");
+  await expect(page.locator(".bell-button")).toBeVisible({ timeout: 20000 });
+  await page.locator(".bell-button").click();
+  const fundoAvisos = await page.locator("#bell-panel").evaluate((el) => getComputedStyle(el).backgroundColor);
+  if (fundoAvisos === "rgba(0, 0, 0, 0)" || fundoAvisos === "transparent") problemas.push(`painel de avisos transparente com tema: ${fundoAvisos}`);
+  await page.locator(".bell-button").click();
+  await page.evaluate(() => localStorage.removeItem("a11y-widget-v2"));
+  await page.reload();
 
   expect(problemas).toEqual([]);
 });
