@@ -29,6 +29,7 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 | v0.7.0 | 09/11/2026 | Currículo por dado com Word e prévia; assistentes por MCP; concursos; triagem; novos idiomas |
 | v0.7.1 | 09/11/2026 | Menu lateral levemente translúcido |
 | v0.7.2 | 10/11/2026 | Painel de avisos translúcido; links da tela de entrada sem cara de botão |
+| v0.8.4 | 12/11/2026 | Envio com um clique a partir do JobDragonQuest: a extensão preenche, confere e envia só com a confirmação da pessoa, e registra o envio com data, hora e o endereço para conferir (#242)
 | v0.8.3 | 12/11/2026 | Testes da extensão com telefone fictício, para a auditoria de vazamento aprovar o espelho público (#238) |
 | v0.8.2 | 11/11/2026 | Preenchimento da candidatura pela extensão a partir da vaga salva (campos de texto, sem envio e sem dados sensíveis) (#234)
 | v0.8.0 | 10/11/2026 | Chat com a IA dentro do painel (Ollama gratuito, Anthropic ou OpenAI com a chave da pessoa); atalho para abrir sem terminal; visão geral com o que dá para fazer |

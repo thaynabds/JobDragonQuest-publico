@@ -19,7 +19,14 @@
         <h2 id="titulo-preencher">Preencher a candidatura</h2>
         <p id="situacao-preencher" role="status" aria-live="polite"></p>
         <button id="preencher" type="button" hidden>Preencher formulário desta página</button>
-        <p class="nota">Preenche só campos de texto vazios, com o perfil da vaga. Nunca envia, nunca preenche CPF, deficiência, raça, gênero, orientação nem consentimentos.</p>
+        <p class="nota">Preenche só campos de texto vazios, com o perfil da vaga. Nunca preenche CPF, deficiência, raça, gênero, orientação nem consentimentos.</p>
+      </section>
+      <section id="secao-enviar" aria-labelledby="titulo-enviar" hidden>
+        <h2 id="titulo-enviar">Enviar candidatura (um clique)</h2>
+        <label><input id="confirmar-envio" type="checkbox" /> Revisei os campos e confirmo o envio desta candidatura</label>
+        <button id="enviar" type="button" disabled>Enviar candidatura</button>
+        <p id="situacao-enviar" role="status" aria-live="polite"></p>
+        <p class="nota">Preenche o formulário, confere os campos e clica no botão de envio do site. Só envia com a sua confirmação. Se a página tiver CAPTCHA ou campo sensível vazio, para e você envia.</p>
       </section>
       <p><a href="opcoes.html" target="_blank" rel="noopener">Configurar API e token</a></p>
     </main>

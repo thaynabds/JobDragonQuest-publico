@@ -1,10 +1,14 @@
-import { chamar, decidirPreenchimento, lerConfig, paginaValida, PADROES_SENSIVEIS } from "./comum.js";
+import { chamar, decidirPreenchimento, evidenciaDeEnvio, lerConfig, paginaValida, PADROES_SENSIVEIS, podeEnviar } from "./comum.js";
 
 const situacao = document.getElementById("situacao");
 const formulario = document.getElementById("formulario");
 const campos = { empresa: document.getElementById("empresa"), cargo: document.getElementById("cargo"), local: document.getElementById("local") };
 const botaoPreencher = document.getElementById("preencher");
 const situacaoPreencher = document.getElementById("situacao-preencher");
+const secaoEnviar = document.getElementById("secao-enviar");
+const confirmarEnvio = document.getElementById("confirmar-envio");
+const botaoEnviar = document.getElementById("enviar");
+const situacaoEnviar = document.getElementById("situacao-enviar");
 let rascunho = null;
 
 // textContent sempre: o que vem da página é dado, nunca HTML.
@@ -13,6 +17,9 @@ const mostrar = (texto) => {
 };
 const mostrarPreencher = (texto) => {
   situacaoPreencher.textContent = texto;
+};
+const mostrarEnviar = (texto) => {
+  situacaoEnviar.textContent = texto;
 };
 
 async function paginaAtual() {
@@ -45,17 +52,23 @@ async function iniciar() {
   }
 }
 
-// Só mostra o botão de preencher quando a vaga já está salva no JobDragonQuest (a URL é a chave).
+// Só mostra o preenchimento e o envio quando a vaga já está salva no JobDragonQuest (a URL é a chave).
 async function verificarVagaSalva(config, pagina) {
   try {
     const previa = await chamar(config, "/api/v1/assist/prefill", { url: pagina });
     botaoPreencher.hidden = false;
+    secaoEnviar.hidden = false;
     mostrarPreencher(`Vaga salva. Perfil que será usado: ${previa.profileName || "sem nome"}.`);
   } catch {
     botaoPreencher.hidden = true;
+    secaoEnviar.hidden = true;
     mostrarPreencher("Para preencher a candidatura, cadastre esta vaga primeiro (formulário acima).");
   }
 }
+
+confirmarEnvio.addEventListener("change", () => {
+  botaoEnviar.disabled = !confirmarEnvio.checked;
+});
 
 formulario.addEventListener("submit", async (evento) => {
   evento.preventDefault();
@@ -72,8 +85,8 @@ formulario.addEventListener("submit", async (evento) => {
   }
 });
 
-// Funções que rodam na página aberta, só depois do clique. Não enviam nada e só escrevem em campo de texto vazio.
-// Não usam nada de fora delas, porque o Chrome as copia para a página.
+// Funções que rodam na página aberta, só depois do clique. Não usam nada de fora delas, porque o Chrome as copia para a página.
+// Lê os campos de texto: não envia nada e não escreve nada.
 function lerCamposDaPagina(padroes) {
   const sensiveis = padroes.map((fonte) => new RegExp(fonte));
   const normal = (texto) => String(texto ?? "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[*:?]/g, "").replace(/\s+/g, " ").trim();
@@ -113,6 +126,29 @@ function aplicarPreenchimento(atribuicoes) {
   return total;
 }
 
+// Detecta CAPTCHA: se houver, a extensão para e a pessoa envia.
+function detectarCaptcha() {
+  return document.querySelector('iframe[src*="recaptcha"], iframe[src*="hcaptcha"], iframe[src*="turnstile"], .g-recaptcha, .h-captcha, .cf-turnstile, [data-sitekey]') !== null;
+}
+
+// Marca um único botão de envio da página. Se houver zero ou mais de um candidato, não marca nada.
+function marcarBotaoEnviar() {
+  const padrao = /enviar|candidatar|candidatura|submit|apply|send/i;
+  const candidatos = [...document.querySelectorAll('button[type=submit], input[type=submit], button:not([type])')]
+    .filter((botao) => botao.getClientRects().length > 0 && !botao.disabled)
+    .filter((botao) => padrao.test((botao.innerText || botao.value || "").trim()));
+  if (candidatos.length !== 1) return false;
+  candidatos[0].dataset.jdqEnviar = "1";
+  return true;
+}
+
+function clicarBotaoEnviar() {
+  const botao = document.querySelector('[data-jdq-enviar="1"]');
+  if (!botao) return false;
+  botao.click();
+  return true;
+}
+
 botaoPreencher.addEventListener("click", async () => {
   try {
     const config = await lerConfig(chrome.storage.local);
@@ -125,9 +161,47 @@ botaoPreencher.addEventListener("click", async () => {
     const [lidos] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: lerCamposDaPagina, args: [PADROES_SENSIVEIS.map((padrao) => padrao.source)] });
     const atribuicoes = decidirPreenchimento(lidos.result, previa);
     const [feitos] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: aplicarPreenchimento, args: [atribuicoes] });
-    mostrarPreencher(`${feitos.result} campo(s) preenchido(s) com o perfil "${previa.profileName || "sem nome"}". Revise tudo e envie você mesmo: a extensão não envia nada.`);
+    mostrarPreencher(`${feitos.result} campo(s) preenchido(s) com o perfil "${previa.profileName || "sem nome"}". Revise tudo antes de enviar.`);
   } catch (erro) {
     mostrarPreencher("Não deu para preencher: " + erro.message);
+  }
+});
+
+botaoEnviar.addEventListener("click", async () => {
+  botaoEnviar.disabled = true;
+  try {
+    const config = await lerConfig(chrome.storage.local);
+    const { aba, pagina } = await paginaAtual();
+    if (!pagina) {
+      mostrarEnviar("Abra a página da vaga.");
+      return;
+    }
+    // Revalida os campos logo antes do envio; a confirmação precisa estar marcada.
+    const [captcha] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: detectarCaptcha });
+    const [lidos] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: lerCamposDaPagina, args: [PADROES_SENSIVEIS.map((padrao) => padrao.source)] });
+    const pode = podeEnviar({ campos: lidos.result, captcha: captcha.result, confirmado: confirmarEnvio.checked });
+    if (!pode.ok) {
+      mostrarEnviar(pode.motivo);
+      botaoEnviar.disabled = false;
+      return;
+    }
+    const [achou] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: marcarBotaoEnviar });
+    if (!achou.result) {
+      mostrarEnviar("Não achei um único botão de envio nesta página. Envie você mesmo e registre no painel.");
+      botaoEnviar.disabled = false;
+      return;
+    }
+    await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: clicarBotaoEnviar });
+    const agora = new Date();
+    try {
+      await chamar(config, "/api/v1/assist/submitted", { url: pagina, evidence: evidenciaDeEnvio(pagina, agora) });
+      mostrarEnviar(`Candidatura enviada e registrada em ${agora.toLocaleString("pt-BR")}. Confira no site: ${pagina}`);
+    } catch (erro) {
+      mostrarEnviar(`A página foi enviada, mas não consegui registrar no JobDragonQuest (${erro.message}). Confira no site: ${pagina}`);
+    }
+  } catch (erro) {
+    mostrarEnviar("Não deu para enviar: " + erro.message);
+    botaoEnviar.disabled = false;
   }
 });
 
