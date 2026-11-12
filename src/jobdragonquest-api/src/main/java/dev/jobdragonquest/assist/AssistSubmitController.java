@@ -33,10 +33,12 @@ class AssistSubmitController {
     @PostMapping("/submitted")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void submitted(@Valid @RequestBody SubmittedRequest request) {
-        assistant.registerSubmitted(currentUser.id(), request.url(), request.evidence());
+        assistant.registerSubmitted(currentUser.id(), request.url(), request.evidence(),
+                Boolean.TRUE.equals(request.automatico()));
     }
 
+    /** {@code automatico} nulo ou falso: envio com um clique confirmado pela pessoa. */
     record SubmittedRequest(@NotBlank @Size(max = UrlCanonicalizer.MAX_LENGTH) String url,
-            @NotBlank @Size(max = 4000) String evidence) {
+            @NotBlank @Size(max = 4000) String evidence, Boolean automatico) {
     }
 }

@@ -75,12 +75,15 @@ public class ApplicationAssistant {
     private final ProfileService profiles;
     private final MatchingEngine matching;
     private final ApplicationService applications;
+    private final EnvioAutomaticoService envioAutomatico;
 
-    ApplicationAssistant(JobService jobs, ProfileService profiles, MatchingEngine matching, ApplicationService applications) {
+    ApplicationAssistant(JobService jobs, ProfileService profiles, MatchingEngine matching, ApplicationService applications,
+            EnvioAutomaticoService envioAutomatico) {
         this.jobs = jobs;
         this.profiles = profiles;
         this.matching = matching;
         this.applications = applications;
+        this.envioAutomatico = envioAutomatico;
     }
 
     /** Vaga salva com esta URL e o perfil que mais combina com ela. Vaga de outra conta responde como inexistente. */
@@ -100,16 +103,23 @@ public class ApplicationAssistant {
     }
 
     /**
-     * Registra o envio que a pessoa confirmou na extensão: a candidatura da vaga passa para enviada, com a evidência
-     * (data, hora e onde conferir). Só a conta dona; sem candidatura para a vaga responde como inexistente. A confiança
-     * é 1 porque é a própria pessoa que confirma o envio, no clique.
+     * Registra o envio na extensão: a candidatura da vaga passa para enviada, com a evidência (data, hora e onde
+     * conferir). Só a conta dona; sem candidatura para a vaga responde como inexistente. A confiança é 1 porque é a
+     * própria pessoa que confirma o envio, no clique, ou que deixou o automático ligado.
+     *
+     * <p>{@code automatico}: o envio saiu do automático da extensão. Só passa com a liga ativa e liberada, e a origem
+     * fica separada do envio com um clique para não contar no aprendizado.
      */
-    public void registerSubmitted(UUID userId, String url, String evidence) {
+    public void registerSubmitted(UUID userId, String url, String evidence, boolean automatico) {
+        if (automatico) {
+            envioAutomatico.exigirLigado(userId);
+        }
         UUID jobId = jobs.findIdByUrl(userId, url).orElseThrow(() -> new NotFoundException("Vaga"));
         UUID applicationId = applications.existingFor(userId, jobId, null, null)
                 .orElseThrow(() -> new NotFoundException("Candidatura"));
+        EventSource source = automatico ? EventSource.EXTENSION_AUTOMATICO : EventSource.EXTENSION;
         applications.transition(userId, applicationId, new TransitionRequest(ApplicationState.SUBMITTED,
-                EventSource.EXTENSION, evidence, BigDecimal.ONE, null, null, null));
+                source, evidence, BigDecimal.ONE, null, null, null));
     }
 
     public List<SuggestedAnswer> answers(UUID userId, UUID jobId, UUID profileId) {

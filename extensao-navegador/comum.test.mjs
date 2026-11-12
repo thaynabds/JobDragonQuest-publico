@@ -112,6 +112,19 @@ test("envio só sai com confirmação, sem CAPTCHA e com campos sensíveis preen
   assert.deepEqual(podeEnviar({ campos, captcha: false, confirmado: true }), { ok: true, motivo: null });
 });
 
+test("envio automático dispensa a confirmação de cada vaga, mas não passa por CAPTCHA nem campo sensível vazio", () => {
+  const campos = [{ indice: 0, sensivel: false, vazio: false }];
+  assert.deepEqual(podeEnviar({ campos, captcha: false, confirmado: false, automatico: true }), { ok: true, motivo: null });
+  assert.equal(podeEnviar({ campos, captcha: true, confirmado: false, automatico: true }).ok, false);
+  assert.equal(podeEnviar({ campos: [{ indice: 1, sensivel: true, vazio: true }], captcha: false, automatico: true }).ok, false);
+});
+
+test("evidência do envio automático diz que saiu pela liga da pessoa", () => {
+  const texto = evidenciaDeEnvio("https://empresa.test/vagas/2", new Date("2026-11-12T10:00:00Z"), true);
+  assert.match(texto, /envio automático que a pessoa deixou ligado/);
+  assert.match(texto, /Conferir em: https:\/\/empresa\.test\/vagas\/2$/);
+});
+
 test("evidência do envio traz data, hora e o endereço para conferir", () => {
   const texto = evidenciaDeEnvio("https://empresa.test/vagas/1", new Date("2026-11-12T10:00:00Z"));
   assert.match(texto, /2026-11-12T10:00:00\.000Z/);

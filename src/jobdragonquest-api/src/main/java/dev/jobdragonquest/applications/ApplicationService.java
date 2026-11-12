@@ -349,6 +349,12 @@ public class ApplicationService {
                 clock.instant().minus(properties.duplicateWindow())).stream().map(JobApplication::getId).findFirst();
     }
 
+    /** Envios que a pessoa confirmou com um clique na extensão (base para liberar o envio automático). */
+    @Transactional(readOnly = true)
+    public long confirmedExtensionSubmissions(UUID userId) {
+        return events.countByUserSourceAndToState(userId, EventSource.EXTENSION, ApplicationState.SUBMITTED);
+    }
+
     /** Vagas das candidaturas enviadas mais recentes (para a busca por vagas parecidas). */
     @Transactional(readOnly = true)
     public Set<UUID> recentSubmittedJobIds(UUID userId, int limit) {
