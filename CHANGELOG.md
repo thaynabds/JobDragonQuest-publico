@@ -6,6 +6,19 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.8.3] - 2026-11-12
+
+### Corrigido
+- Os testes da extensão usavam um número de telefone no formato brasileiro, que reprovava a auditoria de vazamento do espelho público; agora usam um número fictício (#238).
+
+## [0.8.2] - 2026-11-11
+
+### Adicionado
+- Preenchimento da candidatura pela extensão a partir da vaga salva: a API devolve as respostas do perfil que mais combina com a vaga (`POST /api/v1/assist/prefill`), e a extensão preenche só campos de texto vazios. Nunca envia o formulário e nunca preenche CPF, deficiência, raça, gênero, orientação ou consentimentos (#234).
+
+### Corrigido
+- A extensão usava o primeiro perfil da conta e o nome do perfil como nome da pessoa; agora usa o perfil recomendado para a vaga e o nome social do contato (#234).
+
 ## [0.8.1] - 2026-11-10
 
 ### Corrigido

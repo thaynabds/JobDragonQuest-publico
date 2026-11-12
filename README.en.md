@@ -8,7 +8,7 @@
 
 > Language: [Português](README.md) | **English** | [Español](README.es.md)
 
-[![Version](https://img.shields.io/badge/version-0.8.1-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.1)
+[![Version](https://img.shields.io/badge/version-0.8.3-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.3)
 [![License](https://img.shields.io/badge/license-all%20rights%20reserved-6b7280)](#license)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-374%20passing-16a34a)](#quality-and-security)
@@ -18,7 +18,7 @@
 
 **A career management and job application automation platform for jobs and internships, in Brazil and abroad.**
 
-**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.8.1
+**Author:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repository:** [public](https://github.com/thaynabds/JobDragonQuest-publico) · **Version:** 0.8.3
 
 ## Quick install
 
@@ -66,6 +66,7 @@ Saves the job on the open page to your JobDragonQuest, with no store and no thir
 1. Chrome or Edge: open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and pick the `extensao-navegador` folder. Firefox: `about:debugging` → **This Firefox** → **Load Temporary Add-on** → `extensao-navegador/manifest.json`.
 2. In the extension options, enter `http://127.0.0.1:8080` and a token created in **Settings → Integrations and access tokens**.
 3. On a job page, click the dragon icon: check the data and save.
+4. With the job already saved, click **Fill in this page's form**: the extension fills only empty text fields with the profile recommended for the job (name, email, phone, links and answers). It never submits the form and never fills in tax ID, disability, race, gender, sexual orientation or consent fields. Review it and submit yourself.
 
 ## The problem
 
@@ -79,7 +80,7 @@ JobDragonQuest brings it all into one explainable hub:
 
 ## Features
 
-### Implemented (v0.8.1)
+### Implemented (v0.8.3)
 
 | Area | What it does |
 |---|---|

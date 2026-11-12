@@ -8,7 +8,7 @@
 
 > Idioma: [Português](README.md) | [English](README.en.md) | **Español**
 
-[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.8.1-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.1)
+[![Versión](https://img.shields.io/badge/versi%C3%B3n-0.8.3-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.3)
 [![Licencia](https://img.shields.io/badge/licencia-todos%20los%20derechos%20reservados-6b7280)](#licencia)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
 [![Pruebas](https://img.shields.io/badge/pruebas-374%20aprobadas-16a34a)](#calidad-y-seguridad)
@@ -18,7 +18,7 @@
 
 **Plataforma de gestión de carrera y automatización de postulaciones a empleos y prácticas, en Brasil y en el exterior.**
 
-**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositorio:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versión:** 0.8.1
+**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositorio:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versión:** 0.8.3
 
 ## Instalación rápida
 
@@ -66,6 +66,7 @@ Guarda la vacante de la página abierta en tu JobDragonQuest, sin tienda y sin s
 1. Chrome o Edge: abre `chrome://extensions`, activa el **Modo de desarrollador**, haz clic en **Cargar descomprimida** y elige la carpeta `extensao-navegador`. Firefox: `about:debugging` → **Este Firefox** → **Cargar complemento temporal** → `extensao-navegador/manifest.json`.
 2. En las opciones de la extensión, pon `http://127.0.0.1:8080` y un token creado en **Configuración → Integraciones y tokens de acceso**.
 3. En la página de una vacante, haz clic en el ícono del dragón: revisa los datos y guarda.
+4. Con la vacante ya guardada, haz clic en **Rellenar el formulario de esta página**: la extensión rellena solo los campos de texto vacíos con el perfil recomendado para la vacante (nombre, correo, teléfono, enlaces y respuestas). Nunca envía el formulario y nunca rellena CPF, discapacidad, raza, género, orientación sexual ni consentimientos. Revísalo y envíalo tú mismo.
 
 ## El problema
 
@@ -79,7 +80,7 @@ JobDragonQuest lo reúne todo en una central única y explicable:
 
 ## Funcionalidades
 
-### Implementado (v0.8.1)
+### Implementado (v0.8.3)
 
 | Área | Qué hace |
 |---|---|

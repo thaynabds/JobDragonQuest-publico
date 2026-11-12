@@ -15,7 +15,12 @@
         <label>Local <input id="local" maxlength="200" /></label>
         <button type="submit">Cadastrar no JobDragonQuest</button>
       </form>
-      <button id="preencher" type="button">Preencher formulário desta página</button>
+      <section aria-labelledby="titulo-preencher">
+        <h2 id="titulo-preencher">Preencher a candidatura</h2>
+        <p id="situacao-preencher" role="status" aria-live="polite"></p>
+        <button id="preencher" type="button" hidden>Preencher formulário desta página</button>
+        <p class="nota">Preenche só campos de texto vazios, com o perfil da vaga. Nunca envia, nunca preenche CPF, deficiência, raça, gênero, orientação nem consentimentos.</p>
+      </section>
       <p><a href="opcoes.html" target="_blank" rel="noopener">Configurar API e token</a></p>
     </main>
     <script type="module" src="popup.js"></script>

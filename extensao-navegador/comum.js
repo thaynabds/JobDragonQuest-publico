@@ -43,6 +43,65 @@ export function campoDoPerfil(rotulo) {
   return achado ? achado[0] : null;
 }
 
+/** Documento, deficiência, raça, gênero, orientação e consentimentos: a extensão nunca preenche, mesmo com resposta no perfil. */
+export const PADROES_SENSIVEIS = [
+  /cpf|cnpj|\brg\b|documento|identidade|passport|\bssn\b|tax id|national id/,
+  /defici|pcd|disabilit|handicap/,
+  /raca|etnia|racial|ethnic|\brace\b/,
+  /orientacao sexual|sexual orientation|sexuality/,
+  /genero|gender|pronome|pronoun/,
+  /consentimento|consent|demograph|demografic|diversidade|diversity|lgpd|privacidade|privacy/,
+];
+
+const normalizarRotulo = (texto) =>
+  String(texto ?? "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[*:?]/g, "").replace(/\s+/g, " ").trim();
+
+/** O rótulo, o nome ou o contexto do campo menciona algo sensível? */
+export function ehSensivel(texto) {
+  const normal = normalizarRotulo(texto);
+  return PADROES_SENSIVEIS.some((padrao) => padrao.test(normal));
+}
+
+const TIPOS_DE_TEXTO = new Set(["text", "email", "tel", "url", "textarea"]);
+const NOME = ["nome", "first name", "given name", "primeiro nome"];
+const SOBRENOME = ["sobrenome", "last name", "family name", "surname"];
+const EMAIL = ["email", "e-mail", "e-mail address", "email address", "endereco de e-mail"];
+const TELEFONE = ["telefone", "phone", "phone number", "celular", "mobile", "mobile phone", "whatsapp"];
+const LINK_DO_PERFIL = { linkedin: /linkedin/, github: /github/, portfolio: /portfolio|portfólio|website/ };
+
+/**
+ * Decide o que colocar em cada campo de texto vazio, com os dados da vaga salva no JobDragonQuest (previa). Nunca mexe em
+ * campo sensível, em campo já preenchido, em select ou arquivo, nem usa resposta que falte no perfil.
+ * Devolve [{indice, valor}]; quem aplica é a própria página, e nada é enviado.
+ */
+export function decidirPreenchimento(campos, previa) {
+  const partes = String(previa?.name ?? "").trim().split(/\s+/).filter(Boolean);
+  const contato = { nome: partes[0] ?? null, sobrenome: partes.slice(1).join(" ") || null, email: previa?.email ?? null, telefone: previa?.phone ?? null };
+  const respostas = (previa?.answers ?? []).filter((resposta) => resposta.answer != null && resposta.answer !== "" && resposta.missing == null);
+  const valores = [];
+  for (const campo of campos ?? []) {
+    if (campo.vazio !== true || !TIPOS_DE_TEXTO.has(campo.tipo) || campo.sensivel || ehSensivel(campo.contexto ?? campo.rotulo)) continue;
+    const valor = valorParaRotulo(normalizarRotulo(campo.rotulo), contato, respostas);
+    if (valor) valores.push({ indice: campo.indice, valor: String(valor) });
+  }
+  return valores;
+}
+
+function valorParaRotulo(rotulo, contato, respostas) {
+  if (!rotulo) return null;
+  if (NOME.includes(rotulo)) return contato.nome;
+  if (SOBRENOME.includes(rotulo)) return contato.sobrenome;
+  if (EMAIL.includes(rotulo)) return contato.email;
+  if (TELEFONE.includes(rotulo)) return contato.telefone;
+  const link = Object.keys(LINK_DO_PERFIL).find((chave) => LINK_DO_PERFIL[chave].test(rotulo));
+  if (link) {
+    const achado = respostas.find((resposta) => resposta.category === link);
+    return achado ? achado.answer : null;
+  }
+  const pergunta = respostas.find((resposta) => normalizarRotulo(resposta.question) === rotulo);
+  return pergunta ? pergunta.answer : null;
+}
+
 /** Chamada à API local com o token no cabeçalho; nunca envia cookies. */
 export async function chamar(config, caminho, corpo) {
   const resposta = await fetch(config.api + caminho, {
