@@ -6,6 +6,11 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.9.0] - 2026-11-12
+
+### Adicionado
+- Envio automático pela extensão, ligado pela pessoa só depois de 10 envios com um clique confirmados (a IA aprende a preencher). Antes de ligar, aviso obrigatório. O servidor confere a liga e o aprendizado, não só a tela (`/api/v1/assist/envio-automatico`) (#246).
+
 ## [0.8.4] - 2026-11-12
 
 ### Adicionado

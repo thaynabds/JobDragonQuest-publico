@@ -1,5 +1,9 @@
 import { chamar, decidirPreenchimento, evidenciaDeEnvio, lerConfig, paginaValida, PADROES_SENSIVEIS, podeEnviar } from "./comum.js";
 
+// Caminhos da API do envio automático (POST: a extensão só tem POST liberado no CORS).
+const CAMINHO_ESTADO_AUTOMATICO = "/api/v1/assist/envio-automatico/estado";
+const CAMINHO_LIGA_AUTOMATICA = "/api/v1/assist/envio-automatico";
+
 const situacao = document.getElementById("situacao");
 const formulario = document.getElementById("formulario");
 const campos = { empresa: document.getElementById("empresa"), cargo: document.getElementById("cargo"), local: document.getElementById("local") };
@@ -9,7 +13,15 @@ const secaoEnviar = document.getElementById("secao-enviar");
 const confirmarEnvio = document.getElementById("confirmar-envio");
 const botaoEnviar = document.getElementById("enviar");
 const situacaoEnviar = document.getElementById("situacao-enviar");
+const secaoAutomatico = document.getElementById("secao-automatico");
+const situacaoAutomatico = document.getElementById("situacao-automatico");
+const avisoAutomatico = document.getElementById("aviso-automatico");
+const aceitarAviso = document.getElementById("aceitar-aviso");
+const botaoLigar = document.getElementById("ligar-automatico");
+const botaoDesligar = document.getElementById("desligar-automatico");
 let rascunho = null;
+// Ligado na conta (confirmado pelo servidor): o envio desta vaga sai sem a confirmação de cada envio.
+let automaticoLigado = false;
 
 // textContent sempre: o que vem da página é dado, nunca HTML.
 const mostrar = (texto) => {
@@ -59,15 +71,67 @@ async function verificarVagaSalva(config, pagina) {
     botaoPreencher.hidden = false;
     secaoEnviar.hidden = false;
     mostrarPreencher(`Vaga salva. Perfil que será usado: ${previa.profileName || "sem nome"}.`);
+    secaoAutomatico.hidden = false;
+    await carregarAutomatico(config);
   } catch {
     botaoPreencher.hidden = true;
     secaoEnviar.hidden = true;
+    secaoAutomatico.hidden = true;
     mostrarPreencher("Para preencher a candidatura, cadastre esta vaga primeiro (formulário acima).");
   }
 }
 
-confirmarEnvio.addEventListener("change", () => {
+// Mostra o estado do envio automático: bloqueado até o aprendizado, ou liberado com aviso, ou ligado.
+function mostrarAutomatico(estado) {
+  automaticoLigado = estado.ativo === true;
+  const liberado = estado.liberado === true;
+  avisoAutomatico.hidden = automaticoLigado || !liberado;
+  botaoLigar.hidden = automaticoLigado || !liberado;
+  botaoLigar.disabled = !aceitarAviso.checked;
+  botaoDesligar.hidden = !automaticoLigado;
+  // Ligado, a confirmação de cada envio não é pedida; ainda passa por CAPTCHA e campos sensíveis.
+  confirmarEnvio.closest("label").hidden = automaticoLigado;
+  if (automaticoLigado) {
+    situacaoAutomatico.textContent = "Ligado. A candidatura desta vaga sai sem a sua confirmação; o envio fica registrado com data, hora e onde conferir.";
+    botaoEnviar.disabled = false;
+    return;
+  }
   botaoEnviar.disabled = !confirmarEnvio.checked;
+  if (liberado) {
+    situacaoAutomatico.textContent = `Liberado: você já confirmou ${estado.confirmados} envios com um clique. Leia o aviso para ligar.`;
+  } else {
+    situacaoAutomatico.textContent = `Ainda não liberado: ${estado.confirmados} de ${estado.limite} envios com um clique confirmados. Use o envio com um clique até lá, para a IA aprender a preencher.`;
+  }
+}
+
+async function carregarAutomatico(config) {
+  try {
+    mostrarAutomatico(await chamar(config, CAMINHO_ESTADO_AUTOMATICO, {}));
+  } catch (erro) {
+    situacaoAutomatico.textContent = "Não consegui ler o envio automático: " + erro.message;
+  }
+}
+
+aceitarAviso.addEventListener("change", () => {
+  botaoLigar.disabled = !aceitarAviso.checked;
+});
+
+async function alterarAutomatico(ativo) {
+  const config = await lerConfig(chrome.storage.local);
+  try {
+    const estado = await chamar(config, CAMINHO_LIGA_AUTOMATICA, { ativo, avisoAceito: ativo && aceitarAviso.checked });
+    aceitarAviso.checked = false;
+    mostrarAutomatico(estado);
+  } catch (erro) {
+    situacaoAutomatico.textContent = "Não deu para alterar: " + erro.message;
+  }
+}
+
+botaoLigar.addEventListener("click", () => alterarAutomatico(true));
+botaoDesligar.addEventListener("click", () => alterarAutomatico(false));
+
+confirmarEnvio.addEventListener("change", () => {
+  botaoEnviar.disabled = !confirmarEnvio.checked && !automaticoLigado;
 });
 
 formulario.addEventListener("submit", async (evento) => {
@@ -179,7 +243,7 @@ botaoEnviar.addEventListener("click", async () => {
     // Revalida os campos logo antes do envio; a confirmação precisa estar marcada.
     const [captcha] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: detectarCaptcha });
     const [lidos] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: lerCamposDaPagina, args: [PADROES_SENSIVEIS.map((padrao) => padrao.source)] });
-    const pode = podeEnviar({ campos: lidos.result, captcha: captcha.result, confirmado: confirmarEnvio.checked });
+    const pode = podeEnviar({ campos: lidos.result, captcha: captcha.result, confirmado: confirmarEnvio.checked, automatico: automaticoLigado });
     if (!pode.ok) {
       mostrarEnviar(pode.motivo);
       botaoEnviar.disabled = false;
@@ -194,7 +258,11 @@ botaoEnviar.addEventListener("click", async () => {
     await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: clicarBotaoEnviar });
     const agora = new Date();
     try {
-      await chamar(config, "/api/v1/assist/submitted", { url: pagina, evidence: evidenciaDeEnvio(pagina, agora) });
+      await chamar(config, "/api/v1/assist/submitted", {
+        url: pagina,
+        evidence: evidenciaDeEnvio(pagina, agora, automaticoLigado),
+        automatico: automaticoLigado,
+      });
       mostrarEnviar(`Candidatura enviada e registrada em ${agora.toLocaleString("pt-BR")}. Confira no site: ${pagina}`);
     } catch (erro) {
       mostrarEnviar(`A página foi enviada, mas não consegui registrar no JobDragonQuest (${erro.message}). Confira no site: ${pagina}`);

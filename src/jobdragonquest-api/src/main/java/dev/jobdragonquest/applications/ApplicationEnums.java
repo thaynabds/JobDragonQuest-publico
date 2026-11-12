@@ -24,7 +24,10 @@ public final class ApplicationEnums {
         PORTAL,
         AGENT,
         SYSTEM,
-        EXTENSION;
+        /** Envio que a pessoa confirmou, com um clique, na extensão. Conta para liberar o automático. */
+        EXTENSION,
+        /** Envio feito pelo automático da extensão, com a liga ativa. Não conta para liberar o automático. */
+        EXTENSION_AUTOMATICO;
 
         public boolean isHuman() {
             return this == MANUAL;

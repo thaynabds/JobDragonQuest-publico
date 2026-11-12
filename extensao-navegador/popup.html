@@ -28,6 +28,17 @@
         <p id="situacao-enviar" role="status" aria-live="polite"></p>
         <p class="nota">Preenche o formulário, confere os campos e clica no botão de envio do site. Só envia com a sua confirmação. Se a página tiver CAPTCHA ou campo sensível vazio, para e você envia.</p>
       </section>
+      <section id="secao-automatico" aria-labelledby="titulo-automatico" hidden>
+        <h2 id="titulo-automatico">Envio automático</h2>
+        <p id="situacao-automatico" role="status" aria-live="polite"></p>
+        <div id="aviso-automatico" class="aviso" hidden>
+          <p><strong>Antes de ligar:</strong> com o envio automático ligado, a candidatura desta vaga sai sem você confirmar cada envio. Use antes o envio com um clique por um tempo, para a IA aprender a preencher. Um envio já feito não se desfaz: confira depois no site e no painel.</p>
+          <label><input id="aceitar-aviso" type="checkbox" /> Li o aviso e quero ligar o envio automático</label>
+        </div>
+        <button id="ligar-automatico" type="button" disabled hidden>Ligar envio automático</button>
+        <button id="desligar-automatico" type="button" hidden>Desligar envio automático</button>
+        <p class="nota">Vale para a vaga desta página, quando você roda o envio aqui. Não envia sozinho em outras vagas.</p>
+      </section>
       <p><a href="opcoes.html" target="_blank" rel="noopener">Configurar API e token</a></p>
     </main>
     <script type="module" src="popup.js"></script>
