@@ -12,7 +12,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import dev.jobdragonquest.applications.ApplicationDtos.TransitionRequest;
+import dev.jobdragonquest.applications.ApplicationEnums.EventSource;
 import dev.jobdragonquest.applications.ApplicationService;
+import dev.jobdragonquest.applications.ApplicationState;
 import dev.jobdragonquest.common.error.NotFoundException;
 import dev.jobdragonquest.common.text.SkillNormalizer;
 import dev.jobdragonquest.jobs.JobDtos.JobResponse;
@@ -94,6 +97,19 @@ public class ApplicationAssistant {
         String phone = options == null ? null : options.phone();
         return new Prefill(jobId, job.company(), job.title(), profileId, p.name(), name, email, phone,
                 answers(userId, jobId, profileId));
+    }
+
+    /**
+     * Registra o envio que a pessoa confirmou na extensão: a candidatura da vaga passa para enviada, com a evidência
+     * (data, hora e onde conferir). Só a conta dona; sem candidatura para a vaga responde como inexistente. A confiança
+     * é 1 porque é a própria pessoa que confirma o envio, no clique.
+     */
+    public void registerSubmitted(UUID userId, String url, String evidence) {
+        UUID jobId = jobs.findIdByUrl(userId, url).orElseThrow(() -> new NotFoundException("Vaga"));
+        UUID applicationId = applications.existingFor(userId, jobId, null, null)
+                .orElseThrow(() -> new NotFoundException("Candidatura"));
+        applications.transition(userId, applicationId, new TransitionRequest(ApplicationState.SUBMITTED,
+                EventSource.EXTENSION, evidence, BigDecimal.ONE, null, null, null));
     }
 
     public List<SuggestedAnswer> answers(UUID userId, UUID jobId, UUID profileId) {

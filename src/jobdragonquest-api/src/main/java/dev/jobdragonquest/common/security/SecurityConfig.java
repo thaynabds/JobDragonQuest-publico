@@ -174,7 +174,8 @@ public class SecurityConfig {
     }
 
     /** Rotas que a extensão do navegador usa: ler a vaga da página, cadastrar e pedir os dados de preenchimento. */
-    static final Set<String> EXTENSION_PATHS = Set.of("/api/v1/jobs/from-link", "/api/v1/jobs", "/api/v1/assist/prefill");
+    static final Set<String> EXTENSION_PATHS = Set.of("/api/v1/jobs/from-link", "/api/v1/jobs", "/api/v1/assist/prefill",
+            "/api/v1/assist/submitted");
 
     /**
      * CORS para a extensão gratuita do JobDragonQuest (issue #116). Sem cookies ({@code allowCredentials = false}): a

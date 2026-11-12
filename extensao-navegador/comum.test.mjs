@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { campoDoPerfil, apiValida, chamar, decidirPreenchimento, ehSensivel, paginaValida, tokenValido } from "./comum.js";
+import { apiValida, campoDoPerfil, chamar, decidirPreenchimento, ehSensivel, evidenciaDeEnvio, paginaValida, podeEnviar, tokenValido } from "./comum.js";
 
 const previaDeExemplo = {
   name: "Ana Maria Souza",
@@ -102,4 +102,18 @@ test("preenche nome, sobrenome, e-mail, telefone, links e respostas do perfil, s
 test("sem dado no perfil o campo fica vazio, e rótulo de vaga não vira nome da pessoa", () => {
   const semContato = { name: null, answers: [] };
   assert.deepEqual(decidirPreenchimento([campo(0, "Nome"), campo(1, "E-mail"), campo(2, "Quando você pode começar?")], semContato), []);
+});
+
+test("envio só sai com confirmação, sem CAPTCHA e com campos sensíveis preenchidos pela pessoa", () => {
+  const campos = [{ indice: 0, sensivel: false, vazio: false }];
+  assert.equal(podeEnviar({ campos, captcha: false, confirmado: false }).ok, false);
+  assert.equal(podeEnviar({ campos, captcha: true, confirmado: true }).ok, false);
+  assert.equal(podeEnviar({ campos: [{ indice: 1, sensivel: true, vazio: true }], captcha: false, confirmado: true }).ok, false);
+  assert.deepEqual(podeEnviar({ campos, captcha: false, confirmado: true }), { ok: true, motivo: null });
+});
+
+test("evidência do envio traz data, hora e o endereço para conferir", () => {
+  const texto = evidenciaDeEnvio("https://empresa.test/vagas/1", new Date("2026-11-12T10:00:00Z"));
+  assert.match(texto, /2026-11-12T10:00:00\.000Z/);
+  assert.match(texto, /Conferir em: https:\/\/empresa\.test\/vagas\/1$/);
 });

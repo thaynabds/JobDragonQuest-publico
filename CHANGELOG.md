@@ -6,6 +6,11 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.8.4] - 2026-11-12
+
+### Adicionado
+- Envio com um clique a partir do JobDragonQuest: a extensão preenche a candidatura, confere os campos e envia só depois da confirmação da pessoa. Para com CAPTCHA ou campo sensível vazio. O envio é registrado na candidatura com data, hora e o endereço para conferir (`POST /api/v1/assist/submitted`) (#242).
+
 ## [0.8.3] - 2026-11-12
 
 ### Corrigido

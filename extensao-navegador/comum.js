@@ -125,3 +125,22 @@ export async function chamar(config, caminho, corpo) {
   }
   return dados;
 }
+
+/**
+ * Pode enviar? Só com a confirmação marcada, sem CAPTCHA na página e com todo campo sensível preenchido pela pessoa
+ * (a extensão nunca preenche esses campos, então se algum estiver vazio o envio para aqui).
+ */
+export function podeEnviar({ campos, captcha, confirmado }) {
+  if (confirmado !== true) return { ok: false, motivo: "Marque a confirmação antes de enviar." };
+  if (captcha === true) return { ok: false, motivo: "Esta página tem CAPTCHA: envie você mesmo." };
+  const sensiveisVazios = (campos ?? []).filter((campo) => campo.sensivel === true && campo.vazio === true);
+  if (sensiveisVazios.length > 0) {
+    return { ok: false, motivo: "Há campos sensíveis vazios (documento, deficiência, raça, gênero ou consentimentos). Complete você mesmo." };
+  }
+  return { ok: true, motivo: null };
+}
+
+/** Evidência do envio para a candidatura: data, hora e onde conferir. */
+export function evidenciaDeEnvio(url, agora = new Date()) {
+  return `Enviada pela extensão em ${agora.toISOString()}, com confirmação da pessoa. Conferir em: ${url}`;
+}
