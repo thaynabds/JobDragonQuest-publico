@@ -2,7 +2,21 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { campoDoPerfil, apiValida, chamar, paginaValida, tokenValido } from "./comum.js";
+import { campoDoPerfil, apiValida, chamar, decidirPreenchimento, ehSensivel, paginaValida, tokenValido } from "./comum.js";
+
+const previaDeExemplo = {
+  name: "Ana Maria Souza",
+  email: "ana@exemplo.test",
+  phone: "555-0100",
+  answers: [
+    { category: "linkedin", question: "Link do seu LinkedIn", answer: "https://linkedin.com/in/ana", missing: null },
+    { category: "salary", question: "Qual a sua pretensão salarial?", answer: "5000 BRL (monthly)", missing: null },
+    { category: "experience", question: "Quanto tempo de experiência você tem com Java?", answer: "1 ano, 6 meses", missing: null },
+    { category: "experience", question: "Quanto tempo de experiência você tem com Kotlin?", answer: null, missing: "O perfil não declara Kotlin." },
+  ],
+};
+
+const campo = (indice, rotulo, extras = {}) => ({ indice, rotulo, contexto: rotulo, tipo: "text", vazio: true, sensivel: false, ...extras });
 
 test("aceita só API local http sem caminho", () => {
   assert.equal(apiValida("http://127.0.0.1:8080"), "http://127.0.0.1:8080");
@@ -48,4 +62,44 @@ test("preenchimento nunca usa senha, CPF ou cartão e reconhece os campos comuns
   assert.equal(campoDoPerfil("Your LinkedIn profile"), "linkedin");
   assert.equal(campoDoPerfil("E-mail"), "email");
   assert.equal(campoDoPerfil("Celular"), "telefone");
+});
+
+test("sensíveis nunca são preenchidos: documento, deficiência, raça, gênero, orientação e consentimento", () => {
+  for (const rotulo of ["CPF", "Qual é o seu CPF?", "Você é uma pessoa com deficiência?", "Raça ou etnia", "Gênero", "Orientação sexual", "Consentimento - Diversidade e Inclusão (D&I)", "Do you live with any disabilities?", "Which racial/ethnic group best represents you?"]) {
+    assert.equal(ehSensivel(rotulo), true, rotulo);
+  }
+  assert.equal(ehSensivel("Nome"), false);
+  assert.equal(ehSensivel("Link do seu LinkedIn"), false);
+  const campos = [campo(0, "CPF"), campo(1, "Você é uma pessoa com deficiência?"), campo(2, "Gênero"), campo(3, "Nome")];
+  assert.deepEqual(decidirPreenchimento(campos, previaDeExemplo), [{ indice: 3, valor: "Ana" }]);
+});
+
+test("preenche nome, sobrenome, e-mail, telefone, links e respostas do perfil, só em campo vazio", () => {
+  const campos = [
+    campo(0, "Nome*"),
+    campo(1, "Sobrenome*"),
+    campo(2, "E-mail*"),
+    campo(3, "Telefone"),
+    campo(4, "LinkedIn Profile"),
+    campo(5, "Qual a sua pretensão salarial?"),
+    campo(6, "Quanto tempo de experiência você tem com Java?"),
+    campo(7, "Quanto tempo de experiência você tem com Kotlin?"),
+    campo(8, "Nome da empresa"),
+    campo(9, "Nome", { vazio: false }),
+    campo(10, "E-mail", { tipo: "select" }),
+  ];
+  assert.deepEqual(decidirPreenchimento(campos, previaDeExemplo), [
+    { indice: 0, valor: "Ana" },
+    { indice: 1, valor: "Maria Souza" },
+    { indice: 2, valor: "ana@exemplo.test" },
+    { indice: 3, valor: "555-0100" },
+    { indice: 4, valor: "https://linkedin.com/in/ana" },
+    { indice: 5, valor: "5000 BRL (monthly)" },
+    { indice: 6, valor: "1 ano, 6 meses" },
+  ]);
+});
+
+test("sem dado no perfil o campo fica vazio, e rótulo de vaga não vira nome da pessoa", () => {
+  const semContato = { name: null, answers: [] };
+  assert.deepEqual(decidirPreenchimento([campo(0, "Nome"), campo(1, "E-mail"), campo(2, "Quando você pode começar?")], semContato), []);
 });

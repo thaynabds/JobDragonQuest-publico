@@ -1,14 +1,24 @@
-import { campoDoPerfil, chamar, lerConfig, paginaValida } from "./comum.js";
+import { chamar, decidirPreenchimento, lerConfig, paginaValida, PADROES_SENSIVEIS } from "./comum.js";
 
 const situacao = document.getElementById("situacao");
 const formulario = document.getElementById("formulario");
 const campos = { empresa: document.getElementById("empresa"), cargo: document.getElementById("cargo"), local: document.getElementById("local") };
+const botaoPreencher = document.getElementById("preencher");
+const situacaoPreencher = document.getElementById("situacao-preencher");
 let rascunho = null;
 
 // textContent sempre: o que vem da página é dado, nunca HTML.
 const mostrar = (texto) => {
   situacao.textContent = texto;
 };
+const mostrarPreencher = (texto) => {
+  situacaoPreencher.textContent = texto;
+};
+
+async function paginaAtual() {
+  const [aba] = await chrome.tabs.query({ active: true, currentWindow: true });
+  return { aba, pagina: paginaValida(aba && aba.url) };
+}
 
 async function iniciar() {
   const config = await lerConfig(chrome.storage.local);
@@ -16,12 +26,12 @@ async function iniciar() {
     mostrar("Configure a API local e o token pessoal (link abaixo).");
     return;
   }
-  const [aba] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const pagina = paginaValida(aba && aba.url);
+  const { pagina } = await paginaAtual();
   if (!pagina) {
     mostrar("Abra a página de uma vaga (http ou https) e tente de novo.");
     return;
   }
+  verificarVagaSalva(config, pagina);
   try {
     const resposta = await chamar(config, "/api/v1/jobs/from-link", { url: pagina });
     rascunho = resposta.job;
@@ -35,6 +45,18 @@ async function iniciar() {
   }
 }
 
+// Só mostra o botão de preencher quando a vaga já está salva no JobDragonQuest (a URL é a chave).
+async function verificarVagaSalva(config, pagina) {
+  try {
+    const previa = await chamar(config, "/api/v1/assist/prefill", { url: pagina });
+    botaoPreencher.hidden = false;
+    mostrarPreencher(`Vaga salva. Perfil que será usado: ${previa.profileName || "sem nome"}.`);
+  } catch {
+    botaoPreencher.hidden = true;
+    mostrarPreencher("Para preencher a candidatura, cadastre esta vaga primeiro (formulário acima).");
+  }
+}
+
 formulario.addEventListener("submit", async (evento) => {
   evento.preventDefault();
   const config = await lerConfig(chrome.storage.local);
@@ -43,45 +65,69 @@ formulario.addEventListener("submit", async (evento) => {
     await chamar(config, "/api/v1/jobs", vaga);
     formulario.hidden = true;
     mostrar("Vaga cadastrada no JobDragonQuest.");
+    const { pagina } = await paginaAtual();
+    if (pagina) verificarVagaSalva(config, pagina);
   } catch (erro) {
     mostrar("Não deu para cadastrar: " + erro.message);
   }
 });
 
-// Rodam na página aberta, só depois do clique. Nunca enviam o formulário e não tocam em campo já preenchido.
-function lerRotulos() {
-  return [...document.querySelectorAll("input:not([type=hidden]):not([type=password]):not([type=file]), textarea")].map((campo) =>
-    campo.value || campo.disabled || campo.readOnly ? "" : [campo.labels?.[0]?.innerText, campo.name, campo.id, campo.placeholder, campo.getAttribute("aria-label")].join(" "));
+// Funções que rodam na página aberta, só depois do clique. Não enviam nada e só escrevem em campo de texto vazio.
+// Não usam nada de fora delas, porque o Chrome as copia para a página.
+function lerCamposDaPagina(padroes) {
+  const sensiveis = padroes.map((fonte) => new RegExp(fonte));
+  const normal = (texto) => String(texto ?? "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[*:?]/g, "").replace(/\s+/g, " ").trim();
+  const visivel = (campo) => campo.getClientRects().length > 0 && !campo.disabled && !campo.readOnly;
+  const rotuloDe = (campo) => {
+    const rotulo = campo.id ? document.querySelector(`label[for="${CSS.escape(campo.id)}"]`) : null;
+    return [rotulo?.innerText, campo.getAttribute("aria-label"), campo.placeholder].map((texto) => (texto ?? "").trim()).find(Boolean) ?? "";
+  };
+  const contextoDe = (campo) => [rotuloDe(campo), campo.name, campo.id, campo.closest("label")?.innerText].filter(Boolean).join(" ");
+  const seletor = "input:not([type=hidden]):not([type=password]):not([type=file]):not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]):not([type=reset]), textarea";
+  return [...document.querySelectorAll(seletor)].filter(visivel).map((campo, indice) => {
+    campo.dataset.jdqIndice = String(indice);
+    const contexto = contextoDe(campo);
+    return {
+      indice,
+      rotulo: rotuloDe(campo),
+      contexto,
+      tipo: campo.tagName === "TEXTAREA" ? "textarea" : campo.type,
+      vazio: campo.value === "",
+      sensivel: sensiveis.some((padrao) => padrao.test(normal(contexto))),
+    };
+  });
 }
 
-function aplicarValores(valores) {
-  const campos = [...document.querySelectorAll("input:not([type=hidden]):not([type=password]):not([type=file]), textarea")];
+function aplicarPreenchimento(atribuicoes) {
   let total = 0;
-  valores.forEach((valor, indice) => {
-    const campo = campos[indice];
-    if (!valor || !campo || campo.value) return;
-    campo.value = valor;
+  for (const { indice, valor } of atribuicoes) {
+    const campo = document.querySelector(`[data-jdq-indice="${indice}"]`);
+    if (!campo || campo.value !== "") continue;
+    const descritor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(campo), "value");
+    if (!descritor || !descritor.set) continue;
+    descritor.set.call(campo, valor);
     campo.dispatchEvent(new Event("input", { bubbles: true }));
     campo.dispatchEvent(new Event("change", { bubbles: true }));
     total += 1;
-  });
+  }
   return total;
 }
 
-document.getElementById("preencher").addEventListener("click", async () => {
+botaoPreencher.addEventListener("click", async () => {
   try {
     const config = await lerConfig(chrome.storage.local);
-    const perfis = await chamar(config, "/api/v1/profiles");
-    const p = await chamar(config, "/api/v1/profiles/" + encodeURIComponent(perfis[0].id));
-    const o = p.options ?? {};
-    const dados = { nome: o.socialName ?? p.name, email: o.contactEmail, telefone: o.phone, cidade: p.city, linkedin: p.linkedinUrl, github: p.githubUrl, portfolio: p.portfolioUrl };
-    const [aba] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const [rotulos] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: lerRotulos });
-    const valores = rotulos.result.map((rotulo) => dados[campoDoPerfil(rotulo)] ?? null);
-    const [resultado] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: aplicarValores, args: [valores] });
-    mostrar(resultado.result + " campo(s) preenchido(s). Confira e envie você mesma.");
+    const { aba, pagina } = await paginaAtual();
+    if (!pagina) {
+      mostrarPreencher("Abra a página da vaga.");
+      return;
+    }
+    const previa = await chamar(config, "/api/v1/assist/prefill", { url: pagina });
+    const [lidos] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: lerCamposDaPagina, args: [PADROES_SENSIVEIS.map((padrao) => padrao.source)] });
+    const atribuicoes = decidirPreenchimento(lidos.result, previa);
+    const [feitos] = await chrome.scripting.executeScript({ target: { tabId: aba.id }, func: aplicarPreenchimento, args: [atribuicoes] });
+    mostrarPreencher(`${feitos.result} campo(s) preenchido(s) com o perfil "${previa.profileName || "sem nome"}". Revise tudo e envie você mesmo: a extensão não envia nada.`);
   } catch (erro) {
-    mostrar("Não deu para preencher: " + erro.message);
+    mostrarPreencher("Não deu para preencher: " + erro.message);
   }
 });
 

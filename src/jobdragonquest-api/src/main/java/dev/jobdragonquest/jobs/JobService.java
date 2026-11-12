@@ -102,6 +102,13 @@ public class JobService {
         return JobSnapshot.of(load(userId, jobId));
     }
 
+    /** Vaga da própria conta com esta URL, pela mesma canonicalização do cadastro. Vazio quando não existe. */
+    @Transactional(readOnly = true)
+    public Optional<UUID> findIdByUrl(UUID userId, String url) {
+        String canonical = UrlCanonicalizer.canonicalize(url);
+        return repository.findByUserIdAndUrlHash(userId, UrlCanonicalizer.hash(canonical)).map(JobPosting::getId);
+    }
+
     @Transactional(readOnly = true)
     public Page<JobSummary> list(UUID userId, UUID sourceId, int page, int size) {
         return list(userId, sourceId, false, page, size);

@@ -15,7 +15,7 @@ for (const [file, title] of Object.entries(titles)) {
   const first = sections.find((part) => part.startsWith("## "));
   check(`${file}: a primeira seção é "${title}"`, first?.startsWith(`## ${title}\n`), first?.split("\n")[0]);
   const section = first ?? "";
-  check(`${file}: lista os requisitos`, /Java 21/.test(section) && /Node 20/.test(section) && /PostgreSQL/.test(section));
+  check(`${file}: lista os requisitos`, /Java 21/.test(section) && /Node 22/.test(section) && /PostgreSQL/.test(section));
   const block = section.match(/```bash\n([\s\S]*?)```/)?.[1] ?? "";
   const lines = block.trim().split("\n");
   const clone = lines[0]?.match(/^git clone (\S+) (\S+)$/);

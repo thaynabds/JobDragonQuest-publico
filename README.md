@@ -8,7 +8,7 @@
 
 > Idioma: **Português** | [English](README.en.md) | [Español](README.es.md)
 
-[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.8.1-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.1)
+[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.8.3-7c3aed)](https://github.com/thaynabds/JobDragonQuest-publico/releases/tag/v0.8.3)
 [![Licença](https://img.shields.io/badge/licen%C3%A7a-todos%20os%20direitos%20reservados-6b7280)](#licença)
 [![CI](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/thaynabds/JobDragonQuest-publico/actions/workflows/ci.yml)
 [![Testes](https://img.shields.io/badge/testes-374%20passando-16a34a)](#qualidade-e-segurança)
@@ -18,11 +18,11 @@
 
 **Plataforma de gestão de carreira e automação de candidaturas a vagas de emprego e estágio, no Brasil e no exterior.**
 
-**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositório:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versão:** 0.8.1
+**Autora:** [Thayná Batista da Silva](https://github.com/thaynabds) · **Repositório:** [público](https://github.com/thaynabds/JobDragonQuest-publico) · **Versão:** 0.8.3
 
 ## Instalação rápida
 
-Roda inteiro no seu computador, sem deploy e sem nada pago. Requisitos: **Java 21**, **Node 20.19+** e **PostgreSQL 14+** instalados (o PostgreSQL só precisa dos programas: não precisa de configuração nem de sudo).
+Roda inteiro no seu computador, sem deploy e sem nada pago. Requisitos: **Java 21**, **Node 22.22.2+** e **PostgreSQL 14+** instalados (o PostgreSQL só precisa dos programas: não precisa de configuração nem de sudo).
 
 ```bash
 git clone https://github.com/thaynabds/JobDragonQuest-publico.git JobDragonQuest
@@ -66,6 +66,7 @@ Salva a vaga da página aberta no seu JobDragonQuest, sem loja e sem servidor de
 1. Chrome ou Edge: abra `chrome://extensions`, ligue o **Modo do desenvolvedor**, clique em **Carregar sem compactação** e escolha a pasta `extensao-navegador`. Firefox: `about:debugging` → **Este Firefox** → **Carregar extensão temporária** → `extensao-navegador/manifest.json`.
 2. Nas opções da extensão, informe `http://127.0.0.1:8080` e um token criado em **Configurações → Integrações e tokens de acesso**.
 3. Na página de uma vaga, clique no ícone do dragão: confira os dados e cadastre.
+4. Com a vaga já salva, clique em **Preencher formulário desta página**: a extensão preenche só campos de texto vazios com o perfil recomendado para a vaga (nome, e-mail, telefone, links e respostas). Ela nunca envia o formulário e nunca preenche CPF, deficiência, raça, gênero, orientação ou consentimentos. Revise e envie você mesmo.
 
 ## O problema
 
@@ -79,7 +80,7 @@ O JobDragonQuest junta tudo numa central única e explicável:
 
 ## Funcionalidades
 
-### Implementado (v0.8.1)
+### Implementado (v0.8.3)
 
 | Área | O que faz |
 |---|---|

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import dev.jobdragonquest.applications.ApplicationService;
+import dev.jobdragonquest.common.error.NotFoundException;
 import dev.jobdragonquest.common.text.SkillNormalizer;
 import dev.jobdragonquest.jobs.JobDtos.JobResponse;
 import dev.jobdragonquest.jobs.JobDtos.RequirementDto;
@@ -25,6 +26,7 @@ import dev.jobdragonquest.profiles.ProfileDtos.EntryDto;
 import dev.jobdragonquest.profiles.ProfileDtos.ProfileResponse;
 import dev.jobdragonquest.profiles.ProfileDtos.SkillView;
 import dev.jobdragonquest.profiles.ProfileEntry;
+import dev.jobdragonquest.profiles.ProfileOptions;
 import dev.jobdragonquest.profiles.ProfileService;
 
 /**
@@ -58,6 +60,14 @@ public class ApplicationAssistant {
     public record Review(boolean ready, List<Check> checks) {
     }
 
+    /**
+     * Dados para preencher a candidatura pela extensão: a vaga salva com a URL da página, o perfil que mais combina com
+     * ela, o contato guardado no perfil e as respostas de {@link #answers}. Só leitura: nada é enviado.
+     */
+    public record Prefill(UUID jobId, String company, String title, UUID profileId, String profileName, String name,
+            String email, String phone, List<SuggestedAnswer> answers) {
+    }
+
     private final JobService jobs;
     private final ProfileService profiles;
     private final MatchingEngine matching;
@@ -68,6 +78,22 @@ public class ApplicationAssistant {
         this.profiles = profiles;
         this.matching = matching;
         this.applications = applications;
+    }
+
+    /** Vaga salva com esta URL e o perfil que mais combina com ela. Vaga de outra conta responde como inexistente. */
+    public Prefill prefill(UUID userId, String url) {
+        UUID jobId = jobs.findIdByUrl(userId, url).orElseThrow(() -> new NotFoundException("Vaga"));
+        JobResponse job = jobs.get(userId, jobId);
+        UUID profileId = matching.rank(profiles.snapshots(userId), jobs.snapshot(userId, jobId)).stream()
+                .findFirst().map(MatchResult::profileId).orElseThrow(() -> new NotFoundException("Perfil"));
+        ProfileResponse p = profiles.get(userId, profileId);
+        ProfileOptions options = p.options();
+        // Nome social e contato ficam nas opções do perfil. O nome do perfil é só um rótulo e nunca vira nome da pessoa.
+        String name = options == null ? null : options.socialName();
+        String email = options == null ? null : options.contactEmail();
+        String phone = options == null ? null : options.phone();
+        return new Prefill(jobId, job.company(), job.title(), profileId, p.name(), name, email, phone,
+                answers(userId, jobId, profileId));
     }
 
     public List<SuggestedAnswer> answers(UUID userId, UUID jobId, UUID profileId) {
