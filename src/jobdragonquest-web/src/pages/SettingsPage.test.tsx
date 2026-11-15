@@ -19,6 +19,8 @@ const mocks = vi.hoisted(() => ({
   tokens: vi.fn(),
   createToken: vi.fn(),
   revokeToken: vi.fn(),
+  envioAutomatico: vi.fn(),
+  definirEnvioAutomatico: vi.fn(),
 }));
 vi.mock("../api/endpoints", () => ({ api: mocks }));
 vi.mock("../auth/AuthContext", () => ({ useAuth: () => ({ user: { displayName: "Pessoa", email: "p@teste.dev" }, reloadUser: vi.fn() }) }));
@@ -53,6 +55,7 @@ describe("configurações de avisos", () => {
     mocks.notificationPreferences.mockResolvedValue({ data: view });
     mocks.updateNotificationPreferences.mockImplementation((body: unknown) => Promise.resolve({ data: { ...view, ...(body as object) } }));
     mocks.tokens.mockResolvedValue({ data: [] });
+    mocks.envioAutomatico.mockResolvedValue({ data: { confirmados: 0, limite: 10, liberado: false, ativo: false } });
   });
 
   it("converte a antecedência digitada", () => {

@@ -6,6 +6,11 @@ repositório principal; a lista completa está em [docs/historico-issues-prs.md]
 
 ## [Não lançado]
 
+## [0.9.1] - 2026-11-14
+
+### Adicionado
+- Painel web: em Configurações, a seção Envio automático mostra o aprendizado (10 envios confirmados com um clique) e liga ou desliga o envio automático da extensão. Ligar exige o aviso aceito; desligar é sempre permitido. O servidor continua conferindo tudo (#246).
+
 ## [0.9.0] - 2026-11-12
 
 ### Adicionado

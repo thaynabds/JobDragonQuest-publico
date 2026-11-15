@@ -6,6 +6,7 @@ import type {
   ApplicationEvent,
   ApplicationState,
   AssistReview,
+  EnvioAutomatico,
   BatchTransitionResult,
   Contact,
   ContactInput,
@@ -125,6 +126,9 @@ export const api = {
   jobs: (params: { page?: number; size?: number; sourceId?: string; favorite?: boolean }) => request<Page<JobSummary>>(`/api/v1/jobs${query(params)}`),
   job: (jobId: string) => request<Job>(`/api/v1/jobs/${id(jobId)}`),
   createJob: (body: JobInput) => request<Job>("/api/v1/jobs", { method: "POST", body }),
+  envioAutomatico: () => request<EnvioAutomatico>("/api/v1/assist/envio-automatico/estado", { method: "POST" }),
+  definirEnvioAutomatico: (body: { ativo: boolean; avisoAceito: boolean }) =>
+    request<EnvioAutomatico>("/api/v1/assist/envio-automatico", { method: "POST", body }),
   assistAnswers: (jobId: string, profileId: string) => request<SuggestedAnswer[]>(`/api/v1/jobs/${id(jobId)}/assist/answers${query({ profileId })}`),
   assistReview: (jobId: string, profileId: string) => request<AssistReview>(`/api/v1/jobs/${id(jobId)}/assist/review${query({ profileId })}`),
   resume: (profileId: string, jobId?: string) => request<Resume>(`/api/v1/profiles/${id(profileId)}/resume${query({ jobId })}`),

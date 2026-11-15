@@ -788,6 +788,14 @@ export interface NotificationPreference {
   staleDays: number | null;
 }
 
+/** Estado do envio automático da extensão (issue #246). */
+export interface EnvioAutomatico {
+  confirmados: number;
+  limite: number;
+  liberado: boolean;
+  ativo: boolean;
+}
+
 export interface NotificationSettings {
   quietEnabled: boolean;
   quietStart: string;

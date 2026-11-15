@@ -29,6 +29,7 @@ Nada aqui é apresentado como pronto sem teste que comprove.
 | v0.7.0 | 09/11/2026 | Currículo por dado com Word e prévia; assistentes por MCP; concursos; triagem; novos idiomas |
 | v0.7.1 | 09/11/2026 | Menu lateral levemente translúcido |
 | v0.7.2 | 10/11/2026 | Painel de avisos translúcido; links da tela de entrada sem cara de botão |
+| v0.9.1 | 14/11/2026 | Painel web: em Configurações, a seção Envio automático mostra o aprendizado (10 envios confirmados com um clique) e liga ou desliga o envio automático, com o aviso obrigatório antes de ligar (#246) |
 | v0.9.0 | 12/11/2026 | Envio automático pela extensão, ligado pela pessoa só depois de 10 envios com um clique confirmados e com aviso aceito. O servidor confere a liga e o aprendizado (#246) |
 | v0.8.4 | 12/11/2026 | Envio com um clique a partir do JobDragonQuest: a extensão preenche, confere e envia só com a confirmação da pessoa, e registra o envio com data, hora e o endereço para conferir (#242)
 | v0.8.3 | 12/11/2026 | Testes da extensão com telefone fictício, para a auditoria de vazamento aprovar o espelho público (#238) |
