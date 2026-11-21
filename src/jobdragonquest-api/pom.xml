@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>21</java.version>
-		<bouncycastle.version>1.86</bouncycastle.version>
+		<bouncycastle.version>1.87</bouncycastle.version>
 		<jacoco.version>0.8.16</jacoco.version>
 		<!-- Pacotes críticos: cobertura mínima de linhas exigida no build (RNF-03). -->
 		<coverage.minimum>0.80</coverage.minimum>
